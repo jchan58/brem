@@ -25,7 +25,13 @@ function NavBar() {
                   Home
                 </Link>
                 <Link
-                  to="/game"
+                  to="/team"
+                  className="black hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md "
+                >
+                  Team
+                </Link>
+                <Link
+                  to="/"
                   className="black hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md "
                 >
                   Projects
@@ -34,7 +40,7 @@ function NavBar() {
                   to="/"
                   className="black hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md "
                 >
-                  Team
+                  Opportunities
                 </Link>
               </div>
             </div>
