@@ -46,6 +46,31 @@ const Team = () => {
                                 </div>
                             </div>
                         </div>
+                        <div className="bg-white rounded-xl shadow-2xl text-center relative overflow-hidden">
+                            <div className="p-8">
+                                <div className="relative">
+                                    <h2 className="font-bold text-3xl my-6">Residents</h2>
+                                    <div className="relative">
+                                        <ul>
+                                        <li className="text-xl"> * Safwan Alomari</li>
+                                        <li className="text-xl"> * Jayanidhi Kedda: GWU School of Medicine - 2023</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="bg-white rounded-xl shadow-2xl text-center relative overflow-hidden">
+                            <div className="p-8">
+                                <div className="relative">
+                                    <h2 className="font-bold text-3xl my-6">Medical Student</h2>
+                                    <div className="relative">
+                                        <ul>
+                                        <li className="text-xl"> * Divyaansh Raj: JHU School of Medicine - 2024</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
