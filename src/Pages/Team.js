@@ -19,36 +19,6 @@ const Team = () => {
                         <div className="bg-white rounded-xl shadow-2xl text-center relative overflow-hidden">
                             <div className="p-8">
                                 <div className="relative">
-                                    <h2 className="font-bold text-3xl my-6">Dr. Brem</h2>
-                                    <div className="relative">
-                                        <img className="mx-auto" src={DrBrem} alt="Dr. Brem" />
-                                        <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 flex items-center justify-center p-4 opacity-0 transition-opacity duration-300 ease-in-out hover:opacity-100 hover:transform hover:translate-y-0">
-                                            <p className="text-white text-xl">
-                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Sed felis eget velit aliquet sagittis id consectetur.
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="bg-white rounded-xl shadow-2xl text-center relative overflow-hidden">
-                            <div className="p-8">
-                                <div className="relative">
-                                    <h2 className="font-bold text-3xl my-6">Professor Betty Tyler</h2>
-                                    <div className="relative">
-                                        <img className="mx-auto" src={Professor} alt="Professor Betty Tyler" />
-                                        <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 flex items-center justify-center p-4 opacity-0 transition-opacity duration-300 ease-in-out hover:opacity-100 hover:transform hover:translate-y-0">
-                                            <p className="text-white text-xl">
-                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Sed felis eget velit aliquet sagittis id consectetur.
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="bg-white rounded-xl shadow-2xl text-center relative overflow-hidden">
-                            <div className="p-8">
-                                <div className="relative">
                                     <h2 className="font-bold text-3xl my-6">Residents</h2>
                                     <div className="relative">
                                         <ul>

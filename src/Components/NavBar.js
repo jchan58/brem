@@ -40,7 +40,7 @@ function NavBar() {
                   to="/"
                   className="black hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md "
                 >
-                  Opportunities
+                  Contact Us
                 </Link>
               </div>
             </div>
