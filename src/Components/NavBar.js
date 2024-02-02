@@ -1,58 +1,24 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React from 'react'; 
+import { Link } from 'react-router-dom'
 
-function NavBar() {
-  return (
-    <div>
-      <nav className="white">
-        <div className="flex px-4 sm:px-6">
-          <div className="flex items-center h-16">
-            <div className="flex-shrink-0">
-              <Link to="/">
-                <img
-                   className="h-16 w-16"
-                  src="https://pbs.twimg.com/profile_images/1158476160210210817/5L23zHvW_400x400.jpg"
-                  alt="UWP"
-                />
-              </Link>
+const NavBar = () => {
+    return (
+        <nav className='flex justify-between items-center h-16 bg-white text-black relative shadow-sm font-serif' role='navigation'>
+            <Link to='/' className='pl-8 font-serif'>The Johns Hopkins Hunterian Laboratory</Link>
+            <div className='px-4 cursor-pointer md:hidden'>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                </svg>
             </div>
-            <div className="block">
-              <div className="ml-10 flex items-baseline space-x-2 text-lg font-medium">
-                <Link
-                  to="/"
-                  className="hover:bg-gray-700 hover:text-white text-gray-300 px-3 py-2 rounded-md "
-                >
-                  Home
-                </Link>
-                <Link
-                  to="/team"
-                  className="black hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md "
-                >
-                  Team
-                </Link>
-                <Link
-                  to="/"
-                  className="black hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md "
-                >
-                  Projects
-                </Link>
-                <Link
-                  to="/"
-                  className="black hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md "
-                >
-                  Contact Us
-                </Link>
-              </div>
+            <div className='pr-8 md:block hidden'>
+                <Link className='p-4' to='/'>Home</Link>
+                <Link className='p-4' to='/team'>Team</Link>
+                <Link className='p-4' to='/about'>About</Link>
+                <Link className='p-4' to='/database'>Database</Link>
+                <Link className='p-4' to='/contact'>Contact</Link>
             </div>
-          </div>
-
-          <div className="ml-auto flex items-center">
-          </div>
-        </div>
-        <div className="h-2 bg-gray-900"></div>
-      </nav>
-    </div>
-  );
+        </nav>
+    )
 }
 
-export default NavBar;
+export default NavBar

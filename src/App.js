@@ -1,18 +1,14 @@
-import './App.css';
-import LandingPage from "./Pages/LandingPage";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import NavBar from './Components/NavBar';
-import Team from "./Pages/Team"
+import Content from './components/Content.js';
+import Hero from './components/Hero.js';
+import NavBar from './components/NavBar.js';
 
 function App() {
   return (
-      <div className="App">
-        <NavBar/>
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/team" element={<Team />} />
-        </Routes>
-      </div>
+    <>
+      <NavBar/>
+      <Hero/>
+      <Content/>
+    </>
   );
 }
 
