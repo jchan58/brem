@@ -6,7 +6,7 @@ import peter from '../Image_folder/ashley-1.png';
 import emre from '../Image_folder/Emre.jpg';
 import chris from '../Image_folder/Chris.jpg';
 import gavin from '../Image_folder/gavin.jpg'
-import Alumni from '../components/Alumni';
+import Alumni from '../Components/Alumni';
 import joey from '../Image_folder/joey.jpg'
 import ahmad from '../Image_folder/ahmad.jpeg'
 import harshal from '../Image_folder/harshal.jpg'

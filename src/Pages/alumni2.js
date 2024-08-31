@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import Alumni from '../components/Alumni';
+import Alumni from '../Components/Alumni';
 
 const tableHeaders = ['Name', 'Year'];
 const tableData = [

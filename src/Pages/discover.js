@@ -1,6 +1,6 @@
 import React from 'react';
-import History from '../components/History.js';
-import Article from '../components/Article.js';
+import History from '../Components/History.js';
+import Article from '../Components/Article.js';
 
 const Discover = () => {
     return (

@@ -1,9 +1,9 @@
 import { Route, Routes } from 'react-router-dom';
-import Footer from './components/Footer.js';
-import NavBar from './components/NavBar.js';
+import Footer from './Components/Footer.js';
+import NavBar from './Components/NavBar.js';
 import HomePage from '../src/Pages/HomePage.js';
 import Discover from './Pages/discover.js';
-import Team from './Pages/team.js';
+import Team from './Pages/Team.js';
 import Current from './Pages/current.js';
 import Database from './Pages/database.js';
 import Alumni2 from './Pages/alumni2.js';

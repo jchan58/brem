@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { peopleRoutes } from '../components/PeopleRoutes.js';
+import { peopleRoutes } from '../Components/PeopleRoutes.js';
 
 const SearchBar = () => {
     const [query, setQuery] = useState('');

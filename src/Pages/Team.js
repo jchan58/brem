@@ -8,7 +8,7 @@ import book5 from '../Image_folder/book5.png';
 import book6 from '../Image_folder/book6.png';
 import book7 from '../Image_folder/book7.png';
 import brain from '../Image_folder/brain.png';
-import SearchBar from '../components/SearchBar';
+import SearchBar from '../Components/SearchBar';
 
 const Team = () => {
     return (
