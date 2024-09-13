@@ -14,6 +14,8 @@ import Alumni6 from './Pages/alumni6.js';
 import Alumni7 from './Pages/alumni7.js';
 import Contact from './Pages/contact.js';
 
+import ModuleEdit from './Pages/ModuleEdit.js'
+
 function App() {
   return (
     <>
@@ -31,6 +33,8 @@ function App() {
         <Route path="/alumni6" element={<Alumni6/>} />
         <Route path="/alumni7" element={<Alumni7/>} />
         <Route path="/contact" element={<Contact/>} />
+
+        <Route path="/editmodule" element={<ModuleEdit/>} />
       </Routes>
       <Footer/>
     </>

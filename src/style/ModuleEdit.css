@@ -1,0 +1,123 @@
+#add-module-element-btn {
+    font-size: 1.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid #333;
+    background-color: #fff;
+    color: #333;
+    cursor: pointer;
+    display: inline-block;
+    margin-left: 180%;
+    
+}
+
+#save-module-page-btn {
+    font-size: 1.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid #333;
+    background-color: #fff;
+    color: #333;
+    cursor: pointer;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    
+}
+
+#add-module-container {
+    border: 2px solid #333;
+    border-radius: 55px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+    border-color: black;
+    padding: 10px;
+    text-align: center;
+    width: 95%;
+    margin: auto;
+    margin-bottom: 10px;
+}
+
+#non-footer {
+    /*padding: 20px;*/
+    padding-bottom: 450px;
+}
+
+#btn-and-dropdown-container {
+    align-items: center;
+    position: absolute;
+    margin-left: 70%;
+}
+
+#module-element-type-dropdown {
+    position: relative;
+    width: 100%;
+}
+
+#module-element-type-sel-btn{
+    width:180px;
+    max-width:100%;
+    text-align: center;
+}
+
+.element-container{
+    border: 2px solid #333;
+    border-radius: 55px;
+    border-color: black;
+    padding: 10px;
+    text-align: center;
+    width: 95%;
+    margin: auto;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+    margin-bottom: 10px;
+}
+
+.file-embed{
+    margin: 0 auto;
+}
+
+.element-input{
+    border: 2px solid #4431f0;
+    border-color: #4431f0;
+    width:50em;
+}
+
+.insert-input-btn{
+    font-size: 1.0rem;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid #333;
+    background-color: #fff;
+    color: #333;
+    cursor: pointer;
+    display: inline-block;
+    margin-left: 10%;
+}
+
+/*change this!*/
+a {
+    outline-color: transparent;
+  }
+  
+a:link {
+    color: #6900ff;
+}
+  
+a:visited {
+    color: #a5c300;
+}
+  
+a:focus {
+    text-decoration: none;
+    background: #bae498;
+}
+  
+a:hover {
+    text-decoration: none;
+    background: #cdfeaa;
+}
+  
+a:active {
+    background: #6900ff;
+    color: #cdfeaa;
+}
+
