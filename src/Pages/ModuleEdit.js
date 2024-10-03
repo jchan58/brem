@@ -53,11 +53,25 @@ const ModuleEdit = () => {
       }
       changeTarget.classList.add(sizes[changeTarget.size]);
     }
-    console.log(changeTarget.size);
-    console.log(sizes[changeTarget.size]);
-    console.log(changeTarget.classList);
-    console.log(changeTarget);
 
+  }
+
+  function changeTextPosition(event) {
+    event.preventDefault();
+    const pos = ["left-1/2", "right-0"];
+    const container = event.target.dropdownContainer;
+    const changeTarget = container.parentElement.parentElement.children[1];
+
+    for(let i = 0; i < pos.length; i++) {
+      changeTarget.classList.remove(pos[i]);
+    }
+
+    if(event.target.textContent === "Center") {
+      changeTarget.classList.add(pos[0]);
+    } else if (event.target.textContent === "Right"){
+      changeTarget.classList.add(pos[1]);
+    }
+    
   }
 
   function changeImageSize(event) {
@@ -91,16 +105,17 @@ const ModuleEdit = () => {
     if(insertBtn) {
       const inputField = document.getElementById(`input-box-for-${insertBtn.id}`);
       
-      
-      const textDiv = document.createElement("div");
-      textDiv.size = 2;
-      textDiv.textContent = inputField.value;
+      const text = document.createElement("p");
+      text.size = 2;
+      text.classList.add("absolute", "top-0", "left-1/2");
+      text.textContent = inputField.value;
       event.target.enableDrop();
       const btnContainer = insertBtn.parentElement.parentElement;
 
       btnContainer.removeChild(inputField); 
       insertBtn.parentElement.removeChild(insertBtn); 
-      btnContainer.appendChild(textDiv);      
+      btnContainer.classList.add("relative"); //make text's absolute relative to...this
+      btnContainer.appendChild(text);      
     }
   }
 
@@ -108,7 +123,10 @@ const ModuleEdit = () => {
     const insertBtn = event.target;
     if(insertBtn) {
       const inputField = insertBtn.parentElement.children[0];
-      insertBtn.parentElement.innerHTML = `<a href = "${inputField.value}">${inputField.value}</a>`;  
+      insertBtn.parentElement.innerHTML = `<a href = "${inputField.value}">${inputField.value}</a>`; 
+      
+      //get rid of the box outline
+      
     }
   }
 
@@ -118,7 +136,9 @@ const ModuleEdit = () => {
     
     if (file) {
       const fileURL = URL.createObjectURL(file);
-      event.target.parentElement.innerHTML = `<embed src = "${fileURL}" class="file-embed" width="500" height="400" />`
+      console.log(event.target.parentElement);
+      console.log(event.target.parentElement.width);
+      event.target.parentElement.innerHTML = `<embed src = "${fileURL}" class="file-embed" width="${event.target.parentElement.getBoundingClientRect().width * 0.8}" height="400" />` 
     }
   }
 
@@ -133,9 +153,9 @@ const ModuleEdit = () => {
       const imageEmbed = document.createElement("embed");
       imageEmbed.src = fileURL;
       imageEmbed.classList.add("file-embed");
-      imageEmbed.classList.add("flex-1");
+      imageEmbed.classList.add("flex-1"); //looks different in chrome??? scrolls
       
-      imageEmbed.width = 200; //dynamically size?
+      imageEmbed.width = 200; 
       imageEmbed.height = 300;
       
       event.target.enableDrop();
@@ -157,6 +177,7 @@ const ModuleEdit = () => {
       //videoAndPauseDataContainer.classList.add("content-center");
       videoAndPauseDataContainer.classList.add("space-x-20");
       
+      //create video object
       const fileURL = URL.createObjectURL(file);
       const videoObj = document.createElement("video");
       videoObj.width = "700";
@@ -164,45 +185,89 @@ const ModuleEdit = () => {
       const source = document.createElement("source");
       source.src = fileURL;
       source.type = file.type;
+      videoObj.stampList = [];
       videoObj.append(source);
 
 
       const pauseDataContainer = document.createElement("div");
-      pauseDataContainer.class = `pause-data-container`;
+      pauseDataContainer.classList.add("pause-data-container");
 
+      //input box for pause times
       const pTimeBox1 = document.createElement("input");
       pTimeBox1.width = "40";
       pTimeBox1.height = "50";
       pTimeBox1.classList.add("outline", "outline-black", "outline-2");
       pauseDataContainer.append(pTimeBox1);
+      pTimeBox1.classList.add("m-100");
 
+      //button to add pause times
       const pTimeBox1Btn = document.createElement("button");
       pTimeBox1Btn.innerText = "Add Pause Timestamp";
-      pTimeBox1Btn.class = `pause-time-box-button`;
-      pTimeBox1Btn.classList.add("outline", "outline-black", "outline-1");
+      pTimeBox1Btn.classList.add("outline", "outline-black", "outline-1", "pause-time-box-button");
       pTimeBox1Btn.height = 50;
       pTimeBox1Btn.width = 50;
       pTimeBox1Btn.classList.add("p-4");
 
-      pTimeBox1.classList.add("m-100");
+      //hold all timestamps
+      const timestamps = document.createElement("div");
+      timestamps.classList.add("timestamps");
+      
+      //add a timestamp to the timestamps
+      pTimeBox1Btn.addEventListener("click", () =>{
+        const val = Number(pTimeBox1.value.trim());
+        if(isNaN(val) || val > videoObj.duration) {
+          alert(`Please enter a number shorter than the video duration.`);
+        } else {
+        videoObj.stampList.push(val);
+        console.log(videoObj.stampList);
+          pTimeBox1.value = "";
+          timestamps.innerHTML = "";
+          // Iterate over the list of items
+          videoObj.stampList.forEach(item => {
+            const timestamp = document.createElement("div");
+            timestamp.classList.add("timestamp");
+            timestamp.classList.add("outline", "outline-black", "outline-2","rounded", "shadow-lg");
+
+            const removeBtn = document.createElement("button");
+            removeBtn.classList.add("remove-btn")
+            // Set the button text content
+            removeBtn.textContent = "-";
+            timestamp.innerText = item;
+            removeBtn.item = item;
+            removeBtn.addEventListener("click", (event) => { 
+              console.log(event.target);
+              alert(`You clicked on ${event.target.item}`);
+              videoObj.stampList = videoObj.stampList.filter((item) => item !== event.target.item);
+              console.log(videoObj.stampList);
+              removeBtn.parentElement.remove();
+            });
+
+            timestamp.append(removeBtn);
+            timestamps.append(timestamp);
+          });
+          console.log(videoObj.stampList);
+        }
+      })
+
+      
 
       pauseDataContainer.append(pTimeBox1);
       pauseDataContainer.append(pTimeBox1Btn);
+      pauseDataContainer.append(timestamps);
 
 
-      videoObj.stampList = [3];
+      
         //pop-up place to add question?
 
       // test out auto pausing //work on auto pausing...
       videoObj.addEventListener("timeupdate", () => { 
-        //console.log(videoObj.currentTime);
-        //console.log(videoObj);
+       
         // current time is given in seconds
         if(videoObj.stampList.includes(Math.floor(Number(videoObj.currentTime)))) {
             // pause the playback
             videoObj.pause();
             const time = Math.floor(Number(videoObj.currentTime));
-            videoObj.stampList = videoObj.stampList.filter((item) => item !== time );
+            videoObj.stampList = videoObj.stampList.filter((item) => item !== time ); //for admin, want it to come back, or no, don't just let them test it
             console.log(videoObj.stampList);
             alert(`Video paused`);
         }
@@ -233,9 +298,9 @@ const ModuleEdit = () => {
     button.setAttribute('data-dropdown-toggle', `${label}-type-dropdown`);
     button.innerHTML = `Change ${label.replaceAll("-", " ")} <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6"><path stroke="currentColor" d="m1 1 4 4 4-4"/></svg>`;
     
-    //don't want to change element before it is inserted
-    button.disabled = true;
 
+    button.disabled = true; //why is this disabling other inserted elements of the same types buttons!!
+    
     const enableAllButtons = () => {
         const buttons = parent.querySelectorAll('button');
         buttons.forEach(btn => btn.disabled = false);
@@ -345,6 +410,59 @@ const ModuleEdit = () => {
     }
   }
 
+  //also want to get rid of module element container gap (ok sometimes?)
+  //some other elements need to go away
+  function previewPage() {
+    const hide = [];
+
+    const addModuleContainer = document.getElementById("add-module-container");
+    hide.push(addModuleContainer);
+
+    const insertInputButtons = document.getElementsByClassName("insert-input-btn");
+    hide.push(...insertInputButtons);
+
+    const elementBtnContainers = document.getElementsByClassName("element-btns-container");
+    hide.push(...elementBtnContainers);
+
+    const imageElBtnContainers1 = document.getElementsByClassName("image1-btns-container");
+    hide.push(...imageElBtnContainers1);
+    const imageElBtnContainers2 = document.getElementsByClassName("image2-btns-container");
+    hide.push(...imageElBtnContainers2);
+    const imageElBtnContainers3 = document.getElementsByClassName("image3-btns-container");
+    hide.push(...imageElBtnContainers3);
+
+    const pauseDataContainers = document.getElementsByClassName("pause-data-container");
+    hide.push(...pauseDataContainers);
+
+    const dropdowns = document.getElementsByClassName("dropdown"); //work?
+    hide.push(...dropdowns);
+
+    hide.forEach(item => { 
+      item.classList.add("hidden");
+      item.style.visibility = "hidden";
+      console.log(item);
+      
+    });
+
+    const elementContainers = document.getElementsByClassName("element-container");
+    Array.from(elementContainers).forEach(item => {
+      item.classList.remove("element-container");
+      item.classList.add("added-element-container");
+    })
+  }
+
+  const previewBtnRef = useRef(null);
+  useEffect(() => {
+    const previewBtn= previewBtnRef.current;
+
+
+    if (previewBtn) {
+      previewBtn.addEventListener("click", previewPage);
+    }
+
+    
+  });
+
  
 
   //dropdown menu button logic
@@ -424,6 +542,7 @@ const ModuleEdit = () => {
       typeSelectBtn.classList.remove("Textbox");
       typeSelectBtn.classList.remove("Quiz");
       typeSelectBtn.classList.remove("Image");
+      typeSelectBtn.classList.remove("Video");
 
 
 
@@ -504,7 +623,7 @@ const ModuleEdit = () => {
       //add links
       if(typeSelectBtn.classList.contains("Link")) {
         newElement = `<div key = ${moduleElements.length} class = "element-container"> 
-                        <input type="text" class="element-input" name="random text" required minlength="4" maxlength="100" size="90" />
+                        <input type="text" class="element-input" name="random text" size="120" />
                         <button class = "insert-input-btn" id = "insert-btn-${moduleElements.length}">Insert</button>
                         
                       </div>` 
@@ -533,7 +652,7 @@ const ModuleEdit = () => {
           
         
           newElContainer.children[newElContainer.children.length-1].children[1].addEventListener("click", displayFile); //remove event listener where?s
-      //add textboxes (quizzes not done yet)
+      //add Images
       } else if (typeSelectBtn.classList.contains("Image")){        
           const newElement = document.createElement("div");
           newElement.key = moduleElements.length;
@@ -715,58 +834,17 @@ const ModuleEdit = () => {
      
         insertButton.inField = videoInput;
 
-
         insertButton.addEventListener("click", displayVideo); 
 
         
         
-        
-
-                
-        /*
-        //add adjustment dropdowns
-        
-        const image1BtnsContainer = document.createElement("div");
-        image1BtnsContainer.classList.add("image1-btns-container");
-        const imageSizeMenuItems = [
-          { id: "type-minus-w", text: "Shrink-Width", funcs: [displayDropdownSelection, changeImageSize]}, //test change image size and get dropdown working
-          { id: "type-minus-w", text: "Shrink-Height", funcs: [displayDropdownSelection, changeImageSize]},
-          { id: "type-plus-w", text: "Enlarge-Width", funcs: [displayDropdownSelection, changeImageSize]},
-          { id: "type-plus-h", text: "Enlarge-Height", funcs: [displayDropdownSelection, changeImageSize]}
-        ];
-
-        const image2BtnsContainer = document.createElement("div");
-        image2BtnsContainer.classList.add("image2-btns-container");
-
-        const image3BtnsContainer = document.createElement("div");
-        image3BtnsContainer.classList.add("image3-btns-container");
-        
-
-        image1Container.appendChild(image1BtnsContainer);
-        createDropdown(image1BtnsContainer, "image-size-1", imageSizeMenuItems);
-        insertButton1.enableDrop = image1BtnsContainer.enableDropdown;
-
-        image2Container.appendChild(image2BtnsContainer);
-        createDropdown(image2BtnsContainer, "image-size-2", imageSizeMenuItems);
-        insertButton2.enableDrop = image2BtnsContainer.enableDropdown;
-
-        image3Container.appendChild(image3BtnsContainer);
-        createDropdown(image3BtnsContainer, "image-size-3", imageSizeMenuItems);
-        insertButton3.enableDrop = image3BtnsContainer.enableDropdown;*/
+      
 
         //old ending
         setModuleElements([...moduleElements, newElement]);
         newElContainer.appendChild(newElement);
-
-        //const dropdownElImage1 = document.getElementById(`image-size-1-type-sel-btn`);
-        //const dropdownElImage2 = document.getElementById(`image-size-2-type-sel-btn`);
-        //const dropdownElImage3 = document.getElementById(`image-size-3-type-sel-btn`);
-
-        //dropdownElImage1.addEventListener("click", displayDropdownOptions); 
-        //dropdownElImage2.addEventListener("click", displayDropdownOptions); 
-        //dropdownElImage3.addEventListener("click", displayDropdownOptions); 
         
-      
+      //add Textboxes (Quiz missing)
       } else {
       
         const newElement = document.createElement("div");
@@ -777,8 +855,8 @@ const ModuleEdit = () => {
         const inputBox = document.createElement("textarea");
         inputBox.classList.add('element-input');
         
-        inputBox.minLength = 4;
-        inputBox.maxLength = 35;
+        //inputBox.minLength = 4;
+        //inputBox.maxLength = 35;
         inputBox.size = 90;
 
 
@@ -792,7 +870,7 @@ const ModuleEdit = () => {
         newElement.appendChild(inputBox);
 
         const btnContainer = document.createElement("div");
-        btnContainer.classList.add("element-btns-container");
+        btnContainer.classList.add("element-btns-container"); //issue: overlapping with text
         btnContainer.appendChild(insertButton);
         newElement.appendChild(btnContainer);
         
@@ -809,10 +887,18 @@ const ModuleEdit = () => {
           { id: "type-plus", text: "+", funcs: [displayDropdownSelection, changeFontSize]}
         ];
 
+        const positionMenuItems = [
+          { id: "type-center", text: "Center", funcs: [displayDropdownSelection, changeTextPosition]},
+          { id: "type-left", text: "Left", funcs: [displayDropdownSelection, changeTextPosition]},
+          { id: "type-right", text: "Right", funcs: [displayDropdownSelection, changeTextPosition]},
+        ];
+
         
         
         createDropdown(btnContainer, "font-style", fontStyleMenuItems);
         createDropdown(btnContainer, "font-size", fontSizeMenuItems);
+        createDropdown(btnContainer, "text-position", positionMenuItems);
+
         insertButton.enableDrop = btnContainer.enableDropdown;
         console.log(insertButton.enableDrop);
         
@@ -823,12 +909,13 @@ const ModuleEdit = () => {
         
         insertButton.addEventListener("click", permaText); //remove event listener where?
 
-        const dropdownEl1 = document.getElementById(`font-style-type-sel-btn`);
+        const dropdownEl1 = document.getElementById(`font-style-type-sel-btn`); //id must match 2nd argument of createDropdown
         const dropdownEl2 = document.getElementById(`font-size-type-sel-btn`);
+        const dropdownEl3 = document.getElementById(`text-position-type-sel-btn`);
 
         dropdownEl1.addEventListener("click", displayDropdownOptions); 
         dropdownEl2.addEventListener("click", displayDropdownOptions); 
-        
+        dropdownEl3.addEventListener("click", displayDropdownOptions);       
   
       }
         
@@ -892,7 +979,7 @@ const ModuleEdit = () => {
               <div id = "new-modules-container" ref = {newElContainerRef}>
                 
               </div>
-
+              <button id ="preview-module-page-btn" ref = {previewBtnRef}>Preview</button>
               <button id ="save-module-page-btn">Save</button>
               </div>
 

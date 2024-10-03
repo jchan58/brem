@@ -11,6 +11,32 @@
     
 }
 
+.pause-time-box-button{
+    font-size: 1.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid #333;
+    background-color: #fff;
+    color: #333;
+    cursor: pointer;
+    margin-left: 0.5rem;
+}
+
+.remove-btn{
+    font-size: 1.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid #333;
+    background-color: #fff;
+    color: #333;
+    cursor: pointer;
+    margin-left: 0.5rem;
+}
+
+.timestamps{
+    margin-top: 0.5rem;
+}
+
 #save-module-page-btn {
     font-size: 1.5rem;
     padding: 0.5rem 1rem;
@@ -22,6 +48,20 @@
     position: absolute;
     bottom: 0;
     right: 0;
+    
+}
+
+#preview-module-page-btn {
+    font-size: 1.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid #333;
+    background-color: #fff;
+    color: #333;
+    cursor: pointer;
+    position: absolute;
+    bottom: 0;
+    left: 0;
     
 }
 
@@ -84,13 +124,21 @@
 
 .element-container{
     border: 2px solid #333;
-    border-radius: 55px;
+    border-radius: 30px;
     border-color: black;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
     padding: 10px;
     text-align: center;
     width: 95%;
     margin: auto;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+    margin-bottom: 10px;
+}
+
+.added-element-container{
+    padding: 10px;
+    text-align: center;
+    width: 95%;
+    margin: auto;
     margin-bottom: 10px;
 }
 
