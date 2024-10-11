@@ -2,7 +2,6 @@ import React, { useRef, useEffect, useState } from 'react';
 import '../style/ModuleEdit.css';
 
 const ModuleEdit = () => {
-  
   function changeFontStyle(event) {
     event.preventDefault(); //prevent change movement
     const container = event.target.dropdownContainer;
@@ -56,20 +55,53 @@ const ModuleEdit = () => {
 
   }
 
-  function changeTextPosition(event) {
+
+  //want to add:
+  //add more pause video functionality
+  //add option to caption images
+  //add image popup caption functionality; add as many as you want? or up to 3?
+  //add quizzes
+  //reverse preview
+  function changeTextPosition(event) { 
     event.preventDefault();
-    const pos = ["left-1/2", "right-0"];
+    const positions = ["left-0.5", "left-1/4", "left-1/3", "left-1/2", "left-2/3", "left-3/4", "right-0.5"];
+    
     const container = event.target.dropdownContainer;
     const changeTarget = container.parentElement.parentElement.children[1];
 
-    for(let i = 0; i < pos.length; i++) {
-      changeTarget.classList.remove(pos[i]);
+    const elContainer = changeTarget.parentElement;
+
+    for(let i = 0; i < positions.length; i++) {
+      changeTarget.classList.remove(positions[i]);
     }
 
-    if(event.target.textContent === "Center") {
-      changeTarget.classList.add(pos[0]);
-    } else if (event.target.textContent === "Right"){
-      changeTarget.classList.add(pos[1]);
+    
+    changeTarget.classList.add("transform", "-translate-x-1/2");
+
+    if(event.target.textContent === "Left") {
+      changeTarget.pos -= 1;
+      if(changeTarget.pos < 0) {
+        changeTarget.pos = 0;
+      }
+      changeTarget.classList.add(positions[changeTarget.pos]);
+    } else {
+      changeTarget.pos += 1;
+      if(changeTarget.pos >= positions.length) {
+        changeTarget.pos = positions.length - 1;
+      }
+      changeTarget.classList.add(positions[changeTarget.pos]);
+    }
+
+    if(changeTarget.pos <= 3) {
+      elContainer.classList.remove("justify-start");
+      elContainer.classList.add("justify-end");
+    } else {
+      elContainer.classList.remove("justify-end");
+      elContainer.classList.add("justify-start");
+    }
+
+    if(changeTarget.pos === 0) {
+      changeTarget.classList.remove("transform", "-translate-x-1/2");
     }
     
   }
@@ -78,44 +110,55 @@ const ModuleEdit = () => {
     event.preventDefault();
     const imageEmbed = event.target.dropdownContainer.parentElement.parentElement.children[0];
 
-    console.log(imageEmbed)
+    //console.log(imageEmbed)
     if(event.target.textContent === "Shrink-Width") {
-      if(imageEmbed.width >= 40) {
-        imageEmbed.width -= 20;      }
+      if(parseInt(imageEmbed.style.width) >= 40) {
+        //console.log(imageEmbed.style.width);
+        imageEmbed.style.width = (parseInt(imageEmbed.style.width)-20).toString() + "px";     
+      }
     } else if (event.target.textContent === "Shrink-Height") {
-      if(imageEmbed.height >= 100) {
-
-        imageEmbed.height -= 40;
+      if(parseInt(imageEmbed.style.height) >= 100) {
+        imageEmbed.style.height = (parseInt(imageEmbed.style.height)-40).toString() + "px";   
       }
     } else if (event.target.textContent === "Enlarge-Width") {
-      if(imageEmbed.width <= 500) {
-        imageEmbed.width = (Number(imageEmbed.width) + 20);
+      if(parseInt(imageEmbed.width) <= 500) {
+        imageEmbed.style.width = (parseInt(imageEmbed.style.width)+20).toString() + "px";   
       }
     } else if (event.target.textContent === "Enlarge-Height") {
-      if (imageEmbed.height <= 600) {
-        imageEmbed.height = (Number(imageEmbed.height) + 40);
+      if (parseInt(imageEmbed.height) <= 600) {
+        imageEmbed.style.height = (parseInt(imageEmbed.style.height)+40).toString() + "px";   
       }
     }
     
   }
 
-  //functions to turn text/link put into input box and make it permanent
   function permaText(event) {
     const insertBtn = event.target;
     if(insertBtn) {
       const inputField = document.getElementById(`input-box-for-${insertBtn.id}`);
-      
-      const text = document.createElement("p");
-      text.size = 2;
-      text.classList.add("absolute", "top-0", "left-1/2");
-      text.textContent = inputField.value;
-      event.target.enableDrop();
-      const btnContainer = insertBtn.parentElement.parentElement;
+      if(inputField.value === ""){
+        alert("Please enter text into the input field.");
+      } else {
+        const text = document.createElement("p");
+        text.size = 2;
+        text.pos = 3;
+        text.classList.add("absolute", "top-0", "left-1/2");
+        text.classList.add("transform", "-translate-x-1/2");
+        text.textContent = inputField.value;
+        event.target.enableDrop();
+        const elContainer = insertBtn.parentElement.parentElement;
+        
+        //don't let added text overlap with the menu
+        elContainer.classList.add("flex");
+        elContainer.classList.add("justify-end");
+        text.classList.add("mt-300");
 
-      btnContainer.removeChild(inputField); 
-      insertBtn.parentElement.removeChild(insertBtn); 
-      btnContainer.classList.add("relative"); //make text's absolute relative to...this
-      btnContainer.appendChild(text);      
+        elContainer.removeChild(inputField); 
+        insertBtn.parentElement.removeChild(insertBtn); 
+        elContainer.classList.add("relative"); //make text's absolute relative to...this
+
+        elContainer.appendChild(text);      
+      }
     }
   }
 
@@ -123,7 +166,7 @@ const ModuleEdit = () => {
     const insertBtn = event.target;
     if(insertBtn) {
       const inputField = insertBtn.parentElement.children[0];
-      insertBtn.parentElement.innerHTML = `<a href = "${inputField.value}">${inputField.value}</a>`; 
+      insertBtn.parentElement.innerHTML = `<a href = "${inputField.value}" target="_blank" rel="noopener noreferrer">${inputField.value}</a>`; 
       
       //get rid of the box outline
       
@@ -138,7 +181,7 @@ const ModuleEdit = () => {
       const fileURL = URL.createObjectURL(file);
       console.log(event.target.parentElement);
       console.log(event.target.parentElement.width);
-      event.target.parentElement.innerHTML = `<embed src = "${fileURL}" class="file-embed" width="${event.target.parentElement.getBoundingClientRect().width * 0.8}" height="400" />` 
+      event.target.parentElement.innerHTML = `<embed src = "${fileURL}" class="file-embed" width="${event.target.parentElement.getBoundingClientRect().width * 0.8}" height="500" />` 
     }
   }
 
@@ -150,17 +193,19 @@ const ModuleEdit = () => {
     }
     if (file) {
       const fileURL = URL.createObjectURL(file);
-      const imageEmbed = document.createElement("embed");
+      const imageEmbed = document.createElement("img");
       imageEmbed.src = fileURL;
       imageEmbed.classList.add("file-embed");
       imageEmbed.classList.add("flex-1"); //looks different in chrome??? scrolls
-      
-      imageEmbed.width = 200; 
-      imageEmbed.height = 300;
+      imageEmbed.classList.add("box-content");
+      imageEmbed.style.width = "200px"; 
+      imageEmbed.style.height = "300px";
       
       event.target.enableDrop();
       event.target.inField.replaceWith(imageEmbed);
       event.target.remove();
+    } else {
+      alert("Please upload an image.")
     }
   }
 
@@ -259,7 +304,6 @@ const ModuleEdit = () => {
       
         //pop-up place to add question?
 
-      // test out auto pausing //work on auto pausing...
       videoObj.addEventListener("timeupdate", () => { 
        
         // current time is given in seconds
@@ -278,39 +322,45 @@ const ModuleEdit = () => {
       //event.target.enableDrop();
       event.target.inField.replaceWith(videoAndPauseDataContainer);
       event.target.remove();
+    } else {
+      alert("Please upload a video.")
     }
   }
 
+
+  
   //code to add a dropdown to the page
   //add insert before use message
   function createDropdown(parent, label, menuItems) {
     //create overall container
     const container = document.createElement('div');
     container.id = `${label}-type-dropdown-container`;
-
+    container.classList.add("relative");
     // Create button element
     const button = document.createElement('button');
     button.id = `${label}-type-sel-btn`;
-    let classesStr = "button text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+    let classesStr = "button disabled:opacity-50 disabled:cursor-not-allowed text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
     let classes = classesStr.split(" ");
     button.classList.add(...classes);
     button.type = "button";
     button.setAttribute('data-dropdown-toggle', `${label}-type-dropdown`);
-    button.innerHTML = `Change ${label.replaceAll("-", " ")} <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6"><path stroke="currentColor" d="m1 1 4 4 4-4"/></svg>`;
+    button.innerHTML = `Change ${label.replaceAll("-", " ").replace(/\d/g, "")} <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6"><path stroke="currentColor" d="m1 1 4 4 4-4"/></svg>`;
     
 
-    button.disabled = true; //why is this disabling other inserted elements of the same types buttons!!
+    button.disabled = true; 
+
     
     const enableAllButtons = () => {
         const buttons = parent.querySelectorAll('button');
-        buttons.forEach(btn => btn.disabled = false);
+        buttons.forEach(btn => { 
+            btn.disabled = false;
+          });
     }
 
     // Create dropdown container div
     const dropdownDiv = document.createElement('div');
     dropdownDiv.id = `${label}-type-dropdown`;
-    dropdownDiv.className = "dropdown z-10 hidden relative bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700";
-    
+    dropdownDiv.className = "dropdown z-10 hidden absolute left-1/2 transform -translate-x-1/2 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700";
     // Create unordered list element
     const ul = document.createElement('ul');
     classesStr = "py-2 text-sm text-gray-700 dark:text-gray-200";
@@ -347,7 +397,6 @@ const ModuleEdit = () => {
     //append the button and dropdown in a container to the parent 
     container.appendChild(button);
     container.appendChild(dropdownDiv);
-
     parent.enableDropdown = enableAllButtons;
     parent.appendChild(container);
 
@@ -391,7 +440,7 @@ const ModuleEdit = () => {
     const typeSelectBtn = event.target.parentSelBtn;
 
     if(typeSelectBtn) {
-      console.log(typeSelectBtn);
+      //console.log(typeSelectBtn);
       
       typeSelectBtn.innerHTML = `${targetText} <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
         <path stroke="currentColor" d="m1 1 4 4 4-4"/>
@@ -410,8 +459,6 @@ const ModuleEdit = () => {
     }
   }
 
-  //also want to get rid of module element container gap (ok sometimes?)
-  //some other elements need to go away
   function previewPage() {
     const hide = [];
 
@@ -436,6 +483,9 @@ const ModuleEdit = () => {
 
     const dropdowns = document.getElementsByClassName("dropdown"); //work?
     hide.push(...dropdowns);
+
+    const imageImputs = document.getElementsByClassName("image-input");
+    hide.push(...imageImputs);
 
     hide.forEach(item => { 
       item.classList.add("hidden");
@@ -509,7 +559,7 @@ const ModuleEdit = () => {
 
   //dropdown menu selection logic
   const linkSelButtonRef = useRef(null);
-  const fileSelButtonRef = useRef(null);
+  const pdfSelButtonRef = useRef(null);
   const textSelButtonRef = useRef(null);
   const quizSelButtonRef = useRef(null);
   const imageSelButtonRef = useRef(null);
@@ -522,7 +572,7 @@ const ModuleEdit = () => {
     const typeDropdown = typeDropdownRef.current;
 
     const linkSelButton = linkSelButtonRef.current;
-    const fileSelButton = fileSelButtonRef.current;
+    const pdfSelButton = pdfSelButtonRef.current;
     const textSelButton = textSelButtonRef.current;
     const quizSelButton = quizSelButtonRef.current;
     const imageSelButton = imageSelButtonRef.current;
@@ -538,7 +588,7 @@ const ModuleEdit = () => {
 
       //remove previous target text class
       typeSelectBtn.classList.remove("Link");
-      typeSelectBtn.classList.remove("File");
+      typeSelectBtn.classList.remove("PDF");
       typeSelectBtn.classList.remove("Textbox");
       typeSelectBtn.classList.remove("Quiz");
       typeSelectBtn.classList.remove("Image");
@@ -556,8 +606,8 @@ const ModuleEdit = () => {
       linkSelButton.addEventListener("click", displaySelectionAndClose);
     }
 
-    if (fileSelButton) {
-      fileSelButton.addEventListener("click", displaySelectionAndClose);
+    if (pdfSelButton) {
+      pdfSelButton.addEventListener("click", displaySelectionAndClose);
     }
 
     if (textSelButton) {
@@ -582,8 +632,8 @@ const ModuleEdit = () => {
         linkSelButton.removeEventListener("click", displaySelectionAndClose);
       }
 
-      if (fileSelButton) {
-        fileSelButton.removeEventListener("click", displaySelectionAndClose);
+      if (pdfSelButton) {
+        pdfSelButton.removeEventListener("click", displaySelectionAndClose);
       }
 
       if (textSelButton) {
@@ -637,10 +687,10 @@ const ModuleEdit = () => {
         newElContainer.children[newElContainer.children.length-1].children[1].addEventListener("click", permaLink); //remove event listener where?
 
         //add files
-      } else if (typeSelectBtn.classList.contains("File")) {
+      } else if (typeSelectBtn.classList.contains("PDF")) {
         newElement = 
           `<div key = ${moduleElements.length} class = "element-container">             
-            <input type="file" id="select-file-${moduleElements.length}" accept="*" />
+            <input type="file" id="select-file-${moduleElements.length}" accept="application/pdf" />
             <button class = "insert-input-btn" id = "insert-btn-${moduleElements.length}">Insert</button>
           </div>   
           `;     
@@ -669,24 +719,30 @@ const ModuleEdit = () => {
 
           const image1Container = document.createElement("div");
           image1Container.id = `image1-container-${moduleElements.length}`;
+          //image1Container.classList.add("overflow-hidden");
 
           const imageInput1 = document.createElement("input");
+          imageInput1.classList.add("image-input");
           imageInput1.type = "file";
           imageInput1.id = `select-image1-${moduleElements.length}`;
           imageInput1.accept = "image/*";
 
           const image2Container = document.createElement("div");
           image2Container.id = `image2-container-${moduleElements.length}`;
+          //image2Container.classList.add("overflow-hidden");
 
           const imageInput2 = document.createElement("input");
+          imageInput2.classList.add("image-input");
           imageInput2.type = "file";
           imageInput2.id = `select-image2-${moduleElements.length}`;
           imageInput2.accept = "image/*";
 
           const image3Container = document.createElement("div");
           image3Container.id = `image3-container-${moduleElements.length}`;
+          //image3Container.classList.add("overflow-hidden");
 
           const imageInput3 = document.createElement("input");
+          imageInput3.classList.add("image-input");
           imageInput3.type = "file";
           imageInput3.id = `select-image3-${moduleElements.length}`;
           imageInput3.accept = "image/*";
@@ -703,17 +759,17 @@ const ModuleEdit = () => {
           const insertButton1 = document.createElement('button');
           insertButton1.className = 'insert-input-btn';
           insertButton1.id = `insert-btn1-${moduleElements.length}`; 
-          insertButton1.textContent = 'Insert';
+          insertButton1.textContent = 'Insert 1';
 
           const insertButton2 = document.createElement('button');
           insertButton2.className = 'insert-input-btn';
           insertButton2.id = `insert-btn2-${moduleElements.length}`; 
-          insertButton2.textContent = 'Insert';
+          insertButton2.textContent = 'Insert 2';
 
           const insertButton3 = document.createElement('button');
           insertButton3.className = 'insert-input-btn';
           insertButton3.id = `insert-btn3-${moduleElements.length}`; 
-          insertButton3.textContent = 'Insert';
+          insertButton3.textContent = 'Insert 3';
 
           imageInput1.id = `image-input-for-${insertButton1.id}`;
           imageInput2.id = `image-input-for-${insertButton2.id}`;
@@ -765,24 +821,24 @@ const ModuleEdit = () => {
           
   
           image1Container.appendChild(image1BtnsContainer);
-          createDropdown(image1BtnsContainer, "image-size-1", imageSizeMenuItems);
+          createDropdown(image1BtnsContainer, `image-size-1-${moduleElements.length}`, imageSizeMenuItems);
           insertButton1.enableDrop = image1BtnsContainer.enableDropdown;
 
           image2Container.appendChild(image2BtnsContainer);
-          createDropdown(image2BtnsContainer, "image-size-2", imageSizeMenuItems);
+          createDropdown(image2BtnsContainer, `image-size-2-${moduleElements.length}`, imageSizeMenuItems);
           insertButton2.enableDrop = image2BtnsContainer.enableDropdown;
 
           image3Container.appendChild(image3BtnsContainer);
-          createDropdown(image3BtnsContainer, "image-size-3", imageSizeMenuItems);
+          createDropdown(image3BtnsContainer, `image-size-3-${moduleElements.length}`, imageSizeMenuItems);
           insertButton3.enableDrop = image3BtnsContainer.enableDropdown;
 
           //old ending
           setModuleElements([...moduleElements, newElement]);
           newElContainer.appendChild(newElement);
 
-          const dropdownElImage1 = document.getElementById(`image-size-1-type-sel-btn`);
-          const dropdownElImage2 = document.getElementById(`image-size-2-type-sel-btn`);
-          const dropdownElImage3 = document.getElementById(`image-size-3-type-sel-btn`);
+          const dropdownElImage1 = document.getElementById(`image-size-1-${moduleElements.length}-type-sel-btn`);
+          const dropdownElImage2 = document.getElementById(`image-size-2-${moduleElements.length}-type-sel-btn`);
+          const dropdownElImage3 = document.getElementById(`image-size-3-${moduleElements.length}-type-sel-btn`);
 
           dropdownElImage1.addEventListener("click", displayDropdownOptions); 
           dropdownElImage2.addEventListener("click", displayDropdownOptions); 
@@ -872,6 +928,8 @@ const ModuleEdit = () => {
         const btnContainer = document.createElement("div");
         btnContainer.classList.add("element-btns-container"); //issue: overlapping with text
         btnContainer.appendChild(insertButton);
+        //btnContainer.dropdownBtns = [];
+        console.log(btnContainer);
         newElement.appendChild(btnContainer);
         
       
@@ -888,30 +946,32 @@ const ModuleEdit = () => {
         ];
 
         const positionMenuItems = [
-          { id: "type-center", text: "Center", funcs: [displayDropdownSelection, changeTextPosition]},
+          //{ id: "type-center", text: "Center", funcs: [displayDropdownSelection, changeTextPosition]},
           { id: "type-left", text: "Left", funcs: [displayDropdownSelection, changeTextPosition]},
           { id: "type-right", text: "Right", funcs: [displayDropdownSelection, changeTextPosition]},
         ];
 
         
         
-        createDropdown(btnContainer, "font-style", fontStyleMenuItems);
-        createDropdown(btnContainer, "font-size", fontSizeMenuItems);
-        createDropdown(btnContainer, "text-position", positionMenuItems);
+        createDropdown(btnContainer, `font-style-${moduleElements.length}`, fontStyleMenuItems);
+        createDropdown(btnContainer, `font-size-${moduleElements.length}`, fontSizeMenuItems);
+        createDropdown(btnContainer, `text-position-${moduleElements.length}`, positionMenuItems);
 
         insertButton.enableDrop = btnContainer.enableDropdown;
+        
+    
         console.log(insertButton.enableDrop);
         
         
           
         setModuleElements([...moduleElements, newElement]);
         newElContainer.appendChild(newElement);
-        
+
         insertButton.addEventListener("click", permaText); //remove event listener where?
 
-        const dropdownEl1 = document.getElementById(`font-style-type-sel-btn`); //id must match 2nd argument of createDropdown
-        const dropdownEl2 = document.getElementById(`font-size-type-sel-btn`);
-        const dropdownEl3 = document.getElementById(`text-position-type-sel-btn`);
+        const dropdownEl1 = document.getElementById(`font-style-${moduleElements.length}-type-sel-btn`); //id must match 2nd argument of createDropdown
+        const dropdownEl2 = document.getElementById(`font-size-${moduleElements.length}-type-sel-btn`);
+        const dropdownEl3 = document.getElementById(`text-position-${moduleElements.length}-type-sel-btn`);
 
         dropdownEl1.addEventListener("click", displayDropdownOptions); 
         dropdownEl2.addEventListener("click", displayDropdownOptions); 
@@ -933,6 +993,8 @@ const ModuleEdit = () => {
     };
   });
 
+
+
     //rendered
     return (
         <div className="relative bg-white">
@@ -953,7 +1015,7 @@ const ModuleEdit = () => {
                           <a href = "#" ref = {linkSelButtonRef} id = "type-link" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Link</a>
                         </li>
                         <li>
-                          <a href = "#" ref = {fileSelButtonRef} id = "type-file" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">File</a>
+                          <a href = "#" ref = {pdfSelButtonRef} id = "type-pdf" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">PDF</a>
                         </li>
                         <li>
                           <a href = "#" ref = {textSelButtonRef} id = "type-textbox" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Textbox</a>
