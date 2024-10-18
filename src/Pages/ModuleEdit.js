@@ -1,60 +1,14 @@
 import React, { useRef, useEffect, useState } from 'react';
 import '../style/ModuleEdit.css';
+import {displayImage, changeImageSize, createCaption, updateChoice} from '../ModuleEditFunctions/ImageFunctions'
+import {permaText, changeFontSize, changeFontStyle, changeTextPosition} from '../ModuleEditFunctions/TextFunctions'
+import { displayPDF } from '../ModuleEditFunctions/PDFFunctions';
+import { permaLink } from '../ModuleEditFunctions/LinkFunctions';
+import { createDropdown, displayDropdownOptions, displayDropdownSelection } from '../ModuleEditFunctions/DropdownFunctions';
+import { displayVideo } from '../ModuleEditFunctions/VideoFunctions';
+import { previewPage } from '../ModuleEditFunctions/PreviewFunctions';
 
 const ModuleEdit = () => {
-  function changeFontStyle(event) {
-    event.preventDefault(); //prevent change movement
-    const container = event.target.dropdownContainer;
-    const changeTarget = container.parentElement.parentElement.children[1];
-    if(event.target.textContent === "Bold") {
-      changeTarget.classList.remove("italic");
-      changeTarget.classList.remove("font-bold");
-
-      changeTarget.classList.add("font-bold");
-    } else if (event.target.textContent === "Italics") {
-      changeTarget.classList.remove("italic");
-      changeTarget.classList.remove("font-bold");
-
-      changeTarget.classList.add("italic");
-    } else if (event.target.textContent === "Bold/Italic") {
-      changeTarget.classList.remove("italic");
-      changeTarget.classList.remove("font-bold");
-
-      changeTarget.classList.add("font-bold");
-      changeTarget.classList.add("italic");
-    } else {
-      changeTarget.classList.remove("italic");
-      changeTarget.classList.remove("font-bold");
-    }
-  }
-
-  function changeFontSize(event) {
-    event.preventDefault();
-    const sizes = ["text-xs", "text-sm", "text-base", "text-lg", "text-xl", "text-2xl", "text-3xl", "text-4xl", "text-5xl", "text-6xl", "text-7xl", "text-8xl", "text-9xl"];
-    
-    const container = event.target.dropdownContainer;
-    const changeTarget = container.parentElement.parentElement.children[1];
-    
-    for(let i = 0; i < sizes.length; i++) {
-      changeTarget.classList.remove(sizes[changeTarget.size]);
-    }
-
-    if(event.target.textContent === "+") {
-      changeTarget.size += 1;
-      if(changeTarget.size >= sizes.length) {
-        changeTarget.size = sizes.length - 1;
-      }
-      changeTarget.classList.add(sizes[changeTarget.size]);
-    } else {
-      changeTarget.size -= 1;
-      if(changeTarget.size < 0) {
-        changeTarget.size = 0;
-      }
-      changeTarget.classList.add(sizes[changeTarget.size]);
-    }
-
-  }
-
 
   //want to add:
   //add more pause video functionality
@@ -62,445 +16,7 @@ const ModuleEdit = () => {
   //add image popup caption functionality; add as many as you want? or up to 3?
   //add quizzes
   //reverse preview
-  function changeTextPosition(event) { 
-    event.preventDefault();
-    const positions = ["left-0.5", "left-1/4", "left-1/3", "left-1/2", "left-2/3", "left-3/4", "right-0.5"];
-    
-    const container = event.target.dropdownContainer;
-    const changeTarget = container.parentElement.parentElement.children[1];
-
-    const elContainer = changeTarget.parentElement;
-
-    for(let i = 0; i < positions.length; i++) {
-      changeTarget.classList.remove(positions[i]);
-    }
-
-    
-    changeTarget.classList.add("transform", "-translate-x-1/2");
-
-    if(event.target.textContent === "Left") {
-      changeTarget.pos -= 1;
-      if(changeTarget.pos < 0) {
-        changeTarget.pos = 0;
-      }
-      changeTarget.classList.add(positions[changeTarget.pos]);
-    } else {
-      changeTarget.pos += 1;
-      if(changeTarget.pos >= positions.length) {
-        changeTarget.pos = positions.length - 1;
-      }
-      changeTarget.classList.add(positions[changeTarget.pos]);
-    }
-
-    if(changeTarget.pos <= 3) {
-      elContainer.classList.remove("justify-start");
-      elContainer.classList.add("justify-end");
-    } else {
-      elContainer.classList.remove("justify-end");
-      elContainer.classList.add("justify-start");
-    }
-
-    if(changeTarget.pos === 0) {
-      changeTarget.classList.remove("transform", "-translate-x-1/2");
-    }
-    
-  }
-
-  function changeImageSize(event) {
-    event.preventDefault();
-    const imageEmbed = event.target.dropdownContainer.parentElement.parentElement.children[0];
-
-    //console.log(imageEmbed)
-    if(event.target.textContent === "Shrink-Width") {
-      if(parseInt(imageEmbed.style.width) >= 40) {
-        //console.log(imageEmbed.style.width);
-        imageEmbed.style.width = (parseInt(imageEmbed.style.width)-20).toString() + "px";     
-      }
-    } else if (event.target.textContent === "Shrink-Height") {
-      if(parseInt(imageEmbed.style.height) >= 100) {
-        imageEmbed.style.height = (parseInt(imageEmbed.style.height)-40).toString() + "px";   
-      }
-    } else if (event.target.textContent === "Enlarge-Width") {
-      if(parseInt(imageEmbed.width) <= 500) {
-        imageEmbed.style.width = (parseInt(imageEmbed.style.width)+20).toString() + "px";   
-      }
-    } else if (event.target.textContent === "Enlarge-Height") {
-      if (parseInt(imageEmbed.height) <= 600) {
-        imageEmbed.style.height = (parseInt(imageEmbed.style.height)+40).toString() + "px";   
-      }
-    }
-    
-  }
-
-  function permaText(event) {
-    const insertBtn = event.target;
-    if(insertBtn) {
-      const inputField = document.getElementById(`input-box-for-${insertBtn.id}`);
-      if(inputField.value === ""){
-        alert("Please enter text into the input field.");
-      } else {
-        const text = document.createElement("p");
-        text.size = 2;
-        text.pos = 3;
-        text.classList.add("absolute", "top-0", "left-1/2");
-        text.classList.add("transform", "-translate-x-1/2");
-        text.textContent = inputField.value;
-        event.target.enableDrop();
-        const elContainer = insertBtn.parentElement.parentElement;
-        
-        //don't let added text overlap with the menu
-        elContainer.classList.add("flex");
-        elContainer.classList.add("justify-end");
-        text.classList.add("mt-300");
-
-        elContainer.removeChild(inputField); 
-        insertBtn.parentElement.removeChild(insertBtn); 
-        elContainer.classList.add("relative"); //make text's absolute relative to...this
-
-        elContainer.appendChild(text);      
-      }
-    }
-  }
-
-  function permaLink(event) {
-    const insertBtn = event.target;
-    if(insertBtn) {
-      const inputField = insertBtn.parentElement.children[0];
-      insertBtn.parentElement.innerHTML = `<a href = "${inputField.value}" target="_blank" rel="noopener noreferrer">${inputField.value}</a>`; 
-      
-      //get rid of the box outline
-      
-    }
-  }
-
-  //file insert display function
-  function displayFile(event) {
-    const file = event.target.parentElement.children[0].files[0];
-    
-    if (file) {
-      const fileURL = URL.createObjectURL(file);
-      console.log(event.target.parentElement);
-      console.log(event.target.parentElement.width);
-      event.target.parentElement.innerHTML = `<embed src = "${fileURL}" class="file-embed" width="${event.target.parentElement.getBoundingClientRect().width * 0.8}" height="500" />` 
-    }
-  }
-
-  //add warning, insert file first
-  function displayImage(event) {
-    let file;
-    if(event.target.files) {
-      file = event.target.files[0];
-    }
-    if (file) {
-      const fileURL = URL.createObjectURL(file);
-      const imageEmbed = document.createElement("img");
-      imageEmbed.src = fileURL;
-      imageEmbed.classList.add("file-embed");
-      imageEmbed.classList.add("flex-1"); //looks different in chrome??? scrolls
-      imageEmbed.classList.add("box-content");
-      imageEmbed.style.width = "200px"; 
-      imageEmbed.style.height = "300px";
-      
-      event.target.enableDrop();
-      event.target.inField.replaceWith(imageEmbed);
-      event.target.remove();
-    } else {
-      alert("Please upload an image.")
-    }
-  }
-
-  //add warning, insert file first
-  function displayVideo(event) {
-    let file;
-    if(event.target.files) {
-      file = event.target.files[0];
-    }
-    if (file) {
-      const videoAndPauseDataContainer = document.createElement("div");
-      videoAndPauseDataContainer.classList.add("flex");
-      videoAndPauseDataContainer.classList.add("flex-row");
-      //videoAndPauseDataContainer.classList.add("content-center");
-      videoAndPauseDataContainer.classList.add("space-x-20");
-      
-      //create video object
-      const fileURL = URL.createObjectURL(file);
-      const videoObj = document.createElement("video");
-      videoObj.width = "700";
-      videoObj.setAttribute("controls", "true"); //?
-      const source = document.createElement("source");
-      source.src = fileURL;
-      source.type = file.type;
-      videoObj.stampList = [];
-      videoObj.append(source);
-
-
-      const pauseDataContainer = document.createElement("div");
-      pauseDataContainer.classList.add("pause-data-container");
-
-      //input box for pause times
-      const pTimeBox1 = document.createElement("input");
-      pTimeBox1.width = "40";
-      pTimeBox1.height = "50";
-      pTimeBox1.classList.add("outline", "outline-black", "outline-2");
-      pauseDataContainer.append(pTimeBox1);
-      pTimeBox1.classList.add("m-100");
-
-      //button to add pause times
-      const pTimeBox1Btn = document.createElement("button");
-      pTimeBox1Btn.innerText = "Add Pause Timestamp";
-      pTimeBox1Btn.classList.add("outline", "outline-black", "outline-1", "pause-time-box-button");
-      pTimeBox1Btn.height = 50;
-      pTimeBox1Btn.width = 50;
-      pTimeBox1Btn.classList.add("p-4");
-
-      //hold all timestamps
-      const timestamps = document.createElement("div");
-      timestamps.classList.add("timestamps");
-      
-      //add a timestamp to the timestamps
-      pTimeBox1Btn.addEventListener("click", () =>{
-        const val = Number(pTimeBox1.value.trim());
-        if(isNaN(val) || val > videoObj.duration) {
-          alert(`Please enter a number shorter than the video duration.`);
-        } else {
-        videoObj.stampList.push(val);
-        console.log(videoObj.stampList);
-          pTimeBox1.value = "";
-          timestamps.innerHTML = "";
-          // Iterate over the list of items
-          videoObj.stampList.forEach(item => {
-            const timestamp = document.createElement("div");
-            timestamp.classList.add("timestamp");
-            timestamp.classList.add("outline", "outline-black", "outline-2","rounded", "shadow-lg");
-
-            const removeBtn = document.createElement("button");
-            removeBtn.classList.add("remove-btn")
-            // Set the button text content
-            removeBtn.textContent = "-";
-            timestamp.innerText = item;
-            removeBtn.item = item;
-            removeBtn.addEventListener("click", (event) => { 
-              console.log(event.target);
-              alert(`You clicked on ${event.target.item}`);
-              videoObj.stampList = videoObj.stampList.filter((item) => item !== event.target.item);
-              console.log(videoObj.stampList);
-              removeBtn.parentElement.remove();
-            });
-
-            timestamp.append(removeBtn);
-            timestamps.append(timestamp);
-          });
-          console.log(videoObj.stampList);
-        }
-      })
-
-      
-
-      pauseDataContainer.append(pTimeBox1);
-      pauseDataContainer.append(pTimeBox1Btn);
-      pauseDataContainer.append(timestamps);
-
-
-      
-        //pop-up place to add question?
-
-      videoObj.addEventListener("timeupdate", () => { 
-       
-        // current time is given in seconds
-        if(videoObj.stampList.includes(Math.floor(Number(videoObj.currentTime)))) {
-            // pause the playback
-            videoObj.pause();
-            const time = Math.floor(Number(videoObj.currentTime));
-            videoObj.stampList = videoObj.stampList.filter((item) => item !== time ); //for admin, want it to come back, or no, don't just let them test it
-            console.log(videoObj.stampList);
-            alert(`Video paused`);
-        }
-      });
-
-      videoAndPauseDataContainer.append(videoObj);
-      videoAndPauseDataContainer.append(pauseDataContainer);
-      //event.target.enableDrop();
-      event.target.inField.replaceWith(videoAndPauseDataContainer);
-      event.target.remove();
-    } else {
-      alert("Please upload a video.")
-    }
-  }
-
-
   
-  //code to add a dropdown to the page
-  //add insert before use message
-  function createDropdown(parent, label, menuItems) {
-    //create overall container
-    const container = document.createElement('div');
-    container.id = `${label}-type-dropdown-container`;
-    container.classList.add("relative");
-    // Create button element
-    const button = document.createElement('button');
-    button.id = `${label}-type-sel-btn`;
-    let classesStr = "button disabled:opacity-50 disabled:cursor-not-allowed text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-    let classes = classesStr.split(" ");
-    button.classList.add(...classes);
-    button.type = "button";
-    button.setAttribute('data-dropdown-toggle', `${label}-type-dropdown`);
-    button.innerHTML = `Change ${label.replaceAll("-", " ").replace(/\d/g, "")} <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6"><path stroke="currentColor" d="m1 1 4 4 4-4"/></svg>`;
-    
-
-    button.disabled = true; 
-
-    
-    const enableAllButtons = () => {
-        const buttons = parent.querySelectorAll('button');
-        buttons.forEach(btn => { 
-            btn.disabled = false;
-          });
-    }
-
-    // Create dropdown container div
-    const dropdownDiv = document.createElement('div');
-    dropdownDiv.id = `${label}-type-dropdown`;
-    dropdownDiv.className = "dropdown z-10 hidden absolute left-1/2 transform -translate-x-1/2 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700";
-    // Create unordered list element
-    const ul = document.createElement('ul');
-    classesStr = "py-2 text-sm text-gray-700 dark:text-gray-200";
-    classes = classesStr.split(" ");
-    ul.classList.add(...classes);
-    ul.setAttribute('aria-labelledby', 'dropdownDefaultButton');
-  
-    menuItems.forEach(item => {
-      const li = document.createElement('li');
-      const a = document.createElement('a');
-      a.href = "#";
-      a.id = item.id;
-      classesStr = "block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white";
-      classes = classesStr.split(" ");
-      a.classList.add(...classes);
-      a.textContent = item.text;
-
-      if(item.funcs != null) {
-        for(let i = 0; i < item.funcs.length; i++) {
-          a.addEventListener("click", item.funcs[i])
-        }
-      }
-
-      a.parentSelBtn = button;
-      a.dropdown = dropdownDiv;
-      a.dropdownContainer = container;
-      li.appendChild(a);
-      ul.appendChild(li);
-    });
-  
-    // Append the ul to the dropdown div
-    dropdownDiv.appendChild(ul);
-  
-    //append the button and dropdown in a container to the parent 
-    container.appendChild(button);
-    container.appendChild(dropdownDiv);
-    parent.enableDropdown = enableAllButtons;
-    parent.appendChild(container);
-
-  }
-
-  //general dropdown menu logic
-  function displayDropdownOptions(event) {
-    const selectBtn = event.target;
-
-    const dropdown = selectBtn.parentElement.children[1];
-
-    if(dropdown) {
-      const links = dropdown.querySelectorAll('a');
-      const removes = Array.from(links).map(link => link.textContent);
-
-      for (let i = 0; i < removes.length; i++) {
-        selectBtn.classList.remove(removes[i]);
-      }
-
-      selectBtn.innerHTML = `${selectBtn.textContent} <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-      <path stroke="currentColor" d="m1 1 4 4 4-4"/>
-      </svg>`;
-      
-      
-      if (dropdown.classList.contains("hidden")) {
-        
-        dropdown.classList.remove("hidden");
-        dropdown.classList.add("shown");
-      } else {
-        dropdown.classList.add("hidden");
-        dropdown.classList.remove("shown");
-      }
-    }
-
-  }
-
-  //select on dropdown display logic, is a list item
-  function displayDropdownSelection(event) {
-    const targetText = event.target.textContent;
-    //console.log(event.target);
-    const typeSelectBtn = event.target.parentSelBtn;
-
-    if(typeSelectBtn) {
-      //console.log(typeSelectBtn);
-      
-      typeSelectBtn.innerHTML = `${targetText} <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-        <path stroke="currentColor" d="m1 1 4 4 4-4"/>
-        </svg>`;
-
-      //remove previous target text class
-      const links = typeSelectBtn.querySelectorAll('a');
-      const removes = Array.from(links).map(link => link.textContent);
-
-      for (let i = 0; i < removes.length; i++) {
-        typeSelectBtn.classList.remove(removes[i]);
-      }
-
-      typeSelectBtn.classList.add(targetText);
-      
-    }
-  }
-
-  function previewPage() {
-    const hide = [];
-
-    const addModuleContainer = document.getElementById("add-module-container");
-    hide.push(addModuleContainer);
-
-    const insertInputButtons = document.getElementsByClassName("insert-input-btn");
-    hide.push(...insertInputButtons);
-
-    const elementBtnContainers = document.getElementsByClassName("element-btns-container");
-    hide.push(...elementBtnContainers);
-
-    const imageElBtnContainers1 = document.getElementsByClassName("image1-btns-container");
-    hide.push(...imageElBtnContainers1);
-    const imageElBtnContainers2 = document.getElementsByClassName("image2-btns-container");
-    hide.push(...imageElBtnContainers2);
-    const imageElBtnContainers3 = document.getElementsByClassName("image3-btns-container");
-    hide.push(...imageElBtnContainers3);
-
-    const pauseDataContainers = document.getElementsByClassName("pause-data-container");
-    hide.push(...pauseDataContainers);
-
-    const dropdowns = document.getElementsByClassName("dropdown"); //work?
-    hide.push(...dropdowns);
-
-    const imageImputs = document.getElementsByClassName("image-input");
-    hide.push(...imageImputs);
-
-    hide.forEach(item => { 
-      item.classList.add("hidden");
-      item.style.visibility = "hidden";
-      console.log(item);
-      
-    });
-
-    const elementContainers = document.getElementsByClassName("element-container");
-    Array.from(elementContainers).forEach(item => {
-      item.classList.remove("element-container");
-      item.classList.add("added-element-container");
-    })
-  }
-
   const previewBtnRef = useRef(null);
   useEffect(() => {
     const previewBtn= previewBtnRef.current;
@@ -513,8 +29,7 @@ const ModuleEdit = () => {
     
   });
 
- 
-
+  
   //dropdown menu button logic
   const typeSelectBtnRef = useRef(null);
   const typeDropdownRef = useRef(null);
@@ -701,25 +216,24 @@ const ModuleEdit = () => {
           newElContainer.insertAdjacentHTML('beforeend', newElement);
           
         
-          newElContainer.children[newElContainer.children.length-1].children[1].addEventListener("click", displayFile); //remove event listener where?s
+          newElContainer.children[newElContainer.children.length-1].children[1].addEventListener("click", displayPDF); //remove event listener where?s
       //add Images
       } else if (typeSelectBtn.classList.contains("Image")){        
           const newElement = document.createElement("div");
           newElement.key = moduleElements.length;
-          newElement.classList.add("flex");
+          newElement.classList.add("flex", "flex-row", "flex-wrap");
           newElement.classList.add('element-container');
           newElement.id = `element-container-${moduleElements.length}`;
           newElement.classList.add("justify-center");
 
           const imageFlexBox = document.createElement("div");
-          imageFlexBox.classList.add("flex");
+          imageFlexBox.classList.add("flex", "grow-0");
           imageFlexBox.classList.add("flex-row");
           imageFlexBox.classList.add("content-center");
           imageFlexBox.classList.add("space-x-20");
 
           const image1Container = document.createElement("div");
           image1Container.id = `image1-container-${moduleElements.length}`;
-          //image1Container.classList.add("overflow-hidden");
 
           const imageInput1 = document.createElement("input");
           imageInput1.classList.add("image-input");
@@ -729,7 +243,6 @@ const ModuleEdit = () => {
 
           const image2Container = document.createElement("div");
           image2Container.id = `image2-container-${moduleElements.length}`;
-          //image2Container.classList.add("overflow-hidden");
 
           const imageInput2 = document.createElement("input");
           imageInput2.classList.add("image-input");
@@ -739,7 +252,6 @@ const ModuleEdit = () => {
 
           const image3Container = document.createElement("div");
           image3Container.id = `image3-container-${moduleElements.length}`;
-          //image3Container.classList.add("overflow-hidden");
 
           const imageInput3 = document.createElement("input");
           imageInput3.classList.add("image-input");
@@ -759,16 +271,19 @@ const ModuleEdit = () => {
           const insertButton1 = document.createElement('button');
           insertButton1.className = 'insert-input-btn';
           insertButton1.id = `insert-btn1-${moduleElements.length}`; 
+          insertButton1.num = '1';
           insertButton1.textContent = 'Insert 1';
 
           const insertButton2 = document.createElement('button');
           insertButton2.className = 'insert-input-btn';
           insertButton2.id = `insert-btn2-${moduleElements.length}`; 
+          insertButton2.num = '2';
           insertButton2.textContent = 'Insert 2';
 
           const insertButton3 = document.createElement('button');
           insertButton3.className = 'insert-input-btn';
           insertButton3.id = `insert-btn3-${moduleElements.length}`; 
+          insertButton3.num = '3';
           insertButton3.textContent = 'Insert 3';
 
           imageInput1.id = `image-input-for-${insertButton1.id}`;
@@ -795,8 +310,13 @@ const ModuleEdit = () => {
           imageInput3.addEventListener('change', (event) => insertButton3.files = event.target.files);
 
           insertButton1.inField = imageInput1;
+          insertButton1.elID = moduleElements.length;
+
           insertButton2.inField = imageInput2;
+          insertButton2.elID = moduleElements.length;
+
           insertButton3.inField = imageInput3;
+          insertButton3.elID = moduleElements.length;
 
           insertButton1.addEventListener("click", displayImage); 
           insertButton2.addEventListener("click", displayImage); 
@@ -832,7 +352,52 @@ const ModuleEdit = () => {
           createDropdown(image3BtnsContainer, `image-size-3-${moduleElements.length}`, imageSizeMenuItems);
           insertButton3.enableDrop = image3BtnsContainer.enableDropdown;
 
-          //old ending
+
+          //caption input box
+          //want input box in new row
+          const breakDiv = document.createElement("div");
+          breakDiv.classList.add("break");
+          const captionDiv = document.createElement("div");
+          captionDiv.classList.add("caption-editor");
+          captionDiv.classList.add("flex");
+          const inputBox = document.createElement("textarea");
+          inputBox.classList.add('caption-input');
+        
+          inputBox.size = 90;
+          
+
+          const addButton = document.createElement('button');
+          addButton.classList.add('add-caption-btn');
+          addButton.id = `caption-add-btn-${moduleElements.length}`; 
+          addButton.textContent = 'Add Caption';
+
+          inputBox.id = `input-box-for-${addButton.id}`;
+          
+          addButton.inField = inputBox;
+          addButton.elID = moduleElements.length;
+          addButton.addEventListener("click", createCaption);
+          
+
+
+          const imageSelectMenuItems = [
+            { id: "type-img-1", text: "1", funcs: [displayDropdownSelection, updateChoice]}, 
+            { id: "type-img-2", text: "2", funcs: [displayDropdownSelection, updateChoice]},
+            { id: "type-img-3", text: "3", funcs: [displayDropdownSelection, updateChoice]},
+
+          ];
+
+          captionDiv.appendChild(inputBox);
+          captionDiv.appendChild(addButton);
+
+          createDropdown(captionDiv, `caption-image-${moduleElements.length}`, imageSelectMenuItems, false, moduleElements.length);
+
+          //addButton.choice = document.getElementById(`caption-img-${moduleElements.length}-type-sel-btn`).textContent;
+
+          
+          newElement.appendChild(breakDiv);
+          newElement.appendChild(captionDiv);
+
+          //append the element and update the count
           setModuleElements([...moduleElements, newElement]);
           newElContainer.appendChild(newElement);
 
@@ -842,7 +407,11 @@ const ModuleEdit = () => {
 
           dropdownElImage1.addEventListener("click", displayDropdownOptions); 
           dropdownElImage2.addEventListener("click", displayDropdownOptions); 
-          dropdownElImage3.addEventListener("click", displayDropdownOptions); 
+          dropdownElImage3.addEventListener("click", displayDropdownOptions);
+
+          const dropdownCaption = document.getElementById(`caption-image-${moduleElements.length}-type-sel-btn`);
+          dropdownCaption.addEventListener("click", displayDropdownOptions);
+               
  
       //add Videos
       } else if (typeSelectBtn.classList.contains("Video")) {
@@ -869,7 +438,7 @@ const ModuleEdit = () => {
         newElement.append(videoContainer);
         
         const insertButton = document.createElement('button');
-        insertButton.className = 'insert-input-btn';
+        insertButton.classList.add('insert-input-btn');
         insertButton.id = `insert-btn-${moduleElements.length}`; 
         insertButton.textContent = 'Insert';
 
@@ -889,16 +458,13 @@ const ModuleEdit = () => {
         videoInput.addEventListener('change', (event) => insertButton.files = event.target.files);
      
         insertButton.inField = videoInput;
-
+        insertButton.elID = moduleElements.length;
         insertButton.addEventListener("click", displayVideo); 
 
-        
-        
-      
-
-        //old ending
+  //old ending
         setModuleElements([...moduleElements, newElement]);
         newElContainer.appendChild(newElement);
+        
         
       //add Textboxes (Quiz missing)
       } else {
@@ -951,8 +517,7 @@ const ModuleEdit = () => {
           { id: "type-right", text: "Right", funcs: [displayDropdownSelection, changeTextPosition]},
         ];
 
-        
-        
+
         createDropdown(btnContainer, `font-style-${moduleElements.length}`, fontStyleMenuItems);
         createDropdown(btnContainer, `font-size-${moduleElements.length}`, fontSizeMenuItems);
         createDropdown(btnContainer, `text-position-${moduleElements.length}`, positionMenuItems);
@@ -962,8 +527,7 @@ const ModuleEdit = () => {
     
         console.log(insertButton.enableDrop);
         
-        
-          
+ 
         setModuleElements([...moduleElements, newElement]);
         newElContainer.appendChild(newElement);
 
@@ -984,7 +548,7 @@ const ModuleEdit = () => {
     if (addBtn) {
         addBtn.addEventListener("click", addElement);
     }
-
+    
     // Cleanup event listener on component unmount
     return () => {
         if (addBtn) {
@@ -992,7 +556,6 @@ const ModuleEdit = () => {
         }
     };
   });
-
 
 
     //rendered
