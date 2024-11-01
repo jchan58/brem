@@ -1,4 +1,19 @@
-//add warning, insert file first
+//need to add way to disabled the dropdown...need to hide it first..
+//also need to make sure there is an image there
+export function hideImage(event) {
+  if(event.currentTarget.insertBtn.inserted){
+    const imgContainer = event.currentTarget.parent;
+    imgContainer.innerHTML = "";
+    imgContainer.appendChild(event.currentTarget.inputField); 
+    imgContainer.appendChild(event.currentTarget.buttons); 
+    event.currentTarget.hideDrop();
+    event.currentTarget.insertBtn.disableDrop();
+    event.currentTarget.insertBtnsContainer.appendChild(event.currentTarget.insertBtn);
+    imgContainer.appendChild(event.currentTarget);
+    event.currentTarget.insertBtn.inserted = false;
+  }
+}
+
 export function displayImage(event) {
   let file;
   if(event.target.files) {
@@ -17,6 +32,7 @@ export function displayImage(event) {
       
     event.target.enableDrop();
     event.target.inField.replaceWith(imageEmbed);
+    event.target.inserted = true;
     event.target.remove();
   } else {
     alert("Please upload an image.")

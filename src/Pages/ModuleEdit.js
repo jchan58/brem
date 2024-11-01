@@ -1,40 +1,48 @@
 import React, { useRef, useEffect, useState } from 'react';
 import '../style/ModuleEdit.css';
-import {displayImage, changeImageSize, createCaption, updateChoice} from '../ModuleEditFunctions/ImageFunctions'
-import {permaText, changeFontSize, changeFontStyle, changeTextPosition} from '../ModuleEditFunctions/TextFunctions'
-import { displayPDF } from '../ModuleEditFunctions/PDFFunctions';
-import { permaLink } from '../ModuleEditFunctions/LinkFunctions';
+import {displayImage, changeImageSize, createCaption, updateChoice, hideImage} from '../ModuleEditFunctions/ImageFunctions'
+import {permaText, changeFontSize, changeFontStyle, changeTextPosition, reversePermaText} from '../ModuleEditFunctions/TextFunctions'
+import { displayPDF, hidePDF } from '../ModuleEditFunctions/PDFFunctions';
+import { permaLink, reversePermaLink} from '../ModuleEditFunctions/LinkFunctions';
 import { createDropdown, displayDropdownOptions, displayDropdownSelection } from '../ModuleEditFunctions/DropdownFunctions';
-import { displayVideo } from '../ModuleEditFunctions/VideoFunctions';
-import { previewPage } from '../ModuleEditFunctions/PreviewFunctions';
+import { displayVideo, hideVideo } from '../ModuleEditFunctions/VideoFunctions';
+import { previewOrEditPage} from '../ModuleEditFunctions/PreviewFunctions';
 
-const ModuleEdit = () => {
+const ModuleEdit = () => {  
+  //preview button ref
+  const previewEditBtnRef = useRef(null);
 
-  //want to add:
-  //add more pause video functionality
-  //add option to caption images
-  //add image popup caption functionality; add as many as you want? or up to 3?
-  //add quizzes
-  //reverse preview
-  
-  const previewBtnRef = useRef(null);
-  useEffect(() => {
-    const previewBtn= previewBtnRef.current;
-
-
-    if (previewBtn) {
-      previewBtn.addEventListener("click", previewPage);
-    }
-
-    
-  });
-
-  
-  //dropdown menu button logic
+  //dropdown menu logic refs
   const typeSelectBtnRef = useRef(null);
   const typeDropdownRef = useRef(null);
+
+
+  //dropdown menu selection refs
+  const linkSelButtonRef = useRef(null);
+  const pdfSelButtonRef = useRef(null);
+  const textSelButtonRef = useRef(null);
+  const quizSelButtonRef = useRef(null);
+  const imageSelButtonRef = useRef(null);
+  const videoSelButtonRef = useRef(null);
+
+  //setup for add button logic
   
+  const [moduleElements, setModuleElements] = useState([]); 
+  
+  const addBtnRef = useRef(null);
+  const newElContainerRef = useRef(null);
+
+  //in use effect because buttons may not render right away
   useEffect(() => {
+
+    //preview button stuff
+    const previewEditBtn= previewEditBtnRef.current;
+    if (previewEditBtn) {
+      previewEditBtn.addEventListener("click", previewOrEditPage);
+    }
+
+
+    //dropdown menu logic
     const typeSelectBtn = typeSelectBtnRef.current;
     const typeDropdown = typeDropdownRef.current;
 
@@ -63,29 +71,8 @@ const ModuleEdit = () => {
         typeSelectBtn.addEventListener("click", displayElementOptions);
     }
 
-    // Cleanup event listener on component unmount
-    return () => {
-        if (typeSelectBtn) {
-            typeSelectBtn.removeEventListener("click", displayElementOptions);
-        }
-    };
-  });
 
-
-  //dropdown menu selection logic
-  const linkSelButtonRef = useRef(null);
-  const pdfSelButtonRef = useRef(null);
-  const textSelButtonRef = useRef(null);
-  const quizSelButtonRef = useRef(null);
-  const imageSelButtonRef = useRef(null);
-  const videoSelButtonRef = useRef(null);
-  
-
-  useEffect(() => {
-
-    const typeSelectBtn = typeSelectBtnRef.current;
-    const typeDropdown = typeDropdownRef.current;
-
+    //dropdown selection logic
     const linkSelButton = linkSelButtonRef.current;
     const pdfSelButton = pdfSelButtonRef.current;
     const textSelButton = textSelButtonRef.current;
@@ -141,82 +128,82 @@ const ModuleEdit = () => {
       videoSelButton.addEventListener("click", displaySelectionAndClose);
     }
 
-  // Cleanup event listener on component unmount
-  return () => {
-      if (linkSelButton) {
-        linkSelButton.removeEventListener("click", displaySelectionAndClose);
-      }
 
-      if (pdfSelButton) {
-        pdfSelButton.removeEventListener("click", displaySelectionAndClose);
-      }
-
-      if (textSelButton) {
-        textSelButton.removeEventListener("click", displaySelectionAndClose);
-      }
-
-      if (quizSelButton) {
-        quizSelButton.removeEventListener("click", displaySelectionAndClose);
-      }
-
-      if (imageSelButton) {
-        imageSelButton.removeEventListener("click", displaySelectionAndClose);
-      }
-
-      if (videoSelButton) {
-        videoSelButton.removeEventListener("click", displaySelectionAndClose);
-      }
-  };
-
-  });
-
-  //add button logic
-  
-  const [moduleElements, setModuleElements] = useState([]); 
-  
-  const addBtnRef = useRef(null);
-  const newElContainerRef = useRef(null);
-  
-  useEffect(() => {
     const addBtn = addBtnRef.current;
     const newElContainer = newElContainerRef.current;
-    const typeSelectBtn = typeSelectBtnRef.current;
 
     const addElement = () => {
       
-      let newElement;
+      
       //add links
       if(typeSelectBtn.classList.contains("Link")) {
-        newElement = `<div key = ${moduleElements.length} class = "element-container"> 
-                        <input type="text" class="element-input" name="random text" size="120" />
-                        <button class = "insert-input-btn" id = "insert-btn-${moduleElements.length}">Insert</button>
-                        
-                      </div>` 
+        const newElement = document.createElement("div");
+        newElement.key = moduleElements.length;
+        newElement.classList.add('element-container', "relative");
+        const inputField = document.createElement("input");
+        inputField.classList.add("element-input");
+        inputField.size = 120;
+        const insertBtn = document.createElement("button");
+        insertBtn.id = `insert-btn-${moduleElements.length}`;
+        insertBtn.classList.add("insert-input-btn");
+        insertBtn.textContent = "Insert";
+        insertBtn.inserted = false;
+        newElement.appendChild(inputField);
+        newElement.appendChild(insertBtn);
+
+        const editButton = document.createElement("button");
+        const editIcon = document.createElement("i");
+        editIcon.classList.add("bi", "bi-pencil-square"); 
+        editButton.appendChild(editIcon);
+        editButton.classList.add('edit-btn'); 
+        editButton.classList.add("absolute");
+        editButton.classList.add("top-1", "right-5");
+        editButton.insertBtn = insertBtn;
+        editButton.inputField = inputField;
+        editButton.parent = newElement;
+        editButton.addEventListener("click", reversePermaLink);
+        newElement.appendChild(editButton);
       
 
+        setModuleElements([...moduleElements, newElement]);
+        newElContainer.appendChild(newElement);
+        insertBtn.addEventListener("click", permaLink); 
+
+        //add pdf
+      } else if (typeSelectBtn.classList.contains("PDF")) {
+        const newElement = document.createElement("div");
+        newElement.key = moduleElements.length;
+        newElement.classList.add('element-container', "relative");
+        const inputField = document.createElement("input");
+        inputField.type = "file";
+        inputField.accept = "application/pdf";
+        inputField.size = 120;
+        inputField.id = `select-file-${moduleElements.length}`;
+        const insertBtn = document.createElement("button");
+        insertBtn.id = `insert-btn-${moduleElements.length}`;
+        insertBtn.classList.add("insert-input-btn");
+        insertBtn.textContent = "Insert";
+        insertBtn.inserted = false;
+        newElement.appendChild(inputField);
+        newElement.appendChild(insertBtn);
+
+
+        const editButton = document.createElement("button");
+        const editIcon = document.createElement("i");
+        editIcon.classList.add("bi", "bi-pencil-square"); 
+        editButton.appendChild(editIcon);
+        editButton.classList.add('edit-btn'); 
+        editButton.classList.add("absolute");
+        editButton.classList.add("top-1", "right-5");
+        editButton.insertBtn = insertBtn;
+        editButton.inputField = inputField;
+        editButton.parent = newElement;
+        editButton.addEventListener("click", hidePDF);
+        newElement.appendChild(editButton);
 
         setModuleElements([...moduleElements, newElement]);
-        newElContainer.insertAdjacentHTML('beforeend', newElement);
-        console.log(newElContainer);
-        console.log(newElContainer.children[0]);
-        newElContainer.children[newElContainer.children.length-1].children[1].addEventListener("click", permaLink); //remove event listener where?
-
-        //add files
-      } else if (typeSelectBtn.classList.contains("PDF")) {
-        newElement = 
-          `<div key = ${moduleElements.length} class = "element-container">             
-            <input type="file" id="select-file-${moduleElements.length}" accept="application/pdf" />
-            <button class = "insert-input-btn" id = "insert-btn-${moduleElements.length}">Insert</button>
-          </div>   
-          `;     
-
-          console.log(newElement);
-
-          setModuleElements([...moduleElements, newElement]);
-          newElContainer.insertAdjacentHTML('beforeend', newElement);
-          
-        
-          newElContainer.children[newElContainer.children.length-1].children[1].addEventListener("click", displayPDF); //remove event listener where?s
+        newElContainer.appendChild(newElement);
+        insertBtn.addEventListener("click", displayPDF); 
       //add Images
       } else if (typeSelectBtn.classList.contains("Image")){        
           const newElement = document.createElement("div");
@@ -234,6 +221,7 @@ const ModuleEdit = () => {
 
           const image1Container = document.createElement("div");
           image1Container.id = `image1-container-${moduleElements.length}`;
+          image1Container.classList.add("relative");
 
           const imageInput1 = document.createElement("input");
           imageInput1.classList.add("image-input");
@@ -243,6 +231,7 @@ const ModuleEdit = () => {
 
           const image2Container = document.createElement("div");
           image2Container.id = `image2-container-${moduleElements.length}`;
+          image2Container.classList.add("relative");
 
           const imageInput2 = document.createElement("input");
           imageInput2.classList.add("image-input");
@@ -252,12 +241,14 @@ const ModuleEdit = () => {
 
           const image3Container = document.createElement("div");
           image3Container.id = `image3-container-${moduleElements.length}`;
+          image3Container.classList.add("relative");
 
           const imageInput3 = document.createElement("input");
           imageInput3.classList.add("image-input");
           imageInput3.type = "file";
           imageInput3.id = `select-image3-${moduleElements.length}`;
           imageInput3.accept = "image/*";
+
 
           imageFlexBox.append(image1Container);
           imageFlexBox.append(image2Container);
@@ -303,7 +294,6 @@ const ModuleEdit = () => {
           btnContainer.appendChild(insertButton3);
           newElement.appendChild(btnContainer);
 
-
           //let insert buttons access files and input field
           imageInput1.addEventListener('change', (event) => insertButton1.files = event.target.files);
           imageInput2.addEventListener('change', (event) => insertButton2.files = event.target.files);
@@ -339,19 +329,74 @@ const ModuleEdit = () => {
           const image3BtnsContainer = document.createElement("div");
           image3BtnsContainer.classList.add("image3-btns-container");
           
-  
           image1Container.appendChild(image1BtnsContainer);
           createDropdown(image1BtnsContainer, `image-size-1-${moduleElements.length}`, imageSizeMenuItems);
           insertButton1.enableDrop = image1BtnsContainer.enableDropdown;
+          insertButton1.disableDrop = image1BtnsContainer.disableDropdown;
+          insertButton1.inserted = false;
 
           image2Container.appendChild(image2BtnsContainer);
           createDropdown(image2BtnsContainer, `image-size-2-${moduleElements.length}`, imageSizeMenuItems);
           insertButton2.enableDrop = image2BtnsContainer.enableDropdown;
+          insertButton2.disableDrop = image2BtnsContainer.disableDropdown;
+          insertButton2.inserted = false;
 
           image3Container.appendChild(image3BtnsContainer);
           createDropdown(image3BtnsContainer, `image-size-3-${moduleElements.length}`, imageSizeMenuItems);
           insertButton3.enableDrop = image3BtnsContainer.enableDropdown;
+          insertButton3.disableDrop = image3BtnsContainer.disableDropdown;
+          insertButton3.inserted = false;
 
+          //give images an edit button
+          const editButton1 = document.createElement("button");
+          const editIcon1 = document.createElement("i");
+          editIcon1.classList.add("bi", "bi-pencil-square"); 
+          editButton1.appendChild(editIcon1);
+          editButton1.classList.add('edit-btn'); 
+          editButton1.classList.add("absolute");
+          editButton1.classList.add("top-1", "right-5");
+          editButton1.insertBtn = insertButton1;
+          editButton1.inputField = imageInput1;
+          editButton1.buttons = image1BtnsContainer;
+          editButton1.parent = image1Container;
+          editButton1.insertBtnsContainer = btnContainer;
+          editButton1.hideDrop = image1BtnsContainer.hideDrop;
+          editButton1.addEventListener("click", hideImage);
+          image1Container.appendChild(editButton1);
+
+          //give images an edit button
+          const editButton2 = document.createElement("button");
+          const editIcon2 = document.createElement("i");
+          editIcon2.classList.add("bi", "bi-pencil-square"); 
+          editButton2.appendChild(editIcon2);
+          editButton2.classList.add('edit-btn'); 
+          editButton2.classList.add("absolute");
+          editButton2.classList.add("top-1", "right-5");
+          editButton2.insertBtn = insertButton2;
+          editButton2.inputField = imageInput2;
+          editButton2.buttons = image2BtnsContainer;
+          editButton2.parent = image2Container;
+          editButton2.insertBtnsContainer = btnContainer;
+          editButton2.hideDrop = image2BtnsContainer.hideDrop;
+          editButton2.addEventListener("click", hideImage);
+          image2Container.appendChild(editButton2);
+
+          //give images an edit button
+          const editButton3 = document.createElement("button");
+          const editIcon3 = document.createElement("i");
+          editIcon3.classList.add("bi", "bi-pencil-square"); 
+          editButton3.appendChild(editIcon3);
+          editButton3.classList.add('edit-btn'); 
+          editButton3.classList.add("absolute");
+          editButton3.classList.add("top-1", "right-5");
+          editButton3.insertBtn = insertButton3;
+          editButton3.inputField = imageInput3;
+          editButton3.buttons = image3BtnsContainer;
+          editButton3.parent = image3Container;
+          editButton3.insertBtnsContainer = btnContainer;
+          editButton3.hideDrop = image3BtnsContainer.hideDrop;
+          editButton3.addEventListener("click", hideImage);
+          image3Container.appendChild(editButton3);
 
           //caption input box
           //want input box in new row
@@ -377,8 +422,6 @@ const ModuleEdit = () => {
           addButton.elID = moduleElements.length;
           addButton.addEventListener("click", createCaption);
           
-
-
           const imageSelectMenuItems = [
             { id: "type-img-1", text: "1", funcs: [displayDropdownSelection, updateChoice]}, 
             { id: "type-img-2", text: "2", funcs: [displayDropdownSelection, updateChoice]},
@@ -390,9 +433,6 @@ const ModuleEdit = () => {
           captionDiv.appendChild(addButton);
 
           createDropdown(captionDiv, `caption-image-${moduleElements.length}`, imageSelectMenuItems, false, moduleElements.length);
-
-          //addButton.choice = document.getElementById(`caption-img-${moduleElements.length}-type-sel-btn`).textContent;
-
           
           newElement.appendChild(breakDiv);
           newElement.appendChild(captionDiv);
@@ -419,7 +459,7 @@ const ModuleEdit = () => {
         const newElement = document.createElement("div");
         newElement.key = moduleElements.length;
         newElement.classList.add("flex");
-        newElement.classList.add('element-container');
+        newElement.classList.add('element-container', "relative");
         newElement.id = `element-container-${moduleElements.length}`;
         newElement.classList.add("justify-center");
         newElement.classList.add("flex-row");
@@ -430,12 +470,13 @@ const ModuleEdit = () => {
         videoContainer.id = `video-container-${moduleElements.length}`;
 
         const videoInput = document.createElement("input");
+        videoInput.classList.add("video-input");
         videoInput.type = "file";
         videoInput.id = `select-video-${moduleElements.length}`;
         videoInput.accept = "video/*";
 
-        videoContainer.append(videoInput);
-        newElement.append(videoContainer);
+       
+        newElement.append(videoInput);
         
         const insertButton = document.createElement('button');
         insertButton.classList.add('insert-input-btn');
@@ -445,13 +486,7 @@ const ModuleEdit = () => {
     
         videoInput.id = `video-input-for-${insertButton.id}`;
      
-        const btnContainer = document.createElement("div");
-        btnContainer.classList.add("element-btns-container");
-
-        
-        btnContainer.appendChild(insertButton);
- 
-        newElement.appendChild(btnContainer);
+        newElement.appendChild(insertButton);
 
 
         //let insert buttons access files and input field
@@ -459,44 +494,53 @@ const ModuleEdit = () => {
      
         insertButton.inField = videoInput;
         insertButton.elID = moduleElements.length;
+        insertButton.inserted = false;
         insertButton.addEventListener("click", displayVideo); 
+        
+        //edit button
+        const editButton = document.createElement("button");
+        const editIcon = document.createElement("i");
+        editIcon.classList.add("bi", "bi-pencil-square"); 
+        editButton.appendChild(editIcon);
+        editButton.classList.add('edit-btn'); 
+        editButton.classList.add("absolute");
+        editButton.classList.add("top-1", "right-5");
+        editButton.insertBtn = insertButton;
+        editButton.inputField = videoInput;
+        editButton.parent = newElement;
+        editButton.addEventListener("click", hideVideo);
+        newElement.appendChild(editButton);
 
-  //old ending
         setModuleElements([...moduleElements, newElement]);
         newElContainer.appendChild(newElement);
-        
-        
+          
       //add Textboxes (Quiz missing)
       } else {
       
         const newElement = document.createElement("div");
         newElement.key = moduleElements.length;
-        newElement.classList.add('element-container');
+        newElement.classList.add('element-container', "relative");
         newElement.id = `element-container-${moduleElements.length}`;
 
         const inputBox = document.createElement("textarea");
         inputBox.classList.add('element-input');
         
-        //inputBox.minLength = 4;
-        //inputBox.maxLength = 35;
         inputBox.size = 90;
-
 
         const insertButton = document.createElement('button');
         insertButton.className = 'insert-input-btn';
         insertButton.id = `insert-btn-${moduleElements.length}`; 
         insertButton.textContent = 'Insert';
+        insertButton.inserted = false;
 
         inputBox.id = `input-box-for-${insertButton.id}`;
-        // add input box and button to the new element
         newElement.appendChild(inputBox);
 
         const btnContainer = document.createElement("div");
-        btnContainer.classList.add("element-btns-container"); //issue: overlapping with text
-        btnContainer.appendChild(insertButton);
-        //btnContainer.dropdownBtns = [];
-        console.log(btnContainer);
-        newElement.appendChild(btnContainer);
+        btnContainer.classList.add("element-btns-container"); 
+
+        newElement.appendChild(insertButton);
+        
         
       
         const fontStyleMenuItems = [
@@ -517,17 +561,30 @@ const ModuleEdit = () => {
           { id: "type-right", text: "Right", funcs: [displayDropdownSelection, changeTextPosition]},
         ];
 
-
         createDropdown(btnContainer, `font-style-${moduleElements.length}`, fontStyleMenuItems);
         createDropdown(btnContainer, `font-size-${moduleElements.length}`, fontSizeMenuItems);
         createDropdown(btnContainer, `text-position-${moduleElements.length}`, positionMenuItems);
+        
+        newElement.appendChild(btnContainer);
 
         insertButton.enableDrop = btnContainer.enableDropdown;
+        insertButton.disableDrop = btnContainer.disableDropdown;
+
+        const editButton = document.createElement("button");
+        const editIcon = document.createElement("i");
+        editIcon.classList.add("bi", "bi-pencil-square"); 
+        editButton.appendChild(editIcon);
+        editButton.classList.add('edit-btn'); 
+        editButton.classList.add("absolute");
+        editButton.classList.add("top-1", "right-5");
+        editButton.insertBtn = insertButton;
+        editButton.inputField = inputBox;
+        editButton.parent = newElement;
+        editButton.buttons = btnContainer;
+        editButton.hideDrop = btnContainer.hideDrop;
+        editButton.addEventListener("click", reversePermaText);
+        newElement.appendChild(editButton);
         
-    
-        console.log(insertButton.enableDrop);
-        
- 
         setModuleElements([...moduleElements, newElement]);
         newElContainer.appendChild(newElement);
 
@@ -541,22 +598,51 @@ const ModuleEdit = () => {
         dropdownEl2.addEventListener("click", displayDropdownOptions); 
         dropdownEl3.addEventListener("click", displayDropdownOptions);       
   
-      }
-        
+      }       
     };
 
     if (addBtn) {
         addBtn.addEventListener("click", addElement);
     }
-    
-    // Cleanup event listener on component unmount
-    return () => {
-        if (addBtn) {
-          addBtn.removeEventListener("click", addElement);
-        }
-    };
-  });
 
+    // Cleanup event listeners on component unmount
+    return () => {
+      if (typeSelectBtn) {
+          typeSelectBtn.removeEventListener("click", displayElementOptions);
+      }
+
+
+      if (linkSelButton) {
+        linkSelButton.removeEventListener("click", displaySelectionAndClose);
+      }
+
+      if (pdfSelButton) {
+        pdfSelButton.removeEventListener("click", displaySelectionAndClose);
+      }
+
+      if (textSelButton) {
+        textSelButton.removeEventListener("click", displaySelectionAndClose);
+      }
+
+      if (quizSelButton) {
+        quizSelButton.removeEventListener("click", displaySelectionAndClose);
+      }
+
+      if (imageSelButton) {
+        imageSelButton.removeEventListener("click", displaySelectionAndClose);
+      }
+
+      if (videoSelButton) {
+        videoSelButton.removeEventListener("click", displaySelectionAndClose);
+      }
+
+
+      if (addBtn) {
+        addBtn.removeEventListener("click", addElement);
+      }
+    };
+    
+  });
 
     //rendered
     return (
@@ -604,10 +690,9 @@ const ModuleEdit = () => {
               <div id = "new-modules-container" ref = {newElContainerRef}>
                 
               </div>
-              <button id ="preview-module-page-btn" ref = {previewBtnRef}>Preview</button>
+              <button id ="preview-module-page-btn" ref = {previewEditBtnRef}>Preview</button>
               <button id ="save-module-page-btn">Save</button>
               </div>
-
           </div>
         </div>
     );

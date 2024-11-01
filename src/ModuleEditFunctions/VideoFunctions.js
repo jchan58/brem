@@ -1,6 +1,67 @@
-//maybe make this make question? and do hidden
-function showQuestion(question, options, parent, elID) {
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const temp = array[i];
+    array[i] = array[j];
+    array[j] = temp;
+  }
+}
+
+function handleCorrectAnswer(event) {
+  event.target.parent.classList.add("hidden");
+  event.target.parent.parentElement.classList.add("hidden");
+  event.target.video.play();
+  event.target.video.classList.remove("pointer-events-none");
+}
+
+function handleWrongAnswer(event) {
+  event.target.parent.classList.add("hidden");
+}
+
+function correctAnswerPopUp(event) {
+  const popUp = event.target.quesBox.children[0];
+  popUp.innerHTML = "";
+  const header = document.createElement('h3');
+  header.textContent = "Correct!";
+  const correctText = document.createElement("p");
+  correctText.textContent = event.target.answer;
+  const continueButton = document.createElement("button");
+  continueButton.classList.add("continue-btn", "absolute", "right-1", "bottom-1");
+  continueButton.innerText = "Continue";
+  continueButton.parent = popUp;
+  continueButton.video = event.target.video;
+  continueButton.addEventListener("click", handleCorrectAnswer);
+  popUp.appendChild(header);
+  popUp.appendChild(correctText);
+  popUp.appendChild(continueButton);
+  popUp.classList.remove("hidden");
+}
+
+function incorrectAnswerPopUp(event) {
+  const popUp = event.target.quesBox.children[0];
+  popUp.innerHTML = "";
+  const header = document.createElement('h3');
+  header.textContent = "Incorrect!";
+  const incorrectText = document.createElement("p");
+  incorrectText.textContent = "That is incorrect, please try again.";
+  const retryButton = document.createElement("button");
+  retryButton.classList.add("retry-btn", "absolute", "right-1", "bottom-1");
+  retryButton.innerText = "Try Again!";
+  retryButton.parent = popUp;
+  retryButton.video = event.target.video;
+  retryButton.addEventListener("click", handleWrongAnswer);
+  popUp.appendChild(header);
+  popUp.appendChild(incorrectText);
+  popUp.appendChild(retryButton);
+  popUp.classList.remove("hidden");
+}
+
+function showQuestion(question, options, parent, elID, video) {
     parent.innerHTML = "";
+    
+    const popUp = document.createElement("div");
+    popUp.classList.add("question-popup", "absolute", "hidden", "top-1/2", "left-1/2", "transform", "-translate-x-1/2", "-translate-y-1/2");
+    parent.appendChild(popUp);
     // Create a form element
     const questionDiv = document.createElement('div');
 
@@ -18,35 +79,69 @@ function showQuestion(question, options, parent, elID) {
     legend.textContent = "Desc for screenreaders";
     fieldset.appendChild(legend);
 
-    // Loop through the options to generate the radio buttons
+    //randomize the options but keep track of their ids
     let i = 0;
+    const taggedOptions = [];
     options.forEach(option => {
+      taggedOptions.push({id: i, option: option})
+      i++;
+    });
+
+    shuffleArray(taggedOptions);
+
+    // Loop through the options to generate the radio buttons
+    let letter = 65;
+    taggedOptions.forEach(taggedOption => {
       const div = document.createElement('div');
       div.classList.add('flex', 'items-center', 'mb-4');
 
       const input = document.createElement('input');
       input.type = 'radio';
       input.name = `${question}-${elID}`;
-      input.id = `${question}-${elID}-option-${i}`;
-      input.value = option;
-      input.classList.add('w-4', 'h-4', 'border-gray-300', 'focus:ring-2', 'focus:ring-blue-300', 'dark:focus:ring-blue-600', 'dark:bg-gray-700', 'dark:border-gray-600');
+      input.id = `${question}-${elID}-option-${taggedOption.id}`;
+      input.value = String.fromCharCode(letter) + ". " + taggedOption.option;
+      //input.classList.add('w-4', 'h-4', 'border-gray-300', 'focus:ring-2', 'focus:ring-blue-300', 'dark:focus:ring-blue-600', 'dark:bg-gray-700', 'dark:border-gray-600');
       
+      //answer is always 0
+      if(taggedOption.id === 0) {
+        input.video = video;
+        input.quesBox = parent;
+        input.answer = taggedOption.option;
+        input.addEventListener("click", correctAnswerPopUp);
+      } else {
+        input.quesBox = parent;
+        input.addEventListener("click", incorrectAnswerPopUp);
+      }
 
       const label = document.createElement('label');
-      label.htmlFor = `${question}-${elID}-option-${i}`;
+      label.htmlFor = `${question}-${elID}-option-${taggedOption.id}`;
       label.classList.add('block', 'ms-2', 'text-sm', 'font-medium', 'text-black-900', 'dark:text-black-300');
-      label.textContent = option;
+      label.textContent = String.fromCharCode(letter) + ". " + taggedOption.option;
 
-      div.appendChild(input);
+      label.appendChild(input);
       div.appendChild(label);
+      //div.appendChild(input);
       fieldset.appendChild(div);
-      i += 1;
+      letter += 1;
+      video.classList.add("pointer-events-none");
     });
 
     // Append the fieldset to the form
     questionDiv.appendChild(fieldset);
     parent.appendChild(questionDiv);
     parent.classList.remove("hidden");
+}
+
+
+export function hideVideo(event) {
+  if(event.currentTarget.insertBtn.inserted) {
+    const element = event.currentTarget.parent;
+    element.innerHTML = "";
+    element.appendChild(event.currentTarget.inputField); 
+    element.appendChild(event.currentTarget.insertBtn); 
+    element.appendChild(event.currentTarget);
+    event.currentTarget.insertBtn.inserted = false;
+  }
 }
 
 //add warning, insert file first
@@ -96,10 +191,10 @@ export function displayVideo(event) {
       //input box for pause Question and Answer
       const inputBox = document.createElement("textarea");
       inputBox.placeholder = `Enter the question information in this format:
-        This is a question?, This is the answer. Other option 1, Other option 2, Other option 3.`; //think about answer format
+        This is a question?, This is the answer. Other option 1, Other option 2, Other option 3.`; 
       inputBox.classList.add('pause-question-input');  
       inputBox.size = 70;    
-      //needs an id; well, we have elID from the event target
+      
 
       //button to add pause times
       const pTimeBox1Btn = document.createElement("button");
@@ -124,6 +219,11 @@ export function displayVideo(event) {
           inputBox.value = "";
           console.log(questionInfo);
           const options = questionInfo.slice(1, questionInfo.length);
+          if(options.length > 26) { 
+            options.splice(26, options.length - 26);
+            console.log(options);
+            alert("Limit hit. Only 26 answer options saved.");
+          }
         videoObj.stampList.push(
           {time: val, question: questionInfo[0], answer: questionInfo[1], allOptions: options});
         console.log(videoObj.stampList);
@@ -173,13 +273,14 @@ export function displayVideo(event) {
             
             videoObj.stampList = videoObj.stampList.filter((item) => item.time !== time ); //for admin, want it to come back, or no, don't just let them test it
             console.log(videoObj.stampList);
-            showQuestion(pauseData.question, pauseData.allOptions, questionBox, elID);
+            showQuestion(pauseData.question, pauseData.allOptions, questionBox, elID, videoObj);
         }
       });
 
       videoAndPauseDataContainer.append(videoObj);
       videoAndPauseDataContainer.append(pauseDataContainer);
       event.target.inField.replaceWith(videoAndPauseDataContainer);
+      event.target.inserted = true;
       event.target.remove();
     } else {
       alert("Please upload a video.")

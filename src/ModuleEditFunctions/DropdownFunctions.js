@@ -26,16 +26,35 @@ export function createDropdown(parent, label, menuItems, initDisabled = true, el
           });
     }
 
+    const disableAllButtons = () => {
+      const buttons = parent.querySelectorAll('button');
+      buttons.forEach(btn => { 
+          btn.disabled = true;
+        });
+    }
+
     // Create dropdown container div
     const dropdownDiv = document.createElement('div');
     dropdownDiv.id = `${label}-type-dropdown`;
-    dropdownDiv.className = "dropdown z-10 hidden absolute left-1/2 transform -translate-x-1/2 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700";
+    classesStr = "dropdown z-10 hidden absolute left-1/2 transform -translate-x-1/2 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700";
+    classes = classesStr.split(" ");
+    dropdownDiv.classList.add(...classes);
     // Create unordered list element
     const ul = document.createElement('ul');
     classesStr = "py-2 text-sm text-gray-700 dark:text-gray-200";
     classes = classesStr.split(" ");
     ul.classList.add(...classes);
     ul.setAttribute('aria-labelledby', 'dropdownDefaultButton');
+
+    const hideDropdown = () => {
+      //dropdownDiv.classList.add("hidden");
+      const dropdowns = parent.querySelectorAll('.dropdown');
+      dropdowns.forEach(drop => drop.classList.add("hidden"));
+
+    }
+
+    //want dropdown to be able to hide itself
+    dropdownDiv.hide = hideDropdown;
   
     menuItems.forEach(item => {
       const li = document.createElement('li');
@@ -67,6 +86,8 @@ export function createDropdown(parent, label, menuItems, initDisabled = true, el
     container.appendChild(button);
     container.appendChild(dropdownDiv);
     parent.enableDropdown = enableAllButtons;
+    parent.disableDropdown = disableAllButtons;
+    parent.hideDrop = hideDropdown;
     parent.appendChild(container);
 
 }
@@ -93,10 +114,8 @@ export function displayDropdownOptions(event) {
       if (dropdown.classList.contains("hidden")) {
         
         dropdown.classList.remove("hidden");
-        dropdown.classList.add("shown");
       } else {
         dropdown.classList.add("hidden");
-        dropdown.classList.remove("shown");
       }
     }
 
@@ -104,6 +123,7 @@ export function displayDropdownOptions(event) {
 
   //select on dropdown display logic, is a list item
 export function displayDropdownSelection(event) {
+    event.preventDefault();
     const targetText = event.target.textContent;
     //console.log(event.target);
     const typeSelectBtn = event.target.parentSelBtn;

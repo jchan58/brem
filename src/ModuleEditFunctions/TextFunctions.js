@@ -1,3 +1,17 @@
+export function reversePermaText(event) {
+    if(event.currentTarget.insertBtn.inserted) {
+        const element = event.currentTarget.parent;
+        element.innerHTML = "";
+        element.appendChild(event.currentTarget.inputField); 
+        element.appendChild(event.currentTarget.insertBtn); 
+        event.currentTarget.hideDrop();
+        event.currentTarget.insertBtn.disableDrop();
+        element.appendChild(event.currentTarget.buttons);
+        element.appendChild(event.currentTarget);
+        event.currentTarget.insertBtn.inserted = false;
+    }
+}
+
 export function permaText(event) {
     const insertBtn = event.target;
     if(insertBtn) {
@@ -12,18 +26,19 @@ export function permaText(event) {
             text.classList.add("transform", "-translate-x-1/2");
             text.textContent = inputField.value;
             event.target.enableDrop();
-            const elContainer = insertBtn.parentElement.parentElement;
+            const elContainer = insertBtn.parentElement;
             
             //don't let added text overlap with the menu
             elContainer.classList.add("flex");
             elContainer.classList.add("justify-end");
             text.classList.add("mt-300");
 
-            elContainer.removeChild(inputField); 
-            insertBtn.parentElement.removeChild(insertBtn); 
+            inputField.replaceWith(text);
+            insertBtn.inserted = true;
+            insertBtn.remove();
             elContainer.classList.add("relative"); //make text's absolute relative to...this
 
-            elContainer.appendChild(text);      
+            //elContainer.appendChild(text);      
         }
     }
 }
@@ -32,7 +47,7 @@ export function permaText(event) {
 export function changeFontStyle(event) {
     event.preventDefault(); //prevent change movement
     const container = event.target.dropdownContainer;
-    const changeTarget = container.parentElement.parentElement.children[1];
+    const changeTarget = container.parentElement.parentElement.children[0];
     if(event.target.textContent === "Bold") {
       changeTarget.classList.remove("italic");
       changeTarget.classList.remove("font-bold");
@@ -60,7 +75,7 @@ export function changeFontSize(event) {
     const sizes = ["text-xs", "text-sm", "text-base", "text-lg", "text-xl", "text-2xl", "text-3xl", "text-4xl", "text-5xl", "text-6xl", "text-7xl", "text-8xl", "text-9xl"];
     
     const container = event.target.dropdownContainer;
-    const changeTarget = container.parentElement.parentElement.children[1];
+    const changeTarget = container.parentElement.parentElement.children[0];
     
     for(let i = 0; i < sizes.length; i++) {
         changeTarget.classList.remove(sizes[changeTarget.size]);
@@ -86,8 +101,8 @@ export function changeTextPosition(event) {
     const positions = ["left-0.5", "left-1/4", "left-1/3", "left-1/2", "left-2/3", "left-3/4", "right-0.5"];
     
     const container = event.target.dropdownContainer;
-    const changeTarget = container.parentElement.parentElement.children[1];
-
+    const changeTarget = container.parentElement.parentElement.children[0];
+    console.log(changeTarget);
     const elContainer = changeTarget.parentElement;
 
     for(let i = 0; i < positions.length; i++) {
