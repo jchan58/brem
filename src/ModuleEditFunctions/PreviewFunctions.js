@@ -32,8 +32,10 @@ export function previewOrEditPage(event) {
     const elementInputs = document.getElementsByClassName("element-input");
     toChange.push(...elementInputs);
 
+    const editButtons = document.getElementsByClassName("edit-btn");
+    toChange.push(...editButtons);
+
     const trashButtons = document.getElementsByClassName("trash-btn");
-    console.log(trashButtons);
     toChange.push(...trashButtons);
 
     const captionInputs = document.getElementsByClassName("caption-input");
@@ -48,6 +50,12 @@ export function previewOrEditPage(event) {
     const elementContainers = document.getElementsByClassName("element-container");
 
     const addedElementContainers = document.getElementsByClassName("added-element-container");
+
+    const questionDataContainers = document.getElementsByClassName("question-data-container");
+    toChange.push(...questionDataContainers);
+
+    const inputQuestionBars = document.getElementsByClassName("input-question-bar");
+    toChange.push(...inputQuestionBars);
 
     if(event.target.textContent === "Preview") {
       Array.from(elementContainers).forEach(item => {

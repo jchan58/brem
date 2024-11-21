@@ -25,7 +25,7 @@ export function displayImage(event) {
     imageEmbed.src = fileURL;
     imageEmbed.classList.add("file-embed");
     imageEmbed.id = `image-embed-${event.target.elID}-${event.target.num}`;
-    imageEmbed.classList.add("flex-1"); //looks different in chrome??? scrolls
+    imageEmbed.classList.add("flex-1"); 
     imageEmbed.classList.add("box-content");
     imageEmbed.style.width = "200px"; 
     imageEmbed.style.height = "300px";
@@ -84,15 +84,16 @@ export function createCaption(event) {
       caption.appendChild(text);
       
 
-      const trashButton = document.createElement("button");
-      trashButton.innerText = '🗑';
-      trashButton.classList.add('trash-btn');
-      trashButton.classList.add("absolute");
-      trashButton.classList.add("top-1", "right-1");
-      trashButton.addEventListener("click", () => trashButton.parentElement.remove());
-      caption.appendChild(trashButton);
 
-      
+      const deleteButton = document.createElement("button");
+      const deleteIcon = document.createElement("i");
+      deleteIcon.classList.add("bi", "bi-trash3-fill");
+      deleteButton.appendChild(deleteIcon);
+      deleteButton.classList.add('trash-btn'); 
+      deleteButton.classList.add("absolute");
+      deleteButton.classList.add("top-1", "right-1");
+      deleteButton.addEventListener("click", () => deleteButton.parentElement.remove());
+      caption.appendChild(deleteButton);
 
       
       const correspondingImage = document.getElementById(`image-embed-${event.target.elID}-${event.target.choice}`); 

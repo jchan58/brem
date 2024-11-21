@@ -4,7 +4,7 @@ export function reversePermaLink(event) {
         element.innerHTML = "";
         element.appendChild(event.currentTarget.inputField); 
         element.appendChild(event.currentTarget.insertBtn); 
-        element.appendChild(event.currentTarget);
+        element.appendChild(event.currentTarget.elBtns);
         event.currentTarget.insertBtn.inserted = false;
     }
 }

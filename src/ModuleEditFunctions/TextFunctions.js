@@ -7,7 +7,7 @@ export function reversePermaText(event) {
         event.currentTarget.hideDrop();
         event.currentTarget.insertBtn.disableDrop();
         element.appendChild(event.currentTarget.buttons);
-        element.appendChild(event.currentTarget);
+        element.appendChild(event.currentTarget.elBtns);
         event.currentTarget.insertBtn.inserted = false;
     }
 }
@@ -22,7 +22,7 @@ export function permaText(event) {
             const text = document.createElement("p");
             text.size = 2;
             text.pos = 3;
-            text.classList.add("absolute", "top-0", "left-1/2");
+            text.classList.add("absolute", "top-0", "left-1/2", "textbox");
             text.classList.add("transform", "-translate-x-1/2");
             text.textContent = inputField.value;
             event.target.enableDrop();
@@ -37,8 +37,7 @@ export function permaText(event) {
             insertBtn.inserted = true;
             insertBtn.remove();
             elContainer.classList.add("relative"); //make text's absolute relative to...this
-
-            //elContainer.appendChild(text);      
+ 
         }
     }
 }
@@ -98,7 +97,7 @@ export function changeFontSize(event) {
 
 export function changeTextPosition(event) { 
     event.preventDefault();
-    const positions = ["left-0.5", "left-1/4", "left-1/3", "left-1/2", "left-2/3", "left-3/4", "right-0.5"];
+    const positions = ["left-0.5", "left-1/4", "left-1/3", "left-1/2", "left-2/3", "left-3/4", "right-11"];
     
     const container = event.target.dropdownContainer;
     const changeTarget = container.parentElement.parentElement.children[0];

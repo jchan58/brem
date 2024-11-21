@@ -7,6 +7,7 @@ import { permaLink, reversePermaLink} from '../ModuleEditFunctions/LinkFunctions
 import { createDropdown, displayDropdownOptions, displayDropdownSelection } from '../ModuleEditFunctions/DropdownFunctions';
 import { displayVideo, hideVideo } from '../ModuleEditFunctions/VideoFunctions';
 import { previewOrEditPage} from '../ModuleEditFunctions/PreviewFunctions';
+import { addQuestion, gradeSubmission } from '../ModuleEditFunctions/QuizFunctions';
 
 const ModuleEdit = () => {  
   //preview button ref
@@ -151,18 +152,39 @@ const ModuleEdit = () => {
         newElement.appendChild(inputField);
         newElement.appendChild(insertBtn);
 
+        const elementButtons = document.createElement("div");
+        elementButtons.classList.add("flex", "flex-row");
+
         const editButton = document.createElement("button");
         const editIcon = document.createElement("i");
         editIcon.classList.add("bi", "bi-pencil-square"); 
         editButton.appendChild(editIcon);
         editButton.classList.add('edit-btn'); 
         editButton.classList.add("absolute");
-        editButton.classList.add("top-1", "right-5");
+        editButton.classList.add("top-1", "right-10");
         editButton.insertBtn = insertBtn;
         editButton.inputField = inputField;
         editButton.parent = newElement;
         editButton.addEventListener("click", reversePermaLink);
-        newElement.appendChild(editButton);
+
+        const deleteButton = document.createElement("button");
+        const deleteIcon = document.createElement("i");
+        deleteIcon.classList.add("bi", "bi-trash3-fill");
+        deleteButton.appendChild(deleteIcon);
+        deleteButton.classList.add('trash-btn'); 
+        deleteButton.classList.add("absolute");
+        deleteButton.classList.add("top-1", "right-5");
+        deleteButton.addEventListener("click", () => {
+          newElement.remove();
+        })
+
+        
+        elementButtons.appendChild(editButton);
+        elementButtons.appendChild(deleteButton);
+        elementButtons.classList.add("element-change-btns");
+        editButton.elBtns = elementButtons;
+
+        newElement.appendChild(elementButtons);
       
 
         setModuleElements([...moduleElements, newElement]);
@@ -187,19 +209,42 @@ const ModuleEdit = () => {
         newElement.appendChild(inputField);
         newElement.appendChild(insertBtn);
 
+        //container for the edit and delete buttons for the element
+        const elementButtons = document.createElement("div");
+        elementButtons.classList.add("flex", "flex-row");
 
+        //edit button for the element
         const editButton = document.createElement("button");
         const editIcon = document.createElement("i");
         editIcon.classList.add("bi", "bi-pencil-square"); 
         editButton.appendChild(editIcon);
         editButton.classList.add('edit-btn'); 
         editButton.classList.add("absolute");
-        editButton.classList.add("top-1", "right-5");
+        editButton.classList.add("top-1", "right-10");
         editButton.insertBtn = insertBtn;
         editButton.inputField = inputField;
         editButton.parent = newElement;
         editButton.addEventListener("click", hidePDF);
-        newElement.appendChild(editButton);
+
+        //delete button for the element
+        const deleteButton = document.createElement("button");
+        const deleteIcon = document.createElement("i");
+        deleteIcon.classList.add("bi", "bi-trash3-fill");
+        deleteButton.appendChild(deleteIcon);
+        deleteButton.classList.add('trash-btn'); 
+        deleteButton.classList.add("absolute");
+        deleteButton.classList.add("top-1", "right-5");
+        deleteButton.addEventListener("click", () => {
+          newElement.remove();
+        })
+
+        elementButtons.appendChild(editButton);
+        elementButtons.appendChild(deleteButton);
+        elementButtons.classList.add("element-change-btns");
+
+        editButton.elBtns = elementButtons;
+
+        newElement.appendChild(elementButtons);
 
         setModuleElements([...moduleElements, newElement]);
         newElContainer.appendChild(newElement);
@@ -208,7 +253,7 @@ const ModuleEdit = () => {
       } else if (typeSelectBtn.classList.contains("Image")){        
           const newElement = document.createElement("div");
           newElement.key = moduleElements.length;
-          newElement.classList.add("flex", "flex-row", "flex-wrap");
+          newElement.classList.add("flex", "flex-row", "flex-wrap", "relative");
           newElement.classList.add('element-container');
           newElement.id = `element-container-${moduleElements.length}`;
           newElement.classList.add("justify-center");
@@ -300,13 +345,13 @@ const ModuleEdit = () => {
           imageInput3.addEventListener('change', (event) => insertButton3.files = event.target.files);
 
           insertButton1.inField = imageInput1;
-          insertButton1.elID = moduleElements.length;
+          insertButton1.elID = moduleElements.length + 1;
 
           insertButton2.inField = imageInput2;
-          insertButton2.elID = moduleElements.length;
+          insertButton2.elID = moduleElements.length + 1;
 
           insertButton3.inField = imageInput3;
-          insertButton3.elID = moduleElements.length;
+          insertButton3.elID = moduleElements.length + 1;
 
           insertButton1.addEventListener("click", displayImage); 
           insertButton2.addEventListener("click", displayImage); 
@@ -362,6 +407,7 @@ const ModuleEdit = () => {
           editButton1.insertBtnsContainer = btnContainer;
           editButton1.hideDrop = image1BtnsContainer.hideDrop;
           editButton1.addEventListener("click", hideImage);
+          editButton1.classList.add("element-change-btns");
           image1Container.appendChild(editButton1);
 
           //give images an edit button
@@ -379,6 +425,7 @@ const ModuleEdit = () => {
           editButton2.insertBtnsContainer = btnContainer;
           editButton2.hideDrop = image2BtnsContainer.hideDrop;
           editButton2.addEventListener("click", hideImage);
+          editButton2.classList.add("element-change-btns");
           image2Container.appendChild(editButton2);
 
           //give images an edit button
@@ -396,6 +443,7 @@ const ModuleEdit = () => {
           editButton3.insertBtnsContainer = btnContainer;
           editButton3.hideDrop = image3BtnsContainer.hideDrop;
           editButton3.addEventListener("click", hideImage);
+          editButton3.classList.add("element-change-btns");
           image3Container.appendChild(editButton3);
 
           //caption input box
@@ -408,8 +456,22 @@ const ModuleEdit = () => {
           const inputBox = document.createElement("textarea");
           inputBox.classList.add('caption-input');
         
-          inputBox.size = 90;
+          inputBox.rows = "3";
+          inputBox.addEventListener('keydown', function(e) {
+            if (e.key === 'Tab') {
+              e.preventDefault();
+              const start = this.selectionStart;
+              const end = this.selectionEnd;
           
+              // set textarea value to: text before caret + tab + text after caret
+              this.value = this.value.substring(0, start) +
+                "\t" + this.value.substring(end);
+          
+              // put caret at right position again
+              this.selectionStart =
+                this.selectionEnd = start + 1;
+            }
+          });
 
           const addButton = document.createElement('button');
           addButton.classList.add('add-caption-btn');
@@ -419,7 +481,7 @@ const ModuleEdit = () => {
           inputBox.id = `input-box-for-${addButton.id}`;
           
           addButton.inField = inputBox;
-          addButton.elID = moduleElements.length;
+          addButton.elID = moduleElements.length + 1;
           addButton.addEventListener("click", createCaption);
           
           const imageSelectMenuItems = [
@@ -436,6 +498,20 @@ const ModuleEdit = () => {
           
           newElement.appendChild(breakDiv);
           newElement.appendChild(captionDiv);
+
+
+          //add a delete button for the element
+          const deleteButton = document.createElement("button");
+          const deleteIcon = document.createElement("i");
+          deleteIcon.classList.add("bi", "bi-trash3-fill");
+          deleteButton.appendChild(deleteIcon);
+          deleteButton.classList.add('trash-btn'); 
+          deleteButton.classList.add("absolute");
+          deleteButton.classList.add("top-1", "right-5");
+          deleteButton.addEventListener("click", () => {
+            newElement.remove();
+          })
+          newElement.appendChild(deleteButton);
 
           //append the element and update the count
           setModuleElements([...moduleElements, newElement]);
@@ -493,10 +569,14 @@ const ModuleEdit = () => {
         videoInput.addEventListener('change', (event) => insertButton.files = event.target.files);
      
         insertButton.inField = videoInput;
-        insertButton.elID = moduleElements.length;
+        insertButton.elID = moduleElements.length + 1;
         insertButton.inserted = false;
         insertButton.addEventListener("click", displayVideo); 
         
+        //container for element edit and delete buttons
+        const elementButtons = document.createElement("div");
+        elementButtons.classList.add("flex", "flex-row");
+
         //edit button
         const editButton = document.createElement("button");
         const editIcon = document.createElement("i");
@@ -504,18 +584,36 @@ const ModuleEdit = () => {
         editButton.appendChild(editIcon);
         editButton.classList.add('edit-btn'); 
         editButton.classList.add("absolute");
-        editButton.classList.add("top-1", "right-5");
+        editButton.classList.add("top-1", "right-10");
         editButton.insertBtn = insertButton;
         editButton.inputField = videoInput;
         editButton.parent = newElement;
         editButton.addEventListener("click", hideVideo);
         newElement.appendChild(editButton);
 
+        //delete button for the element
+        const deleteButton = document.createElement("button");
+        const deleteIcon = document.createElement("i");
+        deleteIcon.classList.add("bi", "bi-trash3-fill");
+        deleteButton.appendChild(deleteIcon);
+        deleteButton.classList.add('trash-btn'); 
+        deleteButton.classList.add("absolute");
+        deleteButton.classList.add("top-1", "right-5");
+        deleteButton.addEventListener("click", () => {
+          newElement.remove();
+        })
+
+        elementButtons.appendChild(editButton);
+        elementButtons.appendChild(deleteButton);
+        elementButtons.classList.add("element-change-btns");
+        editButton.elBtns = elementButtons;
+        
+        newElement.appendChild(elementButtons);
         setModuleElements([...moduleElements, newElement]);
         newElContainer.appendChild(newElement);
           
-      //add Textboxes (Quiz missing)
-      } else {
+      //add Textboxes 
+      } else if (typeSelectBtn.classList.contains("Textbox")){
       
         const newElement = document.createElement("div");
         newElement.key = moduleElements.length;
@@ -525,7 +623,22 @@ const ModuleEdit = () => {
         const inputBox = document.createElement("textarea");
         inputBox.classList.add('element-input');
         
-        inputBox.size = 90;
+        inputBox.rows = "10";
+        inputBox.addEventListener('keydown', function(e) {
+          if (e.key === 'Tab') {
+            e.preventDefault();
+            const start = this.selectionStart;
+            const end = this.selectionEnd;
+        
+            // set textarea value to: text before caret + tab + text after caret
+            this.value = this.value.substring(0, start) +
+              "\t" + this.value.substring(end);
+        
+            // put caret at right position again
+            this.selectionStart =
+              this.selectionEnd = start + 1;
+          }
+        });
 
         const insertButton = document.createElement('button');
         insertButton.className = 'insert-input-btn';
@@ -570,13 +683,17 @@ const ModuleEdit = () => {
         insertButton.enableDrop = btnContainer.enableDropdown;
         insertButton.disableDrop = btnContainer.disableDropdown;
 
+        //container for the element's edit and delete buttons
+        const elementButtons = document.createElement("div");
+        elementButtons.classList.add("flex", "flex-row");
+
         const editButton = document.createElement("button");
         const editIcon = document.createElement("i");
         editIcon.classList.add("bi", "bi-pencil-square"); 
         editButton.appendChild(editIcon);
         editButton.classList.add('edit-btn'); 
         editButton.classList.add("absolute");
-        editButton.classList.add("top-1", "right-5");
+        editButton.classList.add("top-1", "right-10");
         editButton.insertBtn = insertButton;
         editButton.inputField = inputBox;
         editButton.parent = newElement;
@@ -584,11 +701,29 @@ const ModuleEdit = () => {
         editButton.hideDrop = btnContainer.hideDrop;
         editButton.addEventListener("click", reversePermaText);
         newElement.appendChild(editButton);
+
+        const deleteButton = document.createElement("button");
+        const deleteIcon = document.createElement("i");
+        deleteIcon.classList.add("bi", "bi-trash3-fill");
+        deleteButton.appendChild(deleteIcon);
+        deleteButton.classList.add('trash-btn'); 
+        deleteButton.classList.add("absolute");
+        deleteButton.classList.add("top-1", "right-5");
+        deleteButton.addEventListener("click", () => {
+          newElement.remove();
+        })
+
+        
+        elementButtons.appendChild(editButton);
+        elementButtons.appendChild(deleteButton);
+        editButton.elBtns = elementButtons;
+        elementButtons.classList.add("element-change-btns");
+        newElement.appendChild(elementButtons);
         
         setModuleElements([...moduleElements, newElement]);
         newElContainer.appendChild(newElement);
 
-        insertButton.addEventListener("click", permaText); //remove event listener where?
+        insertButton.addEventListener("click", permaText); 
 
         const dropdownEl1 = document.getElementById(`font-style-${moduleElements.length}-type-sel-btn`); //id must match 2nd argument of createDropdown
         const dropdownEl2 = document.getElementById(`font-size-${moduleElements.length}-type-sel-btn`);
@@ -597,7 +732,183 @@ const ModuleEdit = () => {
         dropdownEl1.addEventListener("click", displayDropdownOptions); 
         dropdownEl2.addEventListener("click", displayDropdownOptions); 
         dropdownEl3.addEventListener("click", displayDropdownOptions);       
-  
+      } else if(typeSelectBtn.classList.contains("Quiz")) {
+        const newElement = document.createElement("div");
+        newElement.key = moduleElements.length;
+        newElement.classList.add('element-container', "relative");
+        newElement.id = `element-container-${moduleElements.length}`;
+
+
+        const deleteButton = document.createElement("button");
+        const deleteIcon = document.createElement("i");
+        deleteIcon.classList.add("bi", "bi-trash3-fill");
+        deleteButton.appendChild(deleteIcon);
+        deleteButton.classList.add('trash-btn'); 
+        deleteButton.classList.add("absolute");
+        deleteButton.classList.add("top-1", "right-5");
+        deleteButton.addEventListener("click", () => {
+          newElement.remove();
+        })
+        newElement.appendChild(deleteButton);
+            
+
+        const questionDataContainer = document.createElement("div");
+        questionDataContainer.classList.add("question-data-container");
+        questionDataContainer.classList.add("flex", "flex-row", "gap-2");
+      
+
+      
+        //input box for pause Question and Answer
+        const inputBox = document.createElement("textarea");
+        inputBox.placeholder = `Enter the question information in this format: This is a question?!!!This is the answer.!!!Other option 1.!!!Other option 2.!!!Other option 3`; 
+        inputBox.classList.add('question-input');  
+          
+
+        //allow tab to indent in the inputBox
+        inputBox.addEventListener('keydown', function(e) {
+          if (e.key === 'Tab') {
+            e.preventDefault();
+            const start = this.selectionStart;
+            const end = this.selectionEnd;
+        
+            // set textarea value to: text before caret + tab + text after caret
+            this.value = this.value.substring(0, start) +
+              "\t" + this.value.substring(end);
+        
+            // put caret at right position again
+            this.selectionStart =
+              this.selectionEnd = start + 1;
+          }
+        });
+
+        questionDataContainer.appendChild(inputBox);
+      
+        const hintBox = document.createElement("textarea");
+        hintBox.placeholder = `Enter up to 3 hints for the answer question in this format: Hint 1!!!Hint 2!!!Hint 3`;
+        hintBox.classList.add('question-hint-input');
+        
+        //allow tab to indent in the explain box
+        hintBox.addEventListener('keydown', function(e) {
+          if (e.key === 'Tab') {
+            e.preventDefault();
+            const start = this.selectionStart;
+            const end = this.selectionEnd;
+        
+            // set textarea value to: text before caret + tab + text after caret
+            this.value = this.value.substring(0, start) +
+              "\t" + this.value.substring(end);
+        
+            // put caret at right position again
+            this.selectionStart =
+              this.selectionEnd = start + 1;
+          }
+        });
+        questionDataContainer.appendChild(hintBox);
+        
+        
+      
+        //button to add questions
+        const addQuestionBtn = document.createElement("button");
+        addQuestionBtn.innerText = "Add Question";
+        addQuestionBtn.classList.add("outline", "outline-black", "outline-1", "add-question-button");
+        addQuestionBtn.height = 50;
+        addQuestionBtn.width = 50;
+        addQuestionBtn.classList.add("p-4");
+
+        questionDataContainer.appendChild(addQuestionBtn);
+      
+        //hold all question data
+        questionDataContainer.questionData = [];
+
+        const bar = document.createElement("hr");
+        bar.classList.add("input-question-bar");
+        //element to hold all questions
+
+        const questionForm = document.createElement("div");
+        questionForm.classList.add("question-form", "relative");
+        
+        const questions = document.createElement("div");
+        questions.classList.add("questions-container", "flex", "flex-col");
+        questions.elID = moduleElements.length + 1; //+1 bc we are setting it before the length gets updated
+
+
+        const submitBtn = document.createElement("button");
+        submitBtn.textContent = "Submit";
+        submitBtn.classList.add("submit-quiz", "disabled:opacity-50", "disabled:cursor-not-allowed");
+        submitBtn.data = questionDataContainer.questionData;
+        submitBtn.subsUsed = 0;
+        submitBtn.maxSubs = 1;
+
+
+        const subContainer = document.createElement("div");
+        subContainer.classList.add("flex", "flex-col", "question-sub-info-container");
+        const maxSubmissions = document.createElement("textarea");
+        maxSubmissions.id = `max-retries-${moduleElements.length}`;
+        maxSubmissions.classList.add('question-max-submissions');
+        
+
+        const setMaxSubsBtn = document.createElement("button");
+        setMaxSubsBtn.classList.add("set-max-retries-btn");
+        setMaxSubsBtn.textContent ="Set Max. Submissions";
+        setMaxSubsBtn.addEventListener("click", () => {submitBtn.maxSubs = Number(maxSubmissions.value) || 1; maxSubmissions.value = ""});
+
+        subContainer.appendChild(maxSubmissions);
+        subContainer.appendChild(setMaxSubsBtn);
+
+        questionDataContainer.appendChild(subContainer);
+
+        //add question data to the list
+        addQuestionBtn.addEventListener("click", (event) =>{
+          const questionId = `el-${questions.elID}-question-${questionDataContainer.questionData.length}`;
+          if( inputBox.value === "") {
+            alert(`Please enter question text before adding a question.`);
+          } else if (!inputBox.value.includes("!!!")){
+            alert(`Please enter at least one answer to the question before adding a timestamp.`);
+          } else {
+            const questionInfo = inputBox.value.split("!!!");
+            inputBox.value = "";
+                
+            const hintInfo = hintBox.value.split("!!!"); 
+            hintBox.value  = "";
+
+            const options = questionInfo.slice(1, questionInfo.length);
+            if(options.length > 26) { 
+              options.splice(26, options.length - 26);
+              console.log(options);
+              alert("Limit hit. Only 26 answer options saved.");
+            }
+            
+            //may not need this? maybe just pass this?
+            questionDataContainer.questionData.push(
+              {question: questionInfo[0], answer: questionInfo[1], allOptions: options, hintInfo: hintInfo, questionId: questionId});
+
+            console.log(questionDataContainer.questionData);
+
+            addQuestion(questionInfo[0], options, hintInfo, questions, questionId);
+
+            const breakDiv = document.createElement("div");
+            breakDiv.classList.add("break");
+            questions.appendChild(breakDiv);
+            const quesBar = document.createElement("hr");
+            quesBar.classList.add("btwn-question-bar");
+            questions.appendChild(quesBar);
+          }
+        })
+
+        
+        submitBtn.addEventListener("click", gradeSubmission);
+
+        newElement.appendChild(questionDataContainer);
+        newElement.appendChild(bar);
+
+        questionForm.appendChild(questions);
+        questionForm.appendChild(submitBtn);
+        newElement.appendChild(questionForm);
+        setModuleElements([...moduleElements, newElement]);
+        newElContainer.appendChild(newElement);
+
+      } else {
+        alert("Please select an element type.")
       }       
     };
 
@@ -661,22 +972,22 @@ const ModuleEdit = () => {
                   <div ref = {typeDropdownRef} id="module-element-type-dropdown" className="z-10 hidden relative bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
                       <ul className="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
                         <li>
-                          <a href = "#" ref = {linkSelButtonRef} id = "type-link" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Link</a>
+                          <button ref = {linkSelButtonRef} id = "type-link" className="block w-full px-4 py-2 text-center bg-gray-200 hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white rounded">Link</button>
                         </li>
                         <li>
-                          <a href = "#" ref = {pdfSelButtonRef} id = "type-pdf" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">PDF</a>
+                          <button ref = {pdfSelButtonRef} id = "type-pdf" className="block w-full px-4 py-2 text-center bg-gray-200 hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white rounded">PDF</button>
                         </li>
                         <li>
-                          <a href = "#" ref = {textSelButtonRef} id = "type-textbox" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Textbox</a>
+                          <button ref = {textSelButtonRef} id = "type-textbox" className="block w-full px-4 py-2 text-center bg-gray-200 hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white rounded">Textbox</button>
                         </li>
                         <li>
-                          <a href = "#" ref = {quizSelButtonRef} id = "type-quiz" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Quiz</a>
+                          <button ref = {quizSelButtonRef} id = "type-quiz" className="block w-full px-4 py-2 text-center bg-gray-200 hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white rounded">Quiz</button>
                         </li>
                         <li>
-                          <a href = "#" ref = {imageSelButtonRef} id = "type-image" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Image</a>
+                          <button ref = {imageSelButtonRef} id = "type-image" className="block w-full px-4 py-2 text-center bg-gray-200 hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white rounded">Image</button>
                         </li>
                         <li>
-                          <a href = "#" ref = {videoSelButtonRef} id = "type-video" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Video</a>
+                          <button ref = {videoSelButtonRef} id = "type-video" className="block w-full px-4 py-2 text-center bg-gray-200 hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white rounded">Video</button>
                         </li>
                       </ul>
                   </div>
