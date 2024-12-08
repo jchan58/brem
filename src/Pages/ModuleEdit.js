@@ -28,22 +28,24 @@ const ModuleEdit = () => {
 
   //setup for add button logic
   
+  //keep track of added elements
   const [moduleElements, setModuleElements] = useState([]); 
   
+  //add button ref and reference for new elements
   const addBtnRef = useRef(null);
   const newElContainerRef = useRef(null);
 
   //in use effect because buttons may not render right away
   useEffect(() => {
 
-    //preview button stuff
+    //get preview button and add its functionality to it
     const previewEditBtn= previewEditBtnRef.current;
     if (previewEditBtn) {
       previewEditBtn.addEventListener("click", previewOrEditPage);
     }
 
 
-    //dropdown menu logic
+    //get the type select button/dropdown
     const typeSelectBtn = typeSelectBtnRef.current;
     const typeDropdown = typeDropdownRef.current;
 
@@ -59,13 +61,14 @@ const ModuleEdit = () => {
       <path stroke="currentColor" d="m1 1 4 4 4-4"/>
       </svg>`;
       
-        if (typeDropdown.classList.contains("hidden")) {
-            typeDropdown.classList.remove("hidden");
-            typeDropdown.classList.add("shown");
-        } else {
-            typeDropdown.classList.add("hidden");
-            typeDropdown.classList.remove("shown");
-        }
+      //hide or reveal the dropdown
+      if (typeDropdown.classList.contains("hidden")) {
+          typeDropdown.classList.remove("hidden");
+          typeDropdown.classList.add("shown");
+      } else {
+          typeDropdown.classList.add("hidden");
+          typeDropdown.classList.remove("shown");
+      }
     };
 
     if (typeSelectBtn) {
@@ -98,13 +101,14 @@ const ModuleEdit = () => {
       typeSelectBtn.classList.remove("Video");
 
 
-
+      //add the target element type to the class list and hide the dropdown
       typeSelectBtn.classList.add(targetText);
       
       typeDropdown.classList.add("hidden");
       typeDropdown.classList.remove("shown");
     }
 
+    //give all the element type selection buttons the ability to change and close the dropdown menu
     if (linkSelButton) {
       linkSelButton.addEventListener("click", displaySelectionAndClose);
     }
@@ -129,7 +133,7 @@ const ModuleEdit = () => {
       videoSelButton.addEventListener("click", displaySelectionAndClose);
     }
 
-
+    //use the references to grab the element add button and new element container
     const addBtn = addBtnRef.current;
     const newElContainer = newElContainerRef.current;
 
@@ -141,6 +145,8 @@ const ModuleEdit = () => {
         const newElement = document.createElement("div");
         newElement.key = moduleElements.length;
         newElement.classList.add('element-container', "relative");
+
+
         const inputField = document.createElement("input");
         inputField.classList.add("element-input");
         inputField.size = 120;
@@ -186,7 +192,6 @@ const ModuleEdit = () => {
 
         newElement.appendChild(elementButtons);
       
-
         setModuleElements([...moduleElements, newElement]);
         newElContainer.appendChild(newElement);
         insertBtn.addEventListener("click", permaLink); 
@@ -447,7 +452,7 @@ const ModuleEdit = () => {
           image3Container.appendChild(editButton3);
 
           //caption input box
-          //want input box in new row
+          //want input box in new row, so we use breakDiv
           const breakDiv = document.createElement("div");
           breakDiv.classList.add("break");
           const captionDiv = document.createElement("div");
@@ -457,6 +462,7 @@ const ModuleEdit = () => {
           inputBox.classList.add('caption-input');
         
           inputBox.rows = "3";
+          //allows tabbing in textarea to add tab whitespace and instead of moving to the next textarea
           inputBox.addEventListener('keydown', function(e) {
             if (e.key === 'Tab') {
               e.preventDefault();
@@ -624,6 +630,7 @@ const ModuleEdit = () => {
         inputBox.classList.add('element-input');
         
         inputBox.rows = "10";
+        //allows tabbing in textarea to add tab whitespace and instead of moving to the next textarea
         inputBox.addEventListener('keydown', function(e) {
           if (e.key === 'Tab') {
             e.preventDefault();
@@ -654,8 +661,7 @@ const ModuleEdit = () => {
 
         newElement.appendChild(insertButton);
         
-        
-      
+        //prepare menu items for the dropdowns that will be created
         const fontStyleMenuItems = [
           { id: "type-bold", text: "Bold", funcs: [displayDropdownSelection, changeFontStyle]},
           { id: "type-italics", text: "Italics", funcs: [displayDropdownSelection, changeFontStyle]},
@@ -753,6 +759,7 @@ const ModuleEdit = () => {
             
 
         const questionDataContainer = document.createElement("div");
+        questionDataContainer.id = `question-data-container-${moduleElements.length}`
         questionDataContainer.classList.add("question-data-container");
         questionDataContainer.classList.add("flex", "flex-row", "gap-2");
       
@@ -764,7 +771,7 @@ const ModuleEdit = () => {
         inputBox.classList.add('question-input');  
           
 
-        //allow tab to indent in the inputBox
+        //allows tabbing in textarea to add tab whitespace and instead of moving to the next textarea
         inputBox.addEventListener('keydown', function(e) {
           if (e.key === 'Tab') {
             e.preventDefault();
@@ -827,19 +834,21 @@ const ModuleEdit = () => {
         const questionForm = document.createElement("div");
         questionForm.classList.add("question-form", "relative");
         
+        //will hold the sepearte questions
         const questions = document.createElement("div");
         questions.classList.add("questions-container", "flex", "flex-col");
-        questions.elID = moduleElements.length + 1; //+1 bc we are setting it before the length gets updated
+        questions.elID = moduleElements.length; 
 
-
+        //question submission button
         const submitBtn = document.createElement("button");
         submitBtn.textContent = "Submit";
         submitBtn.classList.add("submit-quiz", "disabled:opacity-50", "disabled:cursor-not-allowed");
         submitBtn.data = questionDataContainer.questionData;
         submitBtn.subsUsed = 0;
         submitBtn.maxSubs = 1;
+        submitBtn.elID = moduleElements.length;
 
-
+        //container to hold input field and confirmation button for setting the number of maximum submissions allowed for the quiz
         const subContainer = document.createElement("div");
         subContainer.classList.add("flex", "flex-col", "question-sub-info-container");
         const maxSubmissions = document.createElement("textarea");
@@ -850,7 +859,11 @@ const ModuleEdit = () => {
         const setMaxSubsBtn = document.createElement("button");
         setMaxSubsBtn.classList.add("set-max-retries-btn");
         setMaxSubsBtn.textContent ="Set Max. Submissions";
-        setMaxSubsBtn.addEventListener("click", () => {submitBtn.maxSubs = Number(maxSubmissions.value) || 1; maxSubmissions.value = ""});
+        setMaxSubsBtn.addEventListener("click", () => {
+          submitBtn.maxSubs = Number(maxSubmissions.value) || 1; maxSubmissions.value = ""
+          submitBtn.disabled = false;
+          submitBtn.subsUsed = 0;
+        });
 
         subContainer.appendChild(maxSubmissions);
         subContainer.appendChild(setMaxSubsBtn);
@@ -878,14 +891,13 @@ const ModuleEdit = () => {
               alert("Limit hit. Only 26 answer options saved.");
             }
             
-            //may not need this? maybe just pass this?
             questionDataContainer.questionData.push(
               {question: questionInfo[0], answer: questionInfo[1], allOptions: options, hintInfo: hintInfo, questionId: questionId});
 
-            console.log(questionDataContainer.questionData);
-
-            addQuestion(questionInfo[0], options, hintInfo, questions, questionId);
-
+  
+            addQuestion(questionInfo[0], options, hintInfo, questions, questionId, submitBtn);
+            
+            //add space between the questions, and a horizontal bar
             const breakDiv = document.createElement("div");
             breakDiv.classList.add("break");
             questions.appendChild(breakDiv);
@@ -897,7 +909,7 @@ const ModuleEdit = () => {
 
         
         submitBtn.addEventListener("click", gradeSubmission);
-
+        
         newElement.appendChild(questionDataContainer);
         newElement.appendChild(bar);
 

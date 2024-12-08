@@ -57,6 +57,13 @@ export function previewOrEditPage(event) {
     const inputQuestionBars = document.getElementsByClassName("input-question-bar");
     toChange.push(...inputQuestionBars);
 
+    const editButtonsQ = document.getElementsByClassName("question-edit-btn");
+    toChange.push(...editButtonsQ);
+
+    const editButtonsA = document.getElementsByClassName("answer-edit-btn");
+    toChange.push(...editButtonsA);
+
+
     if(event.target.textContent === "Preview") {
       Array.from(elementContainers).forEach(item => {
         console.log(event.target.textContent);
@@ -90,5 +97,15 @@ export function previewOrEditPage(event) {
       event.target.textContent = "Preview";
     }
 
+    //hide all the dropdowns
     Array.from(dropdowns).forEach(dropdown => dropdown.hide());
+
+    //re-enable the submit button on quizzes on preview or back to edit
+    const submitQuizButtons = document.getElementsByClassName("submit-quiz");
+    Array.from(submitQuizButtons).forEach(item => { 
+      item.disabled = false;
+      item.subsUsed = 0;
+    });
+
+
 }

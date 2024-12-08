@@ -14,11 +14,12 @@ export function createDropdown(parent, label, menuItems, initDisabled = true, el
     button.setAttribute('data-dropdown-toggle', `${label}-type-dropdown`);
     button.innerHTML = `Change ${label.replaceAll("-", " ").replace(/\d/g, "")} <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6"><path stroke="currentColor" d="m1 1 4 4 4-4"/></svg>`;
     
+    //we want some buttons to be initally disabled
     if(initDisabled) {
       button.disabled = true; 
     }
 
-    
+    //functions to allow the enabling and disabling of all buttons (doing them per element did not work)
     const enableAllButtons = () => {
         const buttons = parent.querySelectorAll('button');
         buttons.forEach(btn => { 
@@ -64,7 +65,7 @@ export function createDropdown(parent, label, menuItems, initDisabled = true, el
       classesStr = "block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white";
       classes = classesStr.split(" ");
       a.classList.add(...classes);
-      a.textContent = item.text;
+      a.textContent = item.text; //these will be used as an exact match for setting the selected option!
       a.elID = elID;
       if(item.funcs != null) {
         for(let i = 0; i < item.funcs.length; i++) {
@@ -92,7 +93,7 @@ export function createDropdown(parent, label, menuItems, initDisabled = true, el
 
 }
 
-//general dropdown menu logic
+//general dropdown menu logic, similar to that of the dropdown in ModuleEdit
 export function displayDropdownOptions(event) {
     const selectBtn = event.target;
 
@@ -102,6 +103,7 @@ export function displayDropdownOptions(event) {
       const links = dropdown.querySelectorAll('a');
       const removes = Array.from(links).map(link => link.textContent);
 
+      //remove all dropdown option text from the class list (they will all be tagged 'a')
       for (let i = 0; i < removes.length; i++) {
         selectBtn.classList.remove(removes[i]);
       }
@@ -110,7 +112,7 @@ export function displayDropdownOptions(event) {
       <path stroke="currentColor" d="m1 1 4 4 4-4"/>
       </svg>`;
       
-      
+      //reveal or hide the dropdown
       if (dropdown.classList.contains("hidden")) {
         
         dropdown.classList.remove("hidden");
@@ -125,12 +127,10 @@ export function displayDropdownOptions(event) {
 export function displayDropdownSelection(event) {
     event.preventDefault();
     const targetText = event.target.textContent;
-    //console.log(event.target);
+
     const typeSelectBtn = event.target.parentSelBtn;
 
-    if(typeSelectBtn) {
-      //console.log(typeSelectBtn);
-      
+    if(typeSelectBtn) {  
       typeSelectBtn.innerHTML = `${targetText} <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
         <path stroke="currentColor" d="m1 1 4 4 4-4"/>
         </svg>`;

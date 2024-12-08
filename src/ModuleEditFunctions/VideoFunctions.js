@@ -120,7 +120,7 @@ function showQuestion(question, options, explanations, parent, elID, video) {
       input.name = `${question}-${elID}`;
       input.id = `${question}-${elID}-option-${taggedOption.id}`;
       input.value = String.fromCharCode(letter) + ". " + taggedOption.option;
-      input.classList.add('w-4', 'h-4', 'border-gray-300', 'focus:ring-2', 'focus:ring-blue-300', 'dark:focus:ring-blue-600', 'dark:bg-gray-700', 'dark:border-gray-600');
+      input.classList.add('w-4', 'h-4', 'border-gray-300', 'focus:ring-2', 'focus:ring-blue-300', 'dark:focus:ring-blue-600', 'dark:bg-gray-700', 'dark:border-gray-600', "vid-question-radio");
       
       //answer is always 0
       if(taggedOption.id === 0) {
