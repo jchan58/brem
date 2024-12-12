@@ -1,3 +1,4 @@
+//reverse link insertion
 export function reversePermaLink(event) {
     if(event.currentTarget.insertBtn.inserted) {
         const element = event.currentTarget.parent;
@@ -9,6 +10,7 @@ export function reversePermaLink(event) {
     }
 }
 
+//insert the user's link
 export function permaLink(event) {
     const insertBtn = event.target;
     if(insertBtn) {
@@ -21,7 +23,6 @@ export function permaLink(event) {
         inputField.replaceWith(link);
         insertBtn.inserted = true;
         insertBtn.remove();
-        //insertBtn.parentElement.innerHTML = `<a href = "${inputField.value}" target="_blank" rel="noopener noreferrer">${inputField.value}</a>`; 
             
     }
 }

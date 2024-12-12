@@ -8,10 +8,14 @@ import { createDropdown, displayDropdownOptions, displayDropdownSelection } from
 import { displayVideo, hideVideo } from '../ModuleEditFunctions/VideoFunctions';
 import { previewOrEditPage} from '../ModuleEditFunctions/PreviewFunctions';
 import { addQuestion, gradeSubmission } from '../ModuleEditFunctions/QuizFunctions';
+import { save } from '../ModuleEditFunctions/SaveFunctions';
 
 const ModuleEdit = () => {  
   //preview button ref
   const previewEditBtnRef = useRef(null);
+
+  //save button ref
+  const saveBtnRef = useRef(null);
 
   //dropdown menu logic refs
   const typeSelectBtnRef = useRef(null);
@@ -42,6 +46,12 @@ const ModuleEdit = () => {
     const previewEditBtn= previewEditBtnRef.current;
     if (previewEditBtn) {
       previewEditBtn.addEventListener("click", previewOrEditPage);
+    }
+
+    //get save button and add its funcitonality to it
+    const saveBtn = saveBtnRef.current;
+    if(saveBtn){
+      saveBtn.addEventListener("click", save)
     }
 
 
@@ -865,8 +875,17 @@ const ModuleEdit = () => {
           submitBtn.subsUsed = 0;
         });
 
+        const reenableSubsBtn = document.createElement("button");
+        reenableSubsBtn.classList.add("reenable-subs");
+        reenableSubsBtn.textContent = "Re-enable Submissions"
+        reenableSubsBtn.addEventListener("click", () => {
+          submitBtn.disabled = false;
+          submitBtn.subsUsed = 0;
+        });
+
         subContainer.appendChild(maxSubmissions);
         subContainer.appendChild(setMaxSubsBtn);
+        subContainer.appendChild(reenableSubsBtn);
 
         questionDataContainer.appendChild(subContainer);
 
@@ -963,13 +982,17 @@ const ModuleEdit = () => {
       if (addBtn) {
         addBtn.removeEventListener("click", addElement);
       }
+
+      if (saveBtn) {
+        saveBtn.removeEventListener("click", save);
+      }
     };
     
   });
 
     //rendered
     return (
-        <div className="relative bg-white">
+        <div className="relative bg-white pt-52">
           <div className="relative z-10">
             <div id = "non-footer">
               <div id = "add-module-container" className = "columns-3 order-first">
@@ -981,7 +1004,7 @@ const ModuleEdit = () => {
                   </button>
 
                   {/*Dropdown menu*/}
-                  <div ref = {typeDropdownRef} id="module-element-type-dropdown" className="z-10 hidden relative bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
+                  <div ref = {typeDropdownRef} id="module-element-type-dropdown" className="z-10 hidden relative bg-gray-200 divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
                       <ul className="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
                         <li>
                           <button ref = {linkSelButtonRef} id = "type-link" className="block w-full px-4 py-2 text-center bg-gray-200 hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white rounded">Link</button>
@@ -1014,7 +1037,7 @@ const ModuleEdit = () => {
                 
               </div>
               <button id ="preview-module-page-btn" ref = {previewEditBtnRef}>Preview</button>
-              <button id ="save-module-page-btn">Save</button>
+              <button id ="save-module-page-btn" ref = {saveBtnRef}>Save</button>
               </div>
           </div>
         </div>

@@ -1,5 +1,4 @@
-//need to add way to disabled the dropdown...need to hide it first..
-//also need to make sure there is an image there
+//function to reverse image insertion
 export function hideImage(event) {
   if(event.currentTarget.insertBtn.inserted){
     const imgContainer = event.currentTarget.parent;
@@ -14,6 +13,7 @@ export function hideImage(event) {
   }
 }
 
+//function to display inserted image
 export function displayImage(event) {
   let file;
   if(event.target.files) {
@@ -39,6 +39,7 @@ export function displayImage(event) {
   }
 }
 
+//function to let users resize the image
 export function changeImageSize(event) {
   event.preventDefault();
   const imageEmbed = event.target.dropdownContainer.parentElement.parentElement.children[0];
@@ -84,7 +85,7 @@ export function createCaption(event) {
       caption.appendChild(text);
       
 
-
+      //caption delte button
       const deleteButton = document.createElement("button");
       const deleteIcon = document.createElement("i");
       deleteIcon.classList.add("bi", "bi-trash3-fill");
@@ -95,7 +96,7 @@ export function createCaption(event) {
       deleteButton.addEventListener("click", () => deleteButton.parentElement.remove());
       caption.appendChild(deleteButton);
 
-      
+      //set the corresponding image for the caption so we can hide/reveal the caption on image click
       const correspondingImage = document.getElementById(`image-embed-${event.target.elID}-${event.target.choice}`); 
       if(correspondingImage) {
         correspondingImage.addEventListener("click", () => {
@@ -107,7 +108,7 @@ export function createCaption(event) {
         });
 
 
-
+        //append the caption to the whole page (not including the footer)
         wholeNonFooter.appendChild(caption);
         // Drag start: Add class or set data as needed
         caption.addEventListener("dragstart", function (e) {
@@ -143,8 +144,6 @@ export function createCaption(event) {
                 const mouseX = e.clientX - containerRect.left;
                 const mouseY = e.clientY - containerRect.top;
 
-                console.log(mouseX);
-                console.log(mouseY);
                 // Adjust for the offset of the dragged element
                 const adjustedX = mouseX - offsetX - 330; //manual adjustment may not be good...
                 const adjustedY = mouseY - offsetY - 55;
@@ -168,6 +167,7 @@ export function createCaption(event) {
   }
 }
 
+//allow the user to choose which image to attach the caption to
 export function updateChoice (event) { 
   const capAddButton = document.getElementById(`caption-add-btn-${event.target.elID}`);
   capAddButton.choice = event.target.textContent;

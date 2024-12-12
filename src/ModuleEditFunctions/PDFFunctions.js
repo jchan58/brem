@@ -1,4 +1,4 @@
-//PDF display function
+//reverse PDF inserted
 export function hidePDF(event) {
     if(event.currentTarget.insertBtn.inserted) {
         const element = event.currentTarget.parent;
@@ -10,6 +10,7 @@ export function hidePDF(event) {
     }
 }
 
+//display inserted PDF 
 export function displayPDF(event) {
     const file = event.target.parentElement.children[0].files[0];
     

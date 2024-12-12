@@ -392,6 +392,20 @@
     margin-left: 0.5rem;
 }
 
+.reenable-subs{
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid #333;
+    background-color: #fff;
+    color: #333;
+    cursor: pointer;
+    width: 120px;
+    height: 60px;
+    margin-left: 2px;
+    margin-top: 5px;
+}
+
 .retry-btn{
     font-size: 1.0rem;
     padding: 0.5rem 1rem;

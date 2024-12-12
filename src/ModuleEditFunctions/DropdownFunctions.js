@@ -37,7 +37,7 @@ export function createDropdown(parent, label, menuItems, initDisabled = true, el
     // Create dropdown container div
     const dropdownDiv = document.createElement('div');
     dropdownDiv.id = `${label}-type-dropdown`;
-    classesStr = "dropdown z-10 hidden absolute left-1/2 transform -translate-x-1/2 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700";
+    classesStr = "dropdown z-10 hidden absolute left-1/2 transform -translate-x-1/2 bg-gray-200 divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700";
     classes = classesStr.split(" ");
     dropdownDiv.classList.add(...classes);
     // Create unordered list element

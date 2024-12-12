@@ -1,3 +1,4 @@
+//helper function to shuffle the array
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -7,6 +8,7 @@ function shuffleArray(array) {
   }
 }
 
+//when the user is correct, play the video and make it clickable
 function handleCorrectAnswer(event) {
   event.target.parent.classList.add("hidden");
   event.target.parent.parentElement.classList.add("hidden");
@@ -14,12 +16,14 @@ function handleCorrectAnswer(event) {
   event.target.video.classList.remove("pointer-events-none");
 }
 
+//when the answer is wrong, renablethe options so the user can try again, and hide the popup
 function handleWrongAnswer(event) {
   const radios =  document.getElementsByName(event.target.radioGroup);
   radios.forEach(item => item.disabled = false);
   event.target.parent.classList.add("hidden");
 }
 
+//correct answer popup activity
 function correctAnswerPopUp(event) {
   const radios =  document.getElementsByName(event.target.name);
   radios.forEach(item => item.disabled = true);
@@ -48,6 +52,7 @@ function correctAnswerPopUp(event) {
   popUp.classList.remove("hidden");
 }
 
+//wrong answer popup activity
 function incorrectAnswerPopUp(event) {
   const radios =  document.getElementsByName(event.target.name);
   radios.forEach(item => item.disabled = true);
@@ -74,6 +79,7 @@ function incorrectAnswerPopUp(event) {
   popUp.classList.remove("hidden");
 }
 
+//function to show the question on the video
 function showQuestion(question, options, explanations, parent, elID, video) {
     parent.innerHTML = "";
     
@@ -153,6 +159,7 @@ function showQuestion(question, options, explanations, parent, elID, video) {
     parent.classList.remove("hidden");
 }
 
+//allow admin to restore passed or otherwise deleted timestamps
 function restoreTimeStampList(event){
   const videoObj = event.target.videoOb;
   videoObj.stampList = event.target.backUpList;
@@ -181,6 +188,7 @@ function restoreTimeStampList(event){
   });
 }
 
+//reverse insertion of video
 export function hideVideo(event) {
   if(event.currentTarget.insertBtn.inserted) {
     const element = event.currentTarget.parent;
@@ -192,7 +200,7 @@ export function hideVideo(event) {
   }
 }
 
-//add warning, insert file first
+//insert video into page
 export function displayVideo(event) {
     const elID = event.target.elID;
 
@@ -270,57 +278,61 @@ export function displayVideo(event) {
         } else if (!inputBox.value.includes("!!!")){
           alert(`Please enter at least one answer to the question before adding a timestamp.`);
         } else {
-          const questionInfo = inputBox.value.split("!!!");
-          inputBox.value = "";
-          
-          const explainInfo = explainBox.value.split("!!!");
-          explainBox.value  = "";
+          const existing_time = videoObj.stampList.filter((item) => item.time === val);
+          if(existing_time.length !== 0) {
+            alert(`Please enter unique timestamps (timestamp already exists).`);
+          } else {
+            const questionInfo = inputBox.value.split("!!!");
+            inputBox.value = "";
+            
+            const explainInfo = explainBox.value.split("!!!");
+            explainBox.value  = "";
 
-          const options = questionInfo.slice(1, questionInfo.length);
-          if(options.length > 26) { 
-            options.splice(26, options.length - 26);
-            console.log(options);
-            alert("Limit hit. Only 26 answer options saved.");
-          }
-          videoObj.stampList.push(
-            {time: val, question: questionInfo[0], answer: questionInfo[1], allOptions: options, explanations: explainInfo});
-          videoObj.backUpStampList.push(
-            {time: val, question: questionInfo[0], answer: questionInfo[1], allOptions: options, explanations: explainInfo});
-          
-            console.log(videoObj.stampList);
-          pTimeBox1.value = "";
-          timestamps.innerHTML = "";
-          // Iterate over the list of items
-          videoObj.stampList.forEach(item => {
-            const timestamp = document.createElement("div");
-            timestamp.classList.add("timestamp");
-            timestamp.classList.add("outline", "outline-black", "outline-2","rounded", "shadow-lg");
+            const options = questionInfo.slice(1, questionInfo.length);
+            if(options.length > 26) { 
+              options.splice(26, options.length - 26);
+              console.log(options);
+              alert("Limit hit. Only 26 answer options saved.");
+            }
+            videoObj.stampList.push(
+              {time: val, question: questionInfo[0], answer: questionInfo[1], allOptions: options, explanations: explainInfo});
+            videoObj.backUpStampList.push(
+              {time: val, question: questionInfo[0], answer: questionInfo[1], allOptions: options, explanations: explainInfo});
+            
+              console.log(videoObj.stampList);
+            pTimeBox1.value = "";
+            timestamps.innerHTML = "";
+            // Iterate over the list of items
+            videoObj.stampList.forEach(item => {
+              const timestamp = document.createElement("div");
+              timestamp.classList.add("timestamp");
+              timestamp.classList.add("outline", "outline-black", "outline-2","rounded", "shadow-lg");
 
-            const removeBtn = document.createElement("button");
-            removeBtn.classList.add("remove-btn")
-            // Set the button text content
-            removeBtn.textContent = "-";
-            timestamp.innerText = item.time;
-            timestamp.value = item.time;
-            removeBtn.item = item;
-            removeBtn.addEventListener("click", (event) => { 
-              alert(`You clicked on ${event.target.item.time}`);
-              videoObj.stampList = videoObj.stampList.filter((item) => item !== event.target.item);
-              removeBtn.parentElement.remove();
+              const removeBtn = document.createElement("button");
+              removeBtn.classList.add("remove-btn")
+              // Set the button text content
+              removeBtn.textContent = "-";
+              timestamp.innerText = item.time;
+              timestamp.value = item.time;
+              removeBtn.item = item;
+              removeBtn.addEventListener("click", (event) => { 
+                alert(`You clicked on ${event.target.item.time}`);
+                videoObj.stampList = videoObj.stampList.filter((item) => item !== event.target.item);
+                removeBtn.parentElement.remove();
+              });
+
+              timestamp.append(removeBtn);
+              timestamps.append(timestamp);
             });
-
-            timestamp.append(removeBtn);
-            timestamps.append(timestamp);
-          });
-          console.log(videoObj.stampList);
+            console.log(videoObj.stampList);
+          }
         }
       })
 
       const resTimestampsBtn = document.createElement("button");
       resTimestampsBtn.innerText = "Restore All Timestamps";
       resTimestampsBtn.classList.add("outline", "outline-black", "outline-1", "restore-times-btn");
-      //resTimestampsBtn.height = 50;
-      //resTimestampsBtn.width = 20;
+
       resTimestampsBtn.classList.add("p-4");
       resTimestampsBtn.videoOb = videoObj;
       resTimestampsBtn.backUpList = videoObj.backUpStampList;
@@ -334,8 +346,7 @@ export function displayVideo(event) {
       pauseDataContainer.append(resTimestampsBtn);
       pauseDataContainer.append(timestamps);
 
-        //pop-up place to add question?
-
+      //as time passes, check for a timestamp
       videoObj.addEventListener("timeupdate", (event) => { 
         const time = Math.floor(Number(videoObj.currentTime));
         // current time is given in seconds
@@ -349,7 +360,7 @@ export function displayVideo(event) {
                 timestamp.remove();
               }
             });
-            videoObj.stampList = videoObj.stampList.filter((item) => item.time !== time ); //for admin, want it to come back, or no, don't just let them test it
+            videoObj.stampList = videoObj.stampList.filter((item) => item.time !== time ); //remove the timestamp so the user can go back through the video without getting the question again
             showQuestion(pauseData.question, pauseData.allOptions, pauseData.explanations, questionBox, elID, videoObj);
         }
       });

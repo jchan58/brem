@@ -33,7 +33,6 @@ function App() {
         <Route path="/alumni6" element={<Alumni6/>} />
         <Route path="/alumni7" element={<Alumni7/>} />
         <Route path="/contact" element={<Contact/>} />
-
         <Route path="/editmodule" element={<ModuleEdit/>} />
       </Routes>
       <Footer/>

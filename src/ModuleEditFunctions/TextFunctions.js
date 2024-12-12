@@ -1,3 +1,4 @@
+//reverse the text's insertion
 export function reversePermaText(event) {
     if(event.currentTarget.insertBtn.inserted) {
         const element = event.currentTarget.parent;
@@ -12,6 +13,7 @@ export function reversePermaText(event) {
     }
 }
 
+//insert the user's text
 export function permaText(event) {
     const insertBtn = event.target;
     if(insertBtn) {
@@ -42,7 +44,7 @@ export function permaText(event) {
     }
 }
 
-
+//allow the user to restyle the font of the text
 export function changeFontStyle(event) {
     event.preventDefault(); //prevent change movement
     const container = event.target.dropdownContainer;
@@ -69,6 +71,7 @@ export function changeFontStyle(event) {
     }
 }
 
+//allow the user to resize the font of the text
 export function changeFontSize(event) {
     event.preventDefault();
     const sizes = ["text-xs", "text-sm", "text-base", "text-lg", "text-xl", "text-2xl", "text-3xl", "text-4xl", "text-5xl", "text-6xl", "text-7xl", "text-8xl", "text-9xl"];
@@ -95,6 +98,7 @@ export function changeFontSize(event) {
     }
 }
 
+//allow the user change the position of the text
 export function changeTextPosition(event) { 
     event.preventDefault();
     const positions = ["left-0.5", "left-1/4", "left-1/3", "left-1/2", "left-2/3", "left-3/4", "right-11"];

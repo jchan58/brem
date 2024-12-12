@@ -1,4 +1,5 @@
 export function previewOrEditPage(event) {
+    //collect elements you want to flip into preview/edit mode
     const toChange = [];
 
     const addModuleContainer = document.getElementById("add-module-container");
@@ -63,7 +64,7 @@ export function previewOrEditPage(event) {
     const editButtonsA = document.getElementsByClassName("answer-edit-btn");
     toChange.push(...editButtonsA);
 
-
+    //remove/add boxing
     if(event.target.textContent === "Preview") {
       Array.from(elementContainers).forEach(item => {
         console.log(event.target.textContent);
@@ -80,7 +81,7 @@ export function previewOrEditPage(event) {
     }
 
     
-
+    //flip visibility
     toChange.forEach(item => { 
       if(event.target.textContent === "Preview") {
         item.classList.add("hidden");
@@ -100,7 +101,7 @@ export function previewOrEditPage(event) {
     //hide all the dropdowns
     Array.from(dropdowns).forEach(dropdown => dropdown.hide());
 
-    //re-enable the submit button on quizzes on preview or back to edit
+    //re-enable the submit button on quizzes on mode switch
     const submitQuizButtons = document.getElementsByClassName("submit-quiz");
     Array.from(submitQuizButtons).forEach(item => { 
       item.disabled = false;
