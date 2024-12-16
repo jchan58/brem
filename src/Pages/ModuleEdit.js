@@ -992,7 +992,7 @@ const ModuleEdit = () => {
 
     //rendered
     return (
-        <div className="relative bg-white pt-52">
+        <div className="relative bg-white pt-5">
           <div className="relative z-10">
             <div id = "non-footer">
               <div id = "add-module-container" className = "columns-3 order-first">
@@ -1036,8 +1036,9 @@ const ModuleEdit = () => {
               <div id = "new-modules-container" ref = {newElContainerRef}>
                 
               </div>
-              <button id ="preview-module-page-btn" ref = {previewEditBtnRef}>Preview</button>
-              <button id ="save-module-page-btn" ref = {saveBtnRef}>Save</button>
+              <div className="mb-36"></div>
+              <button id ="preview-module-page-btn" ref = {previewEditBtnRef} className = "ml-4 mb-3.5" >Preview</button>
+              <button id ="save-module-page-btn" ref = {saveBtnRef} className = "mr-4 mb-3.5" >Save</button>
               </div>
           </div>
         </div>
