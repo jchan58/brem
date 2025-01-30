@@ -1,3 +1,4 @@
+import { postUnit } from "../api/api";
 
 const functionsForUserSide = ["gradeSubmission()", "timeStampWatch()"]; //I will call timestamp triggering stuff timeStampWatch()
 
@@ -11,7 +12,7 @@ function makeFunctionalHTML(){
     });
 }
 
-//helper function to remove user side functions to the html code
+//helper function to remove user side functions in the html code
 function reverseFunctionalHTML(){
     //for quiz submission buttons
     const submitQuizBtns = document.getElementsByClassName("submit-quiz");
@@ -31,15 +32,43 @@ function addScript() { //only works if the js file is in the same place as the h
     document.head.appendChild(scriptElement);
 }
 
-//helper function to remove the added script element to the body
+//helper function to remove the added script element from the body
 function removeScript() {
     const scriptElement = document.getElementById("user-side-function-script");
     scriptElement.remove();
 }
 
 
+//send the page as a string of html to the server
+async function send(content) {
+    /*
+    try {
+        await client.connect(); 
+        const unit_pages_db = client.db("unit_pages");
+        const unitsCollection = unit_pages_db.collection("units");
+
+        const page = {
+            content
+        }
+
+        let result = await unitsCollection.insertOne(page);
+        console.log(`Successfully inserted document: ${result.insertedId}`);
+    } catch (err){
+        console.log(`Error inserting document: ${err} `);
+    } finally {
+        await client.close();
+    }*/
+   try {
+    let results = await fetch(`http://localhost:5050/posts/`).then(resp => resp.json()); //testing out mongodb stuff, will change to more like smth above; issue
+    console.log(results);
+    } catch (error) {
+        console.error("Error:", error);
+    }
+}
+
+
 //cannot save files to local computer, will send it to server, just want to see what the file looks like...I think it will work?
-export function save(){
+export async function save(){
 
     //make it so necessary functions can be used by the html code
     makeFunctionalHTML();
@@ -51,6 +80,27 @@ export function save(){
     // Create a blob with the inner HTML content
     const blob = new Blob([website], { type: "text/html" });
 
+    //const blobBytes = await blob.bytes();
+    //const htmlString = await blob.text();
+    //console.log(typeof(htmlString));
+
+    //console.log(blobBytes); may need to save links here and then use file system to pull...
+
+    /*
+    let base64String;
+    const reader = new FileReader();
+    reader.readAsDataURL(blob);
+    reader.onloadend = function () {
+        base64String = reader.result;
+    }
+    console.log('Base64 String - ', base64String);
+    postUnit(base64String);*/
+
+    //this is bad, need to store files on a file server... but not cheap...will need to do for images, but maybe for html better this way?
+    //wait, can use mongo gridfs for blobs... idk do this instead...
+    //use ceph?
+
+    /*
     // Create a download link for the blob
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
@@ -62,7 +112,7 @@ export function save(){
 
     // Clean up by removing the element and revoking the blob URL
     document.body.removeChild(a);
-    URL.revokeObjectURL(a.href);
+    URL.revokeObjectURL(a.href);*/
     
     console.log('saved');
 

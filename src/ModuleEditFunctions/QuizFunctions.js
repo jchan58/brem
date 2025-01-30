@@ -302,3 +302,5 @@ export function addQuestion(question, options, explanations, parent, questionId,
     questionDiv.appendChild(fieldset);
     parent.appendChild(questionDiv);
 }
+
+//image

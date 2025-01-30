@@ -217,11 +217,13 @@ export function displayVideo(event) {
       //create questionbox object (will start hidden)
       const questionBox = document.createElement("div");
       questionBox.classList.add("question-box", "hidden", "absolute", "top-1/2", "left-1/2", "transform", "-translate-x-1/2", "-translate-y-1/2");
-      
+      questionBox.id = `question-box-${elID}`;
       videoAndPauseDataContainer.append(questionBox);
       //create video object
       const fileURL = URL.createObjectURL(file);
       const videoObj = document.createElement("video");
+      videoObj.classList.add(`video-obj`); //ADDED LINES FOR USER
+      videoObj.id = `video-obj-${elID}`; //ADDED LINES FOR USER
       videoObj.width = "700";
       videoObj.setAttribute("controls", "true"); 
       const source = document.createElement("source");

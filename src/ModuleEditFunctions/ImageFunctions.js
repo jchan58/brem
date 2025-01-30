@@ -85,7 +85,7 @@ export function createCaption(event) {
       caption.appendChild(text);
       
 
-      //caption delte button
+      //caption delete button
       const deleteButton = document.createElement("button");
       const deleteIcon = document.createElement("i");
       deleteIcon.classList.add("bi", "bi-trash3-fill");
@@ -98,6 +98,7 @@ export function createCaption(event) {
 
       //set the corresponding image for the caption so we can hide/reveal the caption on image click
       const correspondingImage = document.getElementById(`image-embed-${event.target.elID}-${event.target.choice}`); 
+      correspondingImage.classList.add("caption-image");
       if(correspondingImage) {
         correspondingImage.addEventListener("click", () => {
           if(!caption.classList.contains("hidden")) { //will need to start hidden for users

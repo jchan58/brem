@@ -851,6 +851,7 @@ const ModuleEdit = () => {
 
         //question submission button
         const submitBtn = document.createElement("button");
+        submitBtn.id = `submit-quiz-${moduleElements.length}`;
         submitBtn.textContent = "Submit";
         submitBtn.classList.add("submit-quiz", "disabled:opacity-50", "disabled:cursor-not-allowed");
         submitBtn.data = questionDataContainer.questionData;
