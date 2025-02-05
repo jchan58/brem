@@ -1,4 +1,5 @@
 import { pullUnit } from "../api/api"; 
+import { getStorage } from "firebase/storage";
 //note this will break if there are no units! fix or enforce...
 /*
 const htmlByteArray = await pullUnit(); //oof this is happening no matter the page...
@@ -53,6 +54,7 @@ async function processAndWriteHTML(file) {
     }
 }
 
+/*
 //make sure the input field exists, and then look for when the file is uploaded and processAndWrite
 window.onload = function() {
     const fileInput = document.getElementById("fileInput");
@@ -66,7 +68,9 @@ window.onload = function() {
         }
       });
     }
-  };
+  };*/
+
+
 
 
 const UnitPage = () => {
