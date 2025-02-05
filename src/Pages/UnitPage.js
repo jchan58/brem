@@ -1,5 +1,6 @@
 import { pullUnit } from "../api/api"; 
-import { getStorage } from "firebase/storage";
+import { ref, getStorage, getBlob } from "firebase/storage";
+import app from "../firebaseConfig";
 //note this will break if there are no units! fix or enforce...
 /*
 const htmlByteArray = await pullUnit(); //oof this is happening no matter the page...
@@ -19,6 +20,12 @@ if (htmlString) {
 }*/
 
 //testing without backend, skipping to document write to page step:
+
+
+//FIREBASE
+const storage = getStorage();
+const testRef = ref(storage, "units/unit_file_test.html");
+
 
 function readHTMLFile(file) {
     return new Promise((resolve, reject) => {
@@ -53,6 +60,15 @@ async function processAndWriteHTML(file) {
       console.error(error);
     }
 }
+
+
+getBlob(testRef).then((htmlBlob) => {
+  const unitFile = new File([htmlBlob], "unit_file_test.html", {type: "text/html"});
+  processAndWriteHTML(unitFile);
+}).catch((error) => {
+  console.log(`An error occured. Code: ${error.code}`)
+});
+
 
 /*
 //make sure the input field exists, and then look for when the file is uploaded and processAndWrite

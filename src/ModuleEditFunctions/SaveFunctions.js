@@ -1,6 +1,6 @@
 import { postUnit } from "../api/api";
 import { getStorage, ref } from "firebase/storage";
-
+import app from "../firebaseConfig";
 
 const storage = getStorage();
 
@@ -87,8 +87,8 @@ export async function save(){
     // Create a blob with the inner HTML content
     const blob = new Blob([website], { type: "text/html" });
 
-    const unitFile = new File([blob], "unit_file_test.html", {type: "text/html"});
-    const fileRef = ref(storage, 'units/unit_file_test.html');
+    const unitFile = new File([blob], "unit_file_test.html", {type: "text/html"}); 
+    const fileRef = ref(storage, 'units/unit_file_test.html'); //write this to the database along with the unit name
 
     //const blobBytes = await blob.bytes();
     //const htmlString = await blob.text();
@@ -125,7 +125,7 @@ export async function save(){
     URL.revokeObjectURL(a.href);
     */
     console.log(`saved at ${fileRef}`);
-    //this works! it was saved at gs://deltatest-1b86e.firebasestorage.app/units/unit_file_test.html (personal account and other account)
+    //this works! it was saved at gs://deltaproject-2025.firebasestorage.app/units/unit_file_test.html(personal account and other account)
     //but why can't I look at it in firebase? also...this file arrangement is bad (app with frontend, but I am guessing Joey will set it up)
     //there probably is a function for looking at it
 
