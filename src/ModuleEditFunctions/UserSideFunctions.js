@@ -169,9 +169,44 @@ function revealHideCaption(event) {
 }
 
 //video
+
+function equipVideo() {
+  const videoObjList = [];
+  const videoObjs = document.getElementsByClassName("video-obj");
+  videoObjList.push(...videoObjs);
+
+  videoObjList.forEach(videoObj => {
+    videoObj.stampList = []; //get this of pause timestamps list from database
+
+    //as time passes, check for a timestamp
+    videoObj.addEventListener("timeupdate", (event) => { 
+      const time = Math.floor(Number(videoObj.currentTime));
+      // current time is given in seconds
+      if(videoObj.stampList.some(el => el.time === time)) {
+          const pauseData = videoObj.timestamps.filter(item => item.time === time)[0]; //going to have to make sure times are unique
+          // pause the playback
+          videoObj.pause();
+
+          //does this not do the same as the next statment?
+          Array.from(videoObj.stampList).forEach(timestamp => {
+            if(Number(timestamp.value) === time) {
+              timestamp.remove();
+            }
+          });
+
+          videoObj.stampList = videoObj.stampList.filter((item) => item.time !== time ); //remove the timestamp so the user can go back through the video without getting the question again
+          showQuestion(pauseData.question, pauseData.allOptions, pauseData.explanations, elID, videoObj); //these pauseData stuff will come from database...
+      }
+    });
+  });
+}
+
+
+
+
 //function to show the question on the video
 function showQuestion(question, options, explanations, video) {
-  const parent = document.getElementById(`question-box-${elID}`); //again, will need to save elID with everything in the database and get it
+  const parent = document.getElementById(`question-box-${elID}`); 
   parent.innerHTML = "";
   
   const popUp = document.createElement("div");
@@ -248,4 +283,76 @@ function showQuestion(question, options, explanations, video) {
   questionDiv.appendChild(fieldset);
   parent.appendChild(questionDiv);
   parent.classList.remove("hidden");
+}
+
+
+//correct answer popup activity
+function correctAnswerPopUp(event) {
+  const radios =  document.getElementsByName(event.target.name);
+  radios.forEach(item => item.disabled = true);
+  const popUp = event.target.quesBox.children[0];
+  popUp.innerHTML = "";
+  const header = document.createElement('h3');
+  header.textContent = "Correct!";
+  header.classList.add("font-bold", "text-xl");
+  const explainText = document.createElement("p");
+  explainText.textContent = event.target.explain;
+
+  const correctText = document.createElement("p");
+  correctText.textContent = event.target.answer;
+
+  const continueButton = document.createElement("button");
+  continueButton.classList.add("continue-btn", "absolute", "right-1", "bottom-1");
+  continueButton.innerText = "Continue";
+  continueButton.parent = popUp;
+  continueButton.video = event.target.video;
+  continueButton.addEventListener("click", handleCorrectAnswer);
+
+  popUp.appendChild(header);
+  popUp.appendChild(correctText);
+  popUp.appendChild(explainText);
+  popUp.appendChild(continueButton);
+  popUp.classList.remove("hidden");
+}
+
+//wrong answer popup activity
+function incorrectAnswerPopUp(event) {
+  const radios =  document.getElementsByName(event.target.name);
+  radios.forEach(item => item.disabled = true);
+  const popUp = event.target.quesBox.children[0];
+  popUp.innerHTML = "";
+  const header = document.createElement('h3');
+  header.textContent = "Incorrect";
+  header.classList.add("font-bold", "text-xl")
+
+  const explainText = document.createElement("p");
+  explainText.textContent = event.target.explain;
+
+  const retryButton = document.createElement("button");
+  retryButton.classList.add("retry-btn", "absolute", "right-1", "bottom-1");
+  retryButton.innerText = "Try Again";
+  retryButton.parent = popUp;
+  retryButton.video = event.target.video;
+  retryButton.radioGroup = event.target.name;
+  retryButton.addEventListener("click", handleWrongAnswer);
+
+  popUp.appendChild(header);
+  popUp.appendChild(explainText);
+  popUp.appendChild(retryButton);
+  popUp.classList.remove("hidden");
+}
+
+//when the user is correct, play the video and make it clickable
+function handleCorrectAnswer(event) {
+  event.target.parent.classList.add("hidden");
+  event.target.parent.parentElement.classList.add("hidden");
+  event.target.video.play();
+  event.target.video.classList.remove("pointer-events-none");
+}
+
+//when the answer is wrong, renablethe options so the user can try again, and hide the popup
+function handleWrongAnswer(event) {
+  const radios =  document.getElementsByName(event.target.radioGroup);
+  radios.forEach(item => item.disabled = false);
+  event.target.parent.classList.add("hidden");
 }

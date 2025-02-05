@@ -1,4 +1,24 @@
 import { postUnit } from "../api/api";
+import { initializeApp } from "firebase/app"; //dont need?
+import { getStorage, ref } from "firebase/storage";
+
+// Get a reference to the storage service, which is used to create references in your storage bucket
+const firebaseConfig = {
+  apiKey: "AIzaSyAVC4N1BzxZpfKwJOzbehG91q6mPd2FKgA", //do not push with this!
+  authDomain: "deltatest-1b86e.firebaseapp.com",
+  projectId: "deltatest-1b86e",
+  storageBucket: "deltatest-1b86e.firebasestorage.app",
+  messagingSenderId: "618030324537",
+  appId: "1:618030324537:web:9759808f820e74598926e8",
+  measurementId: "G-NGSPW1XKRS"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const storage = getStorage();
+
+// Create a storage reference from our storage service
+const storageRef = ref(storage);
 
 const functionsForUserSide = ["gradeSubmission()", "timeStampWatch()"]; //I will call timestamp triggering stuff timeStampWatch()
 
@@ -80,6 +100,9 @@ export async function save(){
     // Create a blob with the inner HTML content
     const blob = new Blob([website], { type: "text/html" });
 
+    const unitFile = new File([blob], "unit_file_test.html", {type: "text/html"});
+    const fileRef = ref(storage, 'units/unit_file_test.html');
+
     //const blobBytes = await blob.bytes();
     //const htmlString = await blob.text();
     //console.log(typeof(htmlString));
@@ -112,9 +135,12 @@ export async function save(){
 
     // Clean up by removing the element and revoking the blob URL
     document.body.removeChild(a);
-    URL.revokeObjectURL(a.href);*/
-    
-    console.log('saved');
+    URL.revokeObjectURL(a.href);
+    */
+    console.log(`saved at ${fileRef}`);
+    //this works! it was save at gs://deltatest-1b86e.firebasestorage.app/units/unit_file_test.html 
+    //but why can't I look at it in firebase? also...this file arrangement is bad (app with frontend, but I am guessing Joey will set it up)
+    //there probably is a function for looking at it
 
     //revert the page to normal so the admin can keep editing if they want
     reverseFunctionalHTML();
