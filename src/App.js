@@ -13,6 +13,7 @@ import Alumni5 from './Pages/alumni5.js';
 import Alumni6 from './Pages/alumni6.js';
 import Alumni7 from './Pages/alumni7.js';
 import Contact from './Pages/contact.js';
+import Modules from './Pages/modules.js';
 
 import ModuleEdit from './Pages/ModuleEdit.js';
 import UnitPage from './Pages/UnitPage.js'
@@ -34,6 +35,7 @@ function App() {
         <Route path="/alumni6" element={<Alumni6/>} />
         <Route path="/alumni7" element={<Alumni7/>} />
         <Route path="/contact" element={<Contact/>} />
+        <Route path="/modules" element={<Modules/>} />
         <Route path="/editmodule" element={<ModuleEdit/>} />
         <Route path = "/unitpage" element={<UnitPage/>} />
       </Routes>
