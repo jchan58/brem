@@ -1,6 +1,8 @@
+import { useEffect, useState } from "react";
 import { pullUnit } from "../api/api"; 
-import { ref, getStorage, getBlob } from "firebase/storage";
-import app from "../firebaseConfig";
+import { equipQuizzes, equipVideos } from "../ModuleEditFunctions/UserSideFunctions.js";
+//import { ref, getStorage, getBlob } from "firebase/storage";
+//import app from "../firebaseConfig";
 //note this will break if there are no units! fix or enforce...
 /*
 const htmlByteArray = await pullUnit(); //oof this is happening no matter the page...
@@ -23,8 +25,9 @@ if (htmlString) {
 
 
 //FIREBASE
+/*does not work
 const storage = getStorage();
-const testRef = ref(storage, "units/unit_file_test.html");
+const testRef = ref(storage, "units/unit_file_test.html");*/
 
 
 function readHTMLFile(file) {
@@ -53,43 +56,51 @@ function readHTMLFile(file) {
   
 //process the HTML file and write it to the page
 async function processAndWriteHTML(file) {
+  console.log("called");
     try {
-      const htmlContent = await readHTMLFile(file);
-      document.write(htmlContent); // Write the file content to the paget
+      let htmlContent = await readHTMLFile(file);
+      document.write(htmlContent); 
+
     } catch (error) {
       console.error(error);
     }
 }
 
 
-getBlob(testRef).then((htmlBlob) => {
-  const unitFile = new File([htmlBlob], "unit_file_test.html", {type: "text/html"});
-  processAndWriteHTML(unitFile);
-}).catch((error) => {
-  console.log(`An error occured. Code: ${error.code}`)
-});
 
+const UnitPage = () => {
+  const queryParams = new URLSearchParams(window.location.search);
+  const unitName = queryParams.get("unit_name"); //get the unit name from the url query param (http://localhost:3000/unitpage?unit_name=[unitName])
+  //make sure the input field exists, and then look for when the file is uploaded and processAndWrite
+  const [loaded, setLoaded] = useState(false);
+  useEffect(() => { 
+    
+    if(!loaded){
+      const completeHTMLProcessing = async (file) => {
+        setLoaded(true);
+        await processAndWriteHTML(file);
+        console.log("called");
+        document.getElementById("undefined").remove(); //not quite...
+        await equipVideos(unitName); 
+        await equipQuizzes(unitName);
+      }
 
-/*
-//make sure the input field exists, and then look for when the file is uploaded and processAndWrite
-window.onload = function() {
-    const fileInput = document.getElementById("fileInput");
-    if (fileInput) {
+      const fileInput = document.getElementById("fileInput");
       fileInput.addEventListener("change", function(event) {
+
         const file = event.target.files[0];
         if (file) {
-          processAndWriteHTML(file);
+          completeHTMLProcessing(file); //note StrictMode caused problems so turned it off
+        //this name for now, but use name of unit file in future
         } else {
             console.log("No file selected")
         }
       });
     }
-  };*/
+    
+  }, []);
+  
 
-
-
-
-const UnitPage = () => {
     return (
         <div className="relative bg-white pt-5">
           <div className="relative z-10">

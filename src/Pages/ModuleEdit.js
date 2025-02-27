@@ -751,7 +751,7 @@ const ModuleEdit = () => {
       } else if(typeSelectBtn.classList.contains("Quiz")) {
         const newElement = document.createElement("div");
         newElement.key = moduleElements.length;
-        newElement.classList.add('element-container', "relative");
+        newElement.classList.add('element-container', 'quiz', "relative");
         newElement.id = `element-container-${moduleElements.length}`;
 
 
@@ -847,7 +847,8 @@ const ModuleEdit = () => {
         //will hold the sepearte questions
         const questions = document.createElement("div");
         questions.classList.add("questions-container", "flex", "flex-col");
-        questions.elID = moduleElements.length; 
+        questions.elID = moduleElements.length;
+        questions.id = moduleElements.length;  
 
         //question submission button
         const submitBtn = document.createElement("button");
@@ -858,6 +859,7 @@ const ModuleEdit = () => {
         submitBtn.subsUsed = 0;
         submitBtn.maxSubs = 1;
         submitBtn.elID = moduleElements.length;
+        questionDataContainer.submitBtn = submitBtn;
 
         //container to hold input field and confirmation button for setting the number of maximum submissions allowed for the quiz
         const subContainer = document.createElement("div");
@@ -914,8 +916,8 @@ const ModuleEdit = () => {
             questionDataContainer.questionData.push(
               {question: questionInfo[0], answer: questionInfo[1], allOptions: options, hintInfo: hintInfo, questionId: questionId});
 
-  
-            addQuestion(questionInfo[0], options, hintInfo, questions, questionId, submitBtn);
+            
+            addQuestion(questionDataContainer.questionData[questionDataContainer.questionData.length -1], questions, submitBtn);//questionInfo[0], options, hintInfo, questions, questionId, submitBtn);
             
             //add space between the questions, and a horizontal bar
             const breakDiv = document.createElement("div");
@@ -996,8 +998,10 @@ const ModuleEdit = () => {
         <div className="relative bg-white pt-5">
           <div className="relative z-10">
             <div id = "non-footer">
+            <div className="flex flex-row justify-end">
+              <input type = "text" className="border border-black mb-2 mr-16" id = "saved-unit-name-input" name="unit-name" placeholder="UnitName"/> 
+            </div>
               <div id = "add-module-container" className = "columns-3 order-first">
-                
                 <div id = "btn-and-dropdown-element-container">
                   <button ref = {typeSelectBtnRef} id="module-element-type-sel-btn" data-dropdown-toggle="module-element-type-dropdown" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button"> Select Module Element Type <svg className="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
                     <path stroke="currentColor" d="m1 1 4 4 4-4"/>
@@ -1039,6 +1043,7 @@ const ModuleEdit = () => {
               </div>
               <div className="mb-36"></div>
               <button id ="preview-module-page-btn" ref = {previewEditBtnRef} className = "ml-4 mb-3.5" >Preview</button>
+
               <button id ="save-module-page-btn" ref = {saveBtnRef} className = "mr-4 mb-3.5" >Save</button>
               </div>
           </div>

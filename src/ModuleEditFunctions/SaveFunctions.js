@@ -1,11 +1,11 @@
-import { postUnit } from "../api/api";
-import { getStorage, ref } from "firebase/storage";
-import app from "../firebaseConfig";
+import { postQuizData, postUnit, postVideoData, test } from "../api/api";
+//import { getStorage, ref } from "firebase/storage";
+//import app from "../firebaseConfig";
 
-const storage = getStorage();
+//const storage = getStorage();
 
 // Create a storage reference from our storage service
-const storageRef = ref(storage);
+//const storageRef = ref(storage);
 
 const functionsForUserSide = ["gradeSubmission()", "timeStampWatch()"]; //I will call timestamp triggering stuff timeStampWatch()
 
@@ -29,12 +29,12 @@ function reverseFunctionalHTML(){
 }
 
 //helper function to add script element to body so that user side functions can be accessed by the html from another file
-function addScript() { //only works if the js file is in the same place as the html folder!!
+function addScript() { //only works if the js file is in the same place as the html folder!! don't think I need since unitpage is in the same place as everything now...
     // Create a script element
     const scriptElement = document.createElement("script");
     scriptElement.id = "user-side-function-script";
     scriptElement.type = "text/javascript";
-    scriptElement.setAttribute("src", "./test_delta.js");
+    scriptElement.setAttribute("src", "./UserSideFunctions.js"); //give the html page access to the user side functions, maybe not necessary bc unit page is written to here?
 
     document.head.appendChild(scriptElement);
 }
@@ -48,23 +48,6 @@ function removeScript() {
 
 //send the page as a string of html to the server
 async function send(content) {
-    /*
-    try {
-        await client.connect(); 
-        const unit_pages_db = client.db("unit_pages");
-        const unitsCollection = unit_pages_db.collection("units");
-
-        const page = {
-            content
-        }
-
-        let result = await unitsCollection.insertOne(page);
-        console.log(`Successfully inserted document: ${result.insertedId}`);
-    } catch (err){
-        console.log(`Error inserting document: ${err} `);
-    } finally {
-        await client.close();
-    }*/
    try {
     let results = await fetch(`http://localhost:5050/posts/`).then(resp => resp.json()); //testing out mongodb stuff, will change to more like smth above; issue
     console.log(results);
@@ -73,44 +56,89 @@ async function send(content) {
     }
 }
 
+// refer to: videoObj.stampList.push(
+    //{time: val, question: questionInfo[0], answer: questionInfo[1], allOptions: options, explanations: explainInfo});
+function saveVideoQuizzes(unitName) {
+    if(unitName.includes(" ") || unitName === "") {
+        alert("Unit not saved. Must enter a unit name with no spaces");
+        return;
+    }
+    const videoObjs = document.getElementsByClassName("video-obj");
+    Array.from(videoObjs).forEach(video => {
 
-//cannot save files to local computer, will send it to server, just want to see what the file looks like...I think it will work?
-export async function save(){
+        const data = video.stampList;
+        data.forEach(item => {
 
-    //make it so necessary functions can be used by the html code
-    makeFunctionalHTML();
-    addScript();
+            const document = {
+                time: item.time,
+                question: item.question,
+                answer: item.answer,
+                allOptions: item.allOptions,
+                explanations: item.explanations,
+                id: video.id,
+                unitName: unitName
+            }
     
-    const website = document.getElementsByTagName("html")[0].innerHTML;
+            postVideoData(document);
+            console.log(`saved video question: ${document.id}`)
+        })
+        
+    })
+}
+
+//refer to questionDataContainer.questionData.push(
+   // {question: questionInfo[0], answer: questionInfo[1], allOptions: options, hintInfo: hintInfo, questionId: questionId});
+function saveQuizzes(unitName) {
+    if(unitName.includes(" ") || unitName === "") {
+        alert("Unit not saved. Must enter a unit name with no spaces");
+        return;
+    }
+    const quizzes = document.getElementsByClassName("question-data-container"); //quizzes are represented by question data containers
+
+    Array.from(quizzes).forEach(quiz => {
+        console.log(quiz);
+        const data = quiz.questionData;
+        data.forEach(item => {
+            const document = {
+                question: item.question,
+                answer: item.answer,
+                allOptions: item.allOptions,
+                hintInfo: item.hintInfo,
+                id: item.questionId,
+                quizmaxSubs: quiz.submitBtn.maxSubs,
+                unitName: unitName
+            }
+          
+            postQuizData(document); 
+            console.log(`saved quiz question: ${document.id}`)
+        })
+
+    })
+
+}
+
+//right now, saves unit to computer...must preview to save, I think this is fine? maybe want to remove hiddens but idk; oh it also has edit and save buttons, want to hide/remove those
+//as well
+export async function save(){
+    //test();
+    //make it so necessary functions can be used by the html code
+    //makeFunctionalHTML();
+    //addScript(); not necessary actually
+    
+    const website = `<!DOCTYPE html>\n` + document.getElementsByTagName("html")[0].innerHTML;
 
     console.log('saving...')
     // Create a blob with the inner HTML content
     const blob = new Blob([website], { type: "text/html" });
 
-    const unitFile = new File([blob], "unit_file_test.html", {type: "text/html"}); 
-    const fileRef = ref(storage, 'units/unit_file_test.html'); //write this to the database along with the unit name
 
-    //const blobBytes = await blob.bytes();
-    //const htmlString = await blob.text();
-    //console.log(typeof(htmlString));
+    //save unit data
+    const unitName = document.getElementById("saved-unit-name-input").value; //enforce no empty and no spaces
+    saveVideoQuizzes(unitName);
+    saveQuizzes(unitName); //test, makes sure it saves with max sub change and edit on question!
 
-    //console.log(blobBytes); may need to save links here and then use file system to pull...
 
-    /*
-    let base64String;
-    const reader = new FileReader();
-    reader.readAsDataURL(blob);
-    reader.onloadend = function () {
-        base64String = reader.result;
-    }
-    console.log('Base64 String - ', base64String);
-    postUnit(base64String);*/
-
-    //this is bad, need to store files on a file server... but not cheap...will need to do for images, but maybe for html better this way?
-    //wait, can use mongo gridfs for blobs... idk do this instead...
-    //use ceph?
-
-    /*
+    
     // Create a download link for the blob
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
@@ -123,13 +151,9 @@ export async function save(){
     // Clean up by removing the element and revoking the blob URL
     document.body.removeChild(a);
     URL.revokeObjectURL(a.href);
-    */
-    console.log(`saved at ${fileRef}`);
-    //this works! it was saved at gs://deltaproject-2025.firebasestorage.app/units/unit_file_test.html(personal account and other account)
-    //but why can't I look at it in firebase? also...this file arrangement is bad (app with frontend, but I am guessing Joey will set it up)
-    //there probably is a function for looking at it
+    
 
     //revert the page to normal so the admin can keep editing if they want
-    reverseFunctionalHTML();
-    removeScript();
+    //reverseFunctionalHTML();
+    //removeScript();
 }

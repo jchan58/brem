@@ -1,10 +1,21 @@
-//quiz
-//count how many the user got correct out of the total
+import { getQuizData, getVideoData } from "../api/api";
+import { addQuestion } from "./QuizFunctions";
 
+
+//helper function to shuffle the array
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const temp = array[i];
+    array[i] = array[j];
+    array[j] = temp;
+  }
+}
+
+//quiz
 //questionData will need to come from the database...
 //how to get? data and question will be together, and have ID according to the unit page...; ID needs to have elID bc some units may have many quizzes
-export function gradeSubmission(event){
-  const questionData = event.target.data;
+export function gradeSubmission(event, questionData){
   let score = 0;
 
   const chosenOptions = [];
@@ -41,7 +52,7 @@ export function gradeSubmission(event){
 
 //need to get elID that matches the questionID from database; will need to get qID from database
 //function to give the user feedback and hints for their submission
-function giveFeedbackAndHints(incorrect, questionData, submitButton, score) {
+function giveFeedbackAndHints(incorrect, questionData, submitButton, score, elID) {
     const submitBtn = document.getElementById(`submit-btn-${elID}`);
 
     let correct = 0;
@@ -150,6 +161,37 @@ function giveFeedbackAndHints(incorrect, questionData, submitButton, score) {
     }
 }
 
+export async function equipQuizzes(unit_name) { 
+  //const quizzes = document.getElementsByClassName("question-data-container"); //quizzes are represented by question data containers
+  const questionSets = document.getElementsByClassName("questions-container"); //quizzes are questionSets
+  if(questionSets.length === 0) {
+    return; //no quizzes to equip
+  }
+  const quizData = await getQuizData(unit_name); //it got the data, but ids not matching...
+  console.log(quizData);
+  console.log(Array.from(questionSets)[0].id)
+  console.log(Array.from(questionSets)[0])
+  let count = 0;
+  quizData.forEach(data => {
+    console.log(data.id);
+    //console.log(data);
+    const parsedQuizId = data.id.split("-");
+    const numElId = parsedQuizId[parsedQuizId.length - 1]; //get numeric part of the quiz's id
+    const subBtnId = `submit-quiz-${numElId}`;
+
+    const subBtn = document.getElementById(subBtnId); //get the quizzes' submission buttons
+    const questionSet = Array.from(questionSets).filter((set) => set.id === numElId)[0]; //id not matching? it should??
+    console.log(questionSet);
+
+    if(count + 1 == quizData.length) { //lastly, equip subBtn
+      subBtn.addEventListener("click", (event) => {gradeSubmission(event, quizData)});
+    }
+    addQuestion(data, questionSet, subBtn);
+
+  });
+
+}
+
 //image
 //run this function in the file...
 function revealHideCaption(event) {
@@ -157,6 +199,7 @@ function revealHideCaption(event) {
     const captionedImages = document.getElementsByClassName("caption-image");
     capImgList.push(...captionedImages);
 
+    const caption = ""; //will be getting from the id from the db
     capImgList.forEach(img => {
         img.addEventListener("click", () => {
             if(!caption.classList.contains("hidden")) { //will need to start hidden for users
@@ -169,43 +212,55 @@ function revealHideCaption(event) {
 }
 
 //video
-
-function equipVideo() {
+export async function equipVideos(unit_name) {
   const videoObjList = [];
   const videoObjs = document.getElementsByClassName("video-obj");
   videoObjList.push(...videoObjs);
 
+  if(videoObjList.length === 0) { //no videos to equip
+    return;
+  }
+
+  const unitVideoData = await getVideoData(unit_name); 
+
   videoObjList.forEach(videoObj => {
     videoObj.stampList = []; //get this of pause timestamps list from database
+    
+    unitVideoData.forEach(document => {
+      if(document.id === videoObj.id) {
+        videoObj.stampList.push(document);
+      }
+    });
+
+    console.log(videoObj.stampList);
 
     //as time passes, check for a timestamp
     videoObj.addEventListener("timeupdate", (event) => { 
       const time = Math.floor(Number(videoObj.currentTime));
       // current time is given in seconds
       if(videoObj.stampList.some(el => el.time === time)) {
-          const pauseData = videoObj.timestamps.filter(item => item.time === time)[0]; //going to have to make sure times are unique
+          const pauseData = videoObj.stampList.filter(item => item.time === time)[0]; //going to have to make sure times are unique; maybe use database to enforce? (mongoose?)
           // pause the playback
           videoObj.pause();
 
-          //does this not do the same as the next statment?
-          Array.from(videoObj.stampList).forEach(timestamp => {
-            if(Number(timestamp.value) === time) {
-              timestamp.remove();
-            }
-          });
-
+          console.log(document.id)
           videoObj.stampList = videoObj.stampList.filter((item) => item.time !== time ); //remove the timestamp so the user can go back through the video without getting the question again
-          showQuestion(pauseData.question, pauseData.allOptions, pauseData.explanations, elID, videoObj); //these pauseData stuff will come from database...
+          showQuestion(pauseData.question, pauseData.allOptions, pauseData.explanations, pauseData.id, videoObj); //these pauseData stuff will come from database...working on it...
+          //use document.id (videoObj id as elID, wil still work)
       }
     });
   });
+  console.log("videos equipped");
 }
 
 
 
 
 //function to show the question on the video
-function showQuestion(question, options, explanations, video) {
+function showQuestion(question, options, explanations, vidID, video) {
+  console.log(vidID); //why is this undefined??
+  const parsedVidID = vidID.split("-");
+  const elID = parsedVidID[parsedVidID.length - 1];
   const parent = document.getElementById(`question-box-${elID}`); 
   parent.innerHTML = "";
   

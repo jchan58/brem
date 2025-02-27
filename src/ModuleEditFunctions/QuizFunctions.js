@@ -155,7 +155,7 @@ export function gradeSubmission(event){
 
 
 //edit a question/answer
-function editPart(event) { 
+function editPart(event, questionData, index) { 
   
   const editButton = event.currentTarget;
   //hold onto the original thing we are editing
@@ -165,15 +165,28 @@ function editPart(event) {
   editDiv.classList.add("flex");
   const editArea = document.createElement("textarea");
   editArea.classList.add("question-edit-input");
-  editArea.textContent = fieldToEdit.textContent;
+
+  const letters = fieldToEdit.textContent.substring(0, 2);
+  editArea.textContent = fieldToEdit.textContent.substring(2, fieldToEdit.textContent.length);
   const doneBtn = document.createElement("button");
 
   //button with function to indicate you are done editing and replace the original field with the edit area
   doneBtn.textContent = "Done";
   doneBtn.classList.add("done-btn");
   doneBtn.addEventListener("click", () => {
-    fieldToEdit.textContent = editArea.value;
+    fieldToEdit.textContent = letters + " " + editArea.value;
+    //make sure to change the question data as well so the save is accurate
+    if(index != -1) {
+      questionData.allOptions[index] = editArea.value;
+      console.log(index);
+      if(index == 0){ //index 0 is always the answer so make sure to change that
+        questionData.answer = editArea.value; //not working? also editArea...
+      }
+    } else {
+      questionData.question = editArea.value; //-1 means we are editing the question
+    } 
     editButton.classList.remove("hidden"); 
+
     editButton.submitButton.disabled = false;
     editButton.submitButton.subsUsed = 0;
 
@@ -189,7 +202,14 @@ function editPart(event) {
 }
 
 //function to add a question to a quiz
-export function addQuestion(question, options, explanations, parent, questionId, subBtn) {
+export function addQuestion(questionData, parent, subBtn){//(question, options, hints, parent, questionId, subBtn) { //edit does not currently edit questionData....fix!
+    
+
+    const question = questionData.question;
+    const options = questionData.allOptions;
+    const hints = questionData.hintInfo;
+    const questionId = questionData.questionId;
+
     const questionDiv = document.createElement('div');
     questionDiv.classList.add("relative", "flex-col", "flex");
     questionDiv.id = questionId;
@@ -211,7 +231,7 @@ export function addQuestion(question, options, explanations, parent, questionId,
     editButton.classList.add('question-edit-btn'); 
     editButton.toEdit = quesText;
     editButton.submitButton = subBtn;
-    editButton.addEventListener("click", editPart);
+    editButton.addEventListener("click",(event) => { editPart(event, questionData, -1)});
     header.appendChild(editButton);
 
     const deleteButton = document.createElement("button");
@@ -242,10 +262,10 @@ export function addQuestion(question, options, explanations, parent, questionId,
     //randomize the options and explanations but keep track of their ids
     let i = 0;
     const taggedOptions = [];
-    const taggedExplanations = [];
+    const taggedHints = [];
     options.forEach(option => {
       taggedOptions.push({id: i, option: option})
-      taggedExplanations.push({id: i, explanation: explanations[i]})
+      taggedHints.push({id: i, hint: hints[i]})
       i++;
     });
 
@@ -267,10 +287,10 @@ export function addQuestion(question, options, explanations, parent, questionId,
       if(taggedOption.id === 0) {
         input.quesBox = parent;
         input.answer = taggedOption.option;
-        input.explain = taggedExplanations.find(ex => ex.id === taggedOption.id).explanation;
+        input.hint = taggedHints.find(ex => ex.id === taggedOption.id).explanation; //do we even need?
       } else {
         input.quesBox = parent;
-        input.explain = taggedExplanations.find(ex => ex.id === taggedOption.id).explanation;
+        input.hint = taggedHints.find(ex => ex.id === taggedOption.id).explanation;
       }
 
       const label = document.createElement('label');
@@ -290,7 +310,7 @@ export function addQuestion(question, options, explanations, parent, questionId,
       editButton.toEdit = label;
       editButton.questionId = questionId;
       editButton.taggedOptionId = taggedOption.id;
-      editButton.addEventListener("click", (event) => {  event.stopPropagation();event.preventDefault(); editPart(event)});
+      editButton.addEventListener("click", (event) => {  event.stopPropagation();event.preventDefault(); editPart(event, questionData, taggedOption.id)});
       editButton.submitButton = subBtn;
       div.appendChild(editButton);
 

@@ -28,3 +28,4 @@ yarn-error.log*
 
 # Environment variables
 .env
+src/env_temp.js
