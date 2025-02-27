@@ -29,3 +29,7 @@ yarn-error.log*
 # Environment variables
 .env
 src/env_temp.js
+
+
+#test video
+public/cell_thawing.mp4
