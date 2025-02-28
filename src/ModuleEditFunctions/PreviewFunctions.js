@@ -64,6 +64,9 @@ export function previewOrEditPage(event) {
     const editButtonsA = document.getElementsByClassName("answer-edit-btn");
     toChange.push(...editButtonsA);
 
+    const unitNameInput = document.getElementById("saved-unit-name-input");
+    toChange.push(unitNameInput);
+
     //remove/add boxing
     if(event.target.textContent === "Preview") {
       Array.from(elementContainers).forEach(item => {

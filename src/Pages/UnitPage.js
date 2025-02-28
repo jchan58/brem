@@ -1,33 +1,6 @@
 import { useEffect, useState } from "react";
-import { pullUnit } from "../api/api"; 
 import { equipQuizzes, equipVideos } from "../ModuleEditFunctions/UserSideFunctions.js";
-//import { ref, getStorage, getBlob } from "firebase/storage";
-//import app from "../firebaseConfig";
-//note this will break if there are no units! fix or enforce...
-/*
-const htmlByteArray = await pullUnit(); //oof this is happening no matter the page...
-
-const htmlBlob = new Blob([new Uint8Array(htmlByteArray)], { type: 'text/html' });
-//console.log(htmlBlob);
-
-const html = await htmlBlob.text();
-
-document.write(html);
-
-
-if (htmlString) {
-    document.write(htmlString); // Write the HTML content to the page
-} else {
-    console.error("Failed to load unit");
-}*/
-
-//testing without backend, skipping to document write to page step:
-
-
-//FIREBASE
-/*does not work
-const storage = getStorage();
-const testRef = ref(storage, "units/unit_file_test.html");*/
+import { pullUnit } from "../api/api.js";
 
 
 function readHTMLFile(file) {
@@ -55,10 +28,10 @@ function readHTMLFile(file) {
   }
   
 //process the HTML file and write it to the page
-async function processAndWriteHTML(file) {
+async function processAndWriteHTML(htmlContent) {
   console.log("called");
     try {
-      let htmlContent = await readHTMLFile(file);
+      //let htmlContent = await readHTMLFile(file);
       document.write(htmlContent); 
 
     } catch (error) {
@@ -67,51 +40,45 @@ async function processAndWriteHTML(file) {
 }
 
 
-
-const UnitPage = () => {
+window.onload = async function () {
   const queryParams = new URLSearchParams(window.location.search);
-  const unitName = queryParams.get("unit_name"); //get the unit name from the url query param (http://localhost:3000/unitpage?unit_name=[unitName])
-  //make sure the input field exists, and then look for when the file is uploaded and processAndWrite
-  const [loaded, setLoaded] = useState(false);
+  const unitName = queryParams.get("unit_name"); //get the unit name from the url query param (http://localhost:3000/unitpage?unit_name=[unitName]&module_name=)
+
+  const moduleName = queryParams.get("module_name");
+
+  if(unitName && moduleName)  { //only do this if the parameters are present (on the unit page...)
+    const unitFile = await pullUnit(unitName, moduleName);
+      
+    if(unitFile){
+      await processAndWriteHTML(unitFile);
+          //console.log("called");
+      //not quite...
+      await equipVideos(unitName); 
+      await equipQuizzes(unitName);
+
+    } 
+  }
+}
+  //}
+    
+ 
+const UnitPage = () => {
   useEffect(() => { 
-    
-    if(!loaded){
-      const completeHTMLProcessing = async (file) => {
-        setLoaded(true);
-        await processAndWriteHTML(file);
-        console.log("called");
-        document.getElementById("undefined").remove(); //not quite...
-        await equipVideos(unitName); 
-        await equipQuizzes(unitName);
-      }
-
-      const fileInput = document.getElementById("fileInput");
-      fileInput.addEventListener("change", function(event) {
-
-        const file = event.target.files[0];
-        if (file) {
-          completeHTMLProcessing(file); //note StrictMode caused problems so turned it off
-        //this name for now, but use name of unit file in future
-        } else {
-            console.log("No file selected")
-        }
-      });
+    if(document.getElementById("undefined")) { //quiz sometimes adds a question with an ide of undefined?
+      document.getElementById("undefined").remove(); 
     }
-    
   }, []);
-  
+
 
     return (
         <div className="relative bg-white pt-5">
           <div className="relative z-10">
             <div id = "non-footer">
-                <input type="file" id="fileInput" />
+              <p>Unit Loading...</p>
             </div>
           </div>
         </div>
     );
 };
-
-//it works just how I thought, test_delta being in public lets it get the file from ./
 
 export default UnitPage;

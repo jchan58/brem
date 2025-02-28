@@ -1,11 +1,4 @@
 import { postQuizData, postUnit, postVideoData, test } from "../api/api";
-//import { getStorage, ref } from "firebase/storage";
-//import app from "../firebaseConfig";
-
-//const storage = getStorage();
-
-// Create a storage reference from our storage service
-//const storageRef = ref(storage);
 
 const functionsForUserSide = ["gradeSubmission()", "timeStampWatch()"]; //I will call timestamp triggering stuff timeStampWatch()
 
@@ -117,9 +110,8 @@ function saveQuizzes(unitName) {
 
 }
 
-//right now, saves unit to computer...must preview to save, I think this is fine? maybe want to remove hiddens but idk; oh it also has edit and save buttons, want to hide/remove those
-//as well
-export async function save(){
+//note for MongoDB to connect, must add IP address to Network Access in Mongo
+export async function save(){ //require preview mode to save or auto do?
     //test();
     //make it so necessary functions can be used by the html code
     //makeFunctionalHTML();
@@ -130,30 +122,25 @@ export async function save(){
     console.log('saving...')
     // Create a blob with the inner HTML content
     const blob = new Blob([website], { type: "text/html" });
-
+   
 
     //save unit data
     const unitName = document.getElementById("saved-unit-name-input").value; //enforce no empty and no spaces
-    saveVideoQuizzes(unitName);
-    saveQuizzes(unitName); //test, makes sure it saves with max sub change and edit on question!
+    const htmlFile = new File([blob], `${unitName}`);
 
+    const queryParams = new URLSearchParams(window.location.search);
+    const moduleName = queryParams.get("module_name");
+    await postUnit(htmlFile, moduleName);
+    await saveVideoQuizzes(unitName);
+    await saveQuizzes(unitName); //test, makes sure it saves with max sub change and edit on question!
 
-    
-    // Create a download link for the blob
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = "unit.html"; // File name for download
+    console.log("saved")
 
-    // Simulate a click on the link to trigger the download
-    document.body.appendChild(a);
-    a.click(); 
-
-    // Clean up by removing the element and revoking the blob URL
-    document.body.removeChild(a);
-    URL.revokeObjectURL(a.href);
     
 
     //revert the page to normal so the admin can keep editing if they want
     //reverseFunctionalHTML();
     //removeScript();
+
+
 }

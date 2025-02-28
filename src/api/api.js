@@ -1,7 +1,6 @@
-///import { google } from "googleapis";
-import GOOGLE_SERVICE_KEY from "../.env";
-//attempt with mongo db
+import { createDriveFolder, fetchDriveFolders, signInWithGoogle, uploadFileToFolder } from "../googleDriveService";
 
+//test mongo db
 export async function test() {
     try {
         await fetch(`http://localhost:5173/units`, {
@@ -15,30 +14,111 @@ export async function test() {
         console.error("Error:", err);
     }
 }
-export async function postUnit(htmlFile) {
-    console.log("Payload being sent:", JSON.stringify({ htmlFile: htmlFile }));
+
+//unit
+export async function postUnit(htmlFile, moduleName) {
     try {
-        await fetch(`http://localhost:5173/units`, {
-            method: "POST",
-            headers: {
-            "content-type": "application/json"
-            },
-            body: JSON.stringify({ htmlFile: htmlFile}) //still get json error from byte method...
-        }).then(resp => resp.json());
-        
+        const folders = await fetchDriveFolders();
+        let folderId = "";
+        for(let i = 0; i < folders.length; i++) {
+            if(folders[i].name === moduleName) {
+                folderId = folders[i].id;
+                break;
+            }
+        }
+
+        console.log("id: ", folderId);
+        if(folderId === "") {
+            folderId = createDriveFolder(moduleName);
+        }
+
+        uploadFileToFolder(htmlFile, folderId);
     } catch (err) {
+        console.log("Problem posting the unit");
         console.error("Error:", err);
     }
 }
 
-export async function pullUnit() { //will need to have unit identifier as a param in the future
+export async function pullUnit(unitName, moduleName) { //from ChatGPT but looks ok?
     try {
-        let results = await fetch(`http://localhost:5173/units`).then(resp => resp.json()); //testing out mongodb stuff, will change to more like smth above; issue
-        return results
-    } catch (err) {
-        console.error("Error:", err);
+        //get the access token
+        const accessToken = await signInWithGoogle();
+        if (!accessToken) {
+            console.error("No access token available.");
+            return;
+        }
+
+        const folders = await fetchDriveFolders();
+        let folderId = "";
+
+        // Find the module's folder ID
+        for(let i = 0; i < folders.length; i++) {
+            if(folders[i].name === moduleName) {
+                folderId = folders[i].id;
+                break;
+            }
+        }
+
+        console.log(folderId);
+
+        if (!folderId) {
+            console.error(`Module "${moduleName}" not found.`);
+        }
+
+        // Fetch files in the folder
+        const filesResponse = await fetch(
+            `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents and mimeType contains 'text/html'&fields=files(id,name)`,
+            {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            }
+        );
+
+        const filesData = await filesResponse.json();
+        const units = filesData.files;
+
+        let desiredUnit = null;
+        for(let i = 0; i < units.length; i++) {
+            console.log(units[i]);
+            if(unitName === units[i].name) {
+                desiredUnit = units[i];
+                break;
+            }
+        }
+
+        console.log(desiredUnit)
+        if (!desiredUnit) {
+            console.error(`Unit "${unitName}" not found in module "${moduleName}".`);
+        }
+
+        // Fetch the actual file content
+        const fileResponse = await fetch(
+            `https://www.googleapis.com/drive/v3/files/${desiredUnit.id}?alt=media`,
+            {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            }
+        );
+
+        if (!fileResponse.ok) {
+            console.error(`Failed to fetch content for unit "${unitName}".`);
+        }
+
+        
+        const htmlText = await fileResponse.text();
+        const cleanedHtml = htmlText.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "").replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, "");
+
+        return cleanedHtml; 
+    } catch (error) {
+        console.error("Error retrieving unit file:", error);
+        return null;
     }
 }
+
 
 //video data
 export async function postVideoData(video_element_data) {
@@ -116,71 +196,4 @@ export async function getQuizData(unit_name) {
     }
 }
 
-/*no...
-//google API
-
-//no? gapi?
-// Load service account key
-const serviceAccountCredentials = JSON.parse(GOOGLE_SERVICE_KEY);
-const auth = new google.auth.GoogleAuth({
-    credentials: serviceAccountCredentials,
-    scopes: ["https://www.googleapis.com/auth/drive.file"]
-});
-
-
-async function getFolderIdByName(folderName) {
-    const drive = google.drive({ version: "v3", auth });
-    try {
-      const res = await drive.files.list({
-        q: `mimeType='application/vnd.google-apps.folder' and name='${folderName}' and trashed=false`,
-        fields: 'files(id, name)',
-      });
-  
-      const files = res.data.files;
-      if (files && files.length > 0) {
-        // If multiple folders have the same name, pick the first one.
-        console.log(`Found folder: ${files[0].name} (${files[0].id})`);
-        return files[0].id;
-      } else {
-        console.log(`Folder "${folderName}" not found.`);
-        return null;
-      }
-    } catch (error) {
-      console.error("Error retrieving folder ID:", error);
-      throw error;
-    }
-}
-
-export async function postUnit(htmlFile, filename, folderName, mimeType) {
-    try {
-        const drive = google.drive({ version: "v3", auth });
-
-        const folderId = await getFolderIdByName(folderName);
-
-        if (!folderId) {
-            console.error("Folder not found. Cannot upload file.");
-            return;
-        }
-
-        const response = await drive.files.create({
-            requestBody: {
-                name: filename, // Change filename
-                mimeType: mimeType,    // Change MIME type
-                parents: [folderId]
-            },
-            media: {
-                mimeType: mimeType,
-                body: htmlFile,
-            },
-            fields: 'files(id, name)'
-        });
-
-        console.log("File uploaded:", response.data);
-    } catch(error) {
-        console.error("Error uploading file:", error);
-        throw error;
-  
-    }
-}
-*/
 

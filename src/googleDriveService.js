@@ -189,3 +189,72 @@ export const uploadImageToFolder = async (file, folderId) => {
     return null;
   }
 };
+
+/**
+ * Uploads a file to a specified Google Drive folder. (same as function from above but not changin Joey's stuff just in case)
+ * @param {File} file - The file object to be uploaded.
+ * @param {string} folderId - The ID of the folder where the file should be stored.
+ * @returns {Promise<string|null>} The public URL of the uploaded file or null if the upload fails.
+ */
+export const uploadFileToFolder = async (file, folderId, fileType) => {
+  const accessToken = await signInWithGoogle(); // Obtain OAuth token
+  if (!accessToken) {
+    console.error("No access token available.");
+    return null;
+  }
+
+  let metadata = {
+    name: file.name,
+    mimeType: file.type,
+    parents: [folderId],
+  };
+
+  let formData = new FormData();
+  formData.append("metadata", new Blob([JSON.stringify(metadata)], { type: "application/json" }));
+  formData.append("file", file);
+
+  try {
+    const response = await fetch("https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: formData,
+    });
+
+    const data = await response.json();
+    console.log("File uploaded:", data);
+
+    await fetch(`https://www.googleapis.com/drive/v3/files/${data.id}/permissions`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        role: "reader",
+        type: "anyone",
+      }),
+    });
+
+    const fileResponse = await fetch(
+      `https://www.googleapis.com/drive/v3/files/${data.id}?fields=webViewLink,webContentLink`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    const fileData = await fileResponse.json();
+    console.log("File public URL:", fileData.webContentLink);
+    return fileData.webViewLink || `https://drive.google.com/uc?export=view&id=${data.id}`;
+  } catch (error) {
+    console.error("Error uploading file:", error);
+    return null;
+  }
+};
+
+
+
