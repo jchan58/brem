@@ -52,10 +52,10 @@ window.onload = async function () {
     if(unitFile){
       await processAndWriteHTML(unitFile);
           //console.log("called");
-      //not quite...
+
       await equipVideos(unitName); 
       await equipQuizzes(unitName);
-
+   
     } 
   }
 }
@@ -63,13 +63,6 @@ window.onload = async function () {
     
  
 const UnitPage = () => {
-  useEffect(() => { 
-    if(document.getElementById("undefined")) { //quiz sometimes adds a question with an ide of undefined?
-      document.getElementById("undefined").remove(); 
-    }
-  }, []);
-
-
     return (
         <div className="relative bg-white pt-5">
           <div className="relative z-10">

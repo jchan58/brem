@@ -98,7 +98,7 @@ function saveQuizzes(unitName) {
                 allOptions: item.allOptions,
                 hintInfo: item.hintInfo,
                 id: item.questionId,
-                quizmaxSubs: quiz.submitBtn.maxSubs,
+                quizMaxSubs: quiz.submitBtn.maxSubs,
                 unitName: unitName
             }
           

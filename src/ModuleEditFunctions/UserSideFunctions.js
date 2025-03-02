@@ -22,7 +22,7 @@ export function gradeSubmission(event, questionData){
   const incorrect = [];
 
   for (let i = 0; i < questionData.length; i++){
-    const qId = questionData[i].questionId;
+    const qId = questionData[i].id;
     const checkedInput = document.querySelector(`input[name=${qId}]:checked`);
     if(!checkedInput){
       alert("Must answer all questions before submitting");
@@ -52,15 +52,14 @@ export function gradeSubmission(event, questionData){
 
 //need to get elID that matches the questionID from database; will need to get qID from database
 //function to give the user feedback and hints for their submission
-function giveFeedbackAndHints(incorrect, questionData, submitButton, score, elID) {
-    const submitBtn = document.getElementById(`submit-btn-${elID}`);
-
+function giveFeedbackAndHints(incorrect, questionData, submitButton, score) {
     let correct = 0;
   
     //go over every question
     for (let i = 0; i < questionData.length; i++){
       
-      const qId = questionData[i].questionId;
+      const qId = questionData[i].id;
+      //console.log(`qId: ${questionData[i].questionId}`);
       const question = document.getElementById(qId);
       question.classList.add("relative");
   
@@ -161,33 +160,109 @@ function giveFeedbackAndHints(incorrect, questionData, submitButton, score, elID
     }
 }
 
+
+
+
+//function to equip a quiz question
+export function equipQuestion(questionData, questionDiv, parent){//(question, options, hints, parent, questionId, subBtn) { //edit does not currently edit questionData....fix!
+    
+    console.log("data for question", questionData);
+   
+    const question = questionData.question;
+    const options = questionData.allOptions;
+    const hints = questionData.hintInfo;
+    const questionId = questionData.id;
+    console.log("id", questionId);
+
+    //give the question an id
+    questionDiv.id = questionId;
+    
+
+
+    // Get the fieldset element
+    const fieldset = questionDiv.getElementsByTagName('fieldset')[0];
+
+    // Get the input elements
+    const inputs = fieldset.getElementsByTagName('input'); 
+
+    //randomize the options and explanations but keep track of their ids; note randomization will be different from instructor view, but this is oke
+    let i = 0;
+    const taggedOptions = [];
+    const taggedHints = [];
+    options.forEach(option => {
+      taggedOptions.push({id: i, option: option})
+      taggedHints.push({id: i, hint: hints[i]})
+      i++;
+    });
+
+    //shuffleArray(taggedOptions);
+    // Loop through the options to populate the radio buttons data
+    let letter = 65;
+    let inputIndex = 0;
+    taggedOptions.forEach(taggedOption => {
+      const div = document.createElement('div');
+      div.classList.add('flex', 'items-center', 'mb-4');
+
+      const input = inputs[inputIndex];
+      input.type = 'radio';
+      input.name = `${questionId}`;
+      input.id = `${questionId}-option-${taggedOption.id}`;
+      input.value = String.fromCharCode(letter) + ". " + taggedOption.option;
+      //already has clas sinfo input.classList.add('w-4', 'h-4', 'border-gray-300', 'focus:ring-2', 'focus:ring-blue-300', 'dark:focus:ring-blue-600', 'dark:bg-gray-700', 'dark:border-gray-600', "question-radio");
+      
+      //answer is always 0
+      if(taggedOption.id === 0) {
+        input.quesBox = parent;
+        input.answer = taggedOption.option;
+        input.hint = taggedHints.find(ex => ex.id === taggedOption.id).explanation; //do we even need?
+      } else {
+        input.quesBox = parent;
+        input.hint = taggedHints.find(ex => ex.id === taggedOption.id).explanation;
+      }
+
+      /*already has label info
+      const label = document.createElement('label');
+      label.htmlFor = `${questionId}-option-${taggedOption.id}`;
+      //label.classList.add('block', 'ms-2', 'font-medium', "text-xl", 'text-black-900', 'dark:text-black-300', "question-answer", "flex", "flex-row");
+      label.textContent = String.fromCharCode(letter) + ". " + taggedOption.option;*/
+      
+      inputIndex += 1;
+      letter += 1;
+    });
+}
+
+
 export async function equipQuizzes(unit_name) { 
+  
   //const quizzes = document.getElementsByClassName("question-data-container"); //quizzes are represented by question data containers
   const questionSets = document.getElementsByClassName("questions-container"); //quizzes are questionSets
   if(questionSets.length === 0) {
     return; //no quizzes to equip
   }
   const quizData = await getQuizData(unit_name); //it got the data, but ids not matching...
-  console.log(quizData);
-  console.log(Array.from(questionSets)[0].id)
-  console.log(Array.from(questionSets)[0])
+
   let count = 0;
   quizData.forEach(data => {
     console.log(data.id);
-    //console.log(data);
+
     const parsedQuizId = data.id.split("-");
-    const numElId = parsedQuizId[parsedQuizId.length - 1]; //get numeric part of the quiz's id
+    const numElId = parsedQuizId[1]; //get numeric part of the quiz's id; should be element id I think...changed from last element
     const subBtnId = `submit-quiz-${numElId}`;
 
     const subBtn = document.getElementById(subBtnId); //get the quizzes' submission buttons
-    const questionSet = Array.from(questionSets).filter((set) => set.id === numElId)[0]; //id not matching? it should??
-    console.log(questionSet);
+    const questionSet = Array.from(questionSets).filter((set) => set.id === numElId)[0]; //dont need...
+    console.log("set", questionSet);
+
+    const question = document.getElementById(data.id);
 
     if(count + 1 == quizData.length) { //lastly, equip subBtn
+      console.log(`max subs: ${data.quizMaxSubs}`) //change cap to quizMaxSubs later...
+      subBtn.subsUsed = 0;
+      subBtn.maxSubs = data.quizMaxSubs;
       subBtn.addEventListener("click", (event) => {gradeSubmission(event, quizData)});
     }
-    addQuestion(data, questionSet, subBtn);
-
+    equipQuestion(data, question, questionSet); //wait, make a modded version of this cuz is actually adding a question?
+    count += 1;
   });
 
 }
