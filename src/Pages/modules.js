@@ -40,7 +40,7 @@ const Modules = () => {
 
       for (const folder of folderData.files) {
         const fileResponse = await fetch(
-          `https://www.googleapis.com/drive/v3/files?q='${folder.id}'+in+parents and mimeType contains 'image'&fields=files(id,name,webContentLink,thumbnailLink)`,
+          `https://www.googleapis.com/drive/v3/files?q='${folder.id}'+in+parents+and+mimeType+contains+'image/'&fields=files(id,name)`,
           {
             method: "GET",
             headers: {
@@ -51,9 +51,11 @@ const Modules = () => {
 
         const fileData = await fileResponse.json();
         if (fileData.files && fileData.files.length > 0) {
+          // Generate the direct image URL using the file ID
+          const imageUrl = `https://drive.google.com/uc?export=view&id=${fileData.files[0].id}`;
           fetchedModules.push({
             folderName: folder.name,
-            imageUrl: fileData.files[0].thumbnailLink || fileData.files[0].webContentLink,
+            imageUrl,
           });
         }
       }
@@ -91,9 +93,10 @@ const Modules = () => {
 
   return (
     <div className="p-6">
-      <h1 className="text-xl font-bold mb-4">Create Module</h1>
-
-      <button onClick={() => setShowPopup(true)} className="flex items-center justify-center w-12 h-12">
+      <button
+        onClick={() => setShowPopup(true)}
+        className="fixed bottom-6 right-6 flex items-center justify-center w-14 h-14 bg-blue-600 rounded-full shadow-lg"
+      >
         <img src={plusIcon} alt="Add Module" className="w-8 h-8" />
       </button>
 
@@ -127,12 +130,17 @@ const Modules = () => {
       )}
 
       <div className="mt-6">
-        <h2 className="text-lg font-bold">Modules</h2>
+        <h1 className="text-3xl font-bold text-center mb-5">Modules</h1>
         <div className="grid grid-cols-5 gap-1">
           {modules.map((module, index) => (
             <div key={index} className="border p-2 rounded shadow-md w-60">
               <h3 className="text-sm font-semibold truncate text-center">{module.folderName}</h3>
-              <img src={module.imageUrl} alt={module.folderName} className="mt-2 w-full h-32 object-cover rounded" />
+              <img
+                src={module.imageUrl}
+                alt={module.folderName}
+                className="mt-2 w-full h-32 object-cover rounded"
+                onError={(e) => console.error("Image failed to load", e)}
+              />
             </div>
           ))}
         </div>
