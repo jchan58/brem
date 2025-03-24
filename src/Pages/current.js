@@ -106,7 +106,25 @@ const tableData = [
   ['Hansika Chennamsetty', '2024'],
   ['Makayla Biles', '2024'],
   ['Arman Ataei Kachoei', '2024'],
-  ['Armin Ataei Kachoei', '2024'] 
+  ['Armin Ataei Kachoei', '2024'], 
+  ['Shreya Dey', '2024'],
+  ['Abhijit Nagre', '2024'],
+  ['Buse Koldas', '2024'],
+  ['Supichaya Thebraksa', '2024'], 
+  ['Siddharth Shah', '2024'],
+  ['Freya Kankhara', '2024'], 
+  ['David Lee', '2025'], 
+  ['Omar Selim', '2025'],
+  ['Eesha Bellad', '2025'],
+  ['Vinayak Goyal', '2025'], 
+  ['Tejaswini Prakash', '2025'],
+  ['Sai Prudhvi', '2025'],
+  ['Arthak Mohapatra', '2025'], 
+  ['Julian Gonzalez', '2025'],
+  ['Isabella Graves', '2025'], 
+  ['Ibrahim Mrad', '2025'], 
+  ['Zain Ghufran Ul Haq (Zain)', '2025'],
+  ['William ElNemer', '2025'], 
 ];
 
 const teamMembers = [
