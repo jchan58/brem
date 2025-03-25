@@ -232,6 +232,7 @@ export function displayVideo(event) {
       videoObj.stampList = [];
       videoObj.backUpStampList = [];
       videoObj.append(source);
+      videoObj.file = file;
 
 
       const pauseDataContainer = document.createElement("div");

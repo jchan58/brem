@@ -16,6 +16,8 @@ function shuffleArray(array) {
 //questionData will need to come from the database...
 //how to get? data and question will be together, and have ID according to the unit page...; ID needs to have elID bc some units may have many quizzes
 export function gradeSubmission(event, questionData){
+  console.log(questionData);
+  console.log(event.target.id);
   let score = 0;
 
   const chosenOptions = [];
@@ -31,6 +33,8 @@ export function gradeSubmission(event, questionData){
     const choice = checkedInput.value;
     chosenOptions.push(choice);
   }
+
+  console.log(chosenOptions);
   
   for (let i = 0; i < questionData.length; i++){
     const answer = questionData[i].answer;
@@ -162,76 +166,6 @@ function giveFeedbackAndHints(incorrect, questionData, submitButton, score) {
 
 
 
-
-//function to equip a quiz question
-export function equipQuestion(questionData, questionDiv, parent){//(question, options, hints, parent, questionId, subBtn) { //edit does not currently edit questionData....fix!
-    
-    console.log("data for question", questionData);
-   
-    const question = questionData.question;
-    const options = questionData.allOptions;
-    const hints = questionData.hintInfo;
-    const questionId = questionData.id;
-    console.log("id", questionId);
-
-    //give the question an id
-    questionDiv.id = questionId;
-    
-
-
-    // Get the fieldset element
-    const fieldset = questionDiv.getElementsByTagName('fieldset')[0];
-
-    // Get the input elements
-    const inputs = fieldset.getElementsByTagName('input'); 
-
-    //randomize the options and explanations but keep track of their ids; note randomization will be different from instructor view, but this is oke
-    let i = 0;
-    const taggedOptions = [];
-    const taggedHints = [];
-    options.forEach(option => {
-      taggedOptions.push({id: i, option: option})
-      taggedHints.push({id: i, hint: hints[i]})
-      i++;
-    });
-
-    //shuffleArray(taggedOptions);
-    // Loop through the options to populate the radio buttons data
-    let letter = 65;
-    let inputIndex = 0;
-    taggedOptions.forEach(taggedOption => {
-      const div = document.createElement('div');
-      div.classList.add('flex', 'items-center', 'mb-4');
-
-      const input = inputs[inputIndex];
-      input.type = 'radio';
-      input.name = `${questionId}`;
-      input.id = `${questionId}-option-${taggedOption.id}`;
-      input.value = String.fromCharCode(letter) + ". " + taggedOption.option;
-      //already has clas sinfo input.classList.add('w-4', 'h-4', 'border-gray-300', 'focus:ring-2', 'focus:ring-blue-300', 'dark:focus:ring-blue-600', 'dark:bg-gray-700', 'dark:border-gray-600', "question-radio");
-      
-      //answer is always 0
-      if(taggedOption.id === 0) {
-        input.quesBox = parent;
-        input.answer = taggedOption.option;
-        input.hint = taggedHints.find(ex => ex.id === taggedOption.id).explanation; //do we even need?
-      } else {
-        input.quesBox = parent;
-        input.hint = taggedHints.find(ex => ex.id === taggedOption.id).explanation;
-      }
-
-      /*already has label info
-      const label = document.createElement('label');
-      label.htmlFor = `${questionId}-option-${taggedOption.id}`;
-      //label.classList.add('block', 'ms-2', 'font-medium', "text-xl", 'text-black-900', 'dark:text-black-300', "question-answer", "flex", "flex-row");
-      label.textContent = String.fromCharCode(letter) + ". " + taggedOption.option;*/
-      
-      inputIndex += 1;
-      letter += 1;
-    });
-}
-
-
 export async function equipQuizzes(unit_name) { 
   
   //const quizzes = document.getElementsByClassName("question-data-container"); //quizzes are represented by question data containers
@@ -239,30 +173,28 @@ export async function equipQuizzes(unit_name) {
   if(questionSets.length === 0) {
     return; //no quizzes to equip
   }
-  const quizData = await getQuizData(unit_name); //it got the data, but ids not matching...
+  const quizData = await getQuizData(unit_name); 
 
-  let count = 0;
+  const subsEquipped = [];
+
   quizData.forEach(data => {
-    console.log(data.id);
+    console.log("data.id", data.id);
 
     const parsedQuizId = data.id.split("-");
     const numElId = parsedQuizId[1]; //get numeric part of the quiz's id; should be element id I think...changed from last element
     const subBtnId = `submit-quiz-${numElId}`;
-
-    const subBtn = document.getElementById(subBtnId); //get the quizzes' submission buttons
-    const questionSet = Array.from(questionSets).filter((set) => set.id === numElId)[0]; //dont need...
-    console.log("set", questionSet);
-
-    const question = document.getElementById(data.id);
-
-    if(count + 1 == quizData.length) { //lastly, equip subBtn
-      console.log(`max subs: ${data.quizMaxSubs}`) //change cap to quizMaxSubs later...
+    
+    if(!(subBtnId in subsEquipped)) { //only do this once per sub button
+      const subBtn = document.getElementById(subBtnId); //get the quizzes' submission button
+      //console.log("sub btn", subBtnId);
+      //console.log(`max subs: ${data.quizMaxSubs}`) //change cap to quizMaxSubs later...
       subBtn.subsUsed = 0;
       subBtn.maxSubs = data.quizMaxSubs;
-      subBtn.addEventListener("click", (event) => {gradeSubmission(event, quizData)});
+      const specificQuizData = quizData.filter((specData) => specData.id === data.id);
+      subBtn.addEventListener("click", (event) => {gradeSubmission(event, specificQuizData)});
+      subsEquipped.push(subBtnId);
     }
-    equipQuestion(data, question, questionSet); //wait, make a modded version of this cuz is actually adding a question?
-    count += 1;
+    
   });
 
 }
@@ -304,7 +236,11 @@ export async function equipVideos(unit_name) {
     unitVideoData.forEach(document => {
       if(document.id === videoObj.id) {
         videoObj.stampList.push(document);
+        //not working const source = videoObj.getElementsByTagName('source'); 
+        //source.src = document.vidLocation;
       }
+
+      
     });
 
     console.log(videoObj.stampList);
@@ -328,12 +264,30 @@ export async function equipVideos(unit_name) {
   console.log("videos equipped");
 }
 
+export function equipImages() {
+  const captionedImages = document.getElementsByClassName("caption-image");
+  Array.from(captionedImages).forEach((image) => {
+      const imageId = image.id;
+      const captionId = `${imageId}-caption`;
+      const caption = document.getElementById(captionId);
+      caption.classList.add("hidden");
+      image.addEventListener("click", () => {
+        if(!caption.classList.contains("hidden")) { 
+          caption.classList.add("hidden");
+        } else {
+          caption.classList.remove("hidden");
+        }
+    });
+    }
+  )
+
+}
+
 
 
 
 //function to show the question on the video
 function showQuestion(question, options, explanations, vidID, video) {
-  console.log(vidID); //why is this undefined??
   const parsedVidID = vidID.split("-");
   const elID = parsedVidID[parsedVidID.length - 1];
   const parent = document.getElementById(`question-box-${elID}`); 

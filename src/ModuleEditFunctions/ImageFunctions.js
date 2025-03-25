@@ -98,6 +98,7 @@ export function createCaption(event) {
 
       //set the corresponding image for the caption so we can hide/reveal the caption on image click
       const correspondingImage = document.getElementById(`image-embed-${event.target.elID}-${event.target.choice}`); 
+      caption.id = `image-embed-${event.target.elID}-${event.target.choice}-caption`; 
       correspondingImage.classList.add("caption-image");
       if(correspondingImage) {
         correspondingImage.addEventListener("click", () => {

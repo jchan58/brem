@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { equipQuizzes, equipVideos } from "../ModuleEditFunctions/UserSideFunctions.js";
+import { equipImages, equipQuizzes, equipVideos } from "../ModuleEditFunctions/UserSideFunctions.js";
 import { pullUnit } from "../api/api.js";
 
 
@@ -55,6 +55,7 @@ window.onload = async function () {
 
       await equipVideos(unitName); 
       await equipQuizzes(unitName);
+      equipImages();
    
     } 
   }

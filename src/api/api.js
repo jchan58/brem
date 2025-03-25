@@ -131,7 +131,6 @@ export async function postVideoData(video_element_data) {
             },
             body: JSON.stringify({ video_element_data }) 
         }).then(resp => resp.json());
-        
     } catch (err) {
         console.error("Error:", err);
     }

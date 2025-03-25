@@ -1,4 +1,5 @@
 import { postQuizData, postUnit, postVideoData, test } from "../api/api";
+import { createDriveFolder, fetchDriveFolders, uploadFileToFolder, uploadLargeFileToFolder, uploadLargerFileToFolder } from "../googleDriveService";
 
 const functionsForUserSide = ["gradeSubmission()", "timeStampWatch()"]; //I will call timestamp triggering stuff timeStampWatch()
 
@@ -51,14 +52,37 @@ async function send(content) {
 
 // refer to: videoObj.stampList.push(
     //{time: val, question: questionInfo[0], answer: questionInfo[1], allOptions: options, explanations: explainInfo});
-function saveVideoQuizzes(unitName) {
+async function saveVideoQuizzes(unitName) {
     if(unitName.includes(" ") || unitName === "") {
         alert("Unit not saved. Must enter a unit name with no spaces");
         return;
     }
-    const videoObjs = document.getElementsByClassName("video-obj");
-    Array.from(videoObjs).forEach(video => {
 
+    /*not functional
+    const folders = await fetchDriveFolders();
+    let folderId = "";
+    
+    // Find the videos folder
+    for(let i = 0; i < folders.length; i++) {
+        console.log("folder name", folders[i].name)
+        if(folders[i].name === "UnitVideos") {
+            folderId = folders[i].id;
+            break;
+        }
+    }
+
+    if(folderId === "") {
+        folderId = createDriveFolder("UnitVideos");
+    }*/
+
+    const videoObjs = document.getElementsByClassName("video-obj");
+    Array.from(videoObjs).forEach(async (video) => {
+        
+        /*in progress
+        const videoFile = video.file;
+        console.log("vid file", videoFile);
+        const videoLocation = await uploadFileToFolder(videoFile, folderId); //right now it is not uploading;could be too large, look more into resumable; could be bad file name...
+        console.log("vid loc", videoLocation);*/
         const data = video.stampList;
         data.forEach(item => {
 
@@ -69,10 +93,12 @@ function saveVideoQuizzes(unitName) {
                 allOptions: item.allOptions,
                 explanations: item.explanations,
                 id: video.id,
-                unitName: unitName
+                unitName: unitName,
+                //vidLocation: videoLocation
             }
     
             postVideoData(document);
+
             console.log(`saved video question: ${document.id}`)
         })
         
@@ -107,7 +133,6 @@ function saveQuizzes(unitName) {
         })
 
     })
-
 }
 
 //note for MongoDB to connect, must add IP address to Network Access in Mongo
