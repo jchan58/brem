@@ -176,10 +176,10 @@ function editPart(event, questionData, index) {
   doneBtn.addEventListener("click", () => {
     fieldToEdit.textContent = letters + " " + editArea.value;
     //make sure to change the question data as well so the save is accurate
-    if(index != -1) {
+    if(index !== -1) {
       questionData.allOptions[index] = editArea.value;
       console.log(index);
-      if(index == 0){ //index 0 is always the answer so make sure to change that
+      if(index === 0){ //index 0 is always the answer so make sure to change that
         questionData.answer = editArea.value; //not working? also editArea...
       }
     } else {

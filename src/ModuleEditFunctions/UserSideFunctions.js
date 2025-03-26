@@ -1,5 +1,5 @@
 import { getQuizData, getVideoData } from "../api/api";
-import { addQuestion } from "./QuizFunctions";
+
 
 
 //helper function to shuffle the array
@@ -197,25 +197,6 @@ export async function equipQuizzes(unit_name) {
     
   });
 
-}
-
-//image
-//run this function in the file...
-function revealHideCaption(event) {
-    const capImgList = [];
-    const captionedImages = document.getElementsByClassName("caption-image");
-    capImgList.push(...captionedImages);
-
-    const caption = ""; //will be getting from the id from the db
-    capImgList.forEach(img => {
-        img.addEventListener("click", () => {
-            if(!caption.classList.contains("hidden")) { //will need to start hidden for users
-              caption.classList.add("hidden");
-            } else {
-              caption.classList.remove("hidden");
-            }
-        });
-    });
 }
 
 //video
