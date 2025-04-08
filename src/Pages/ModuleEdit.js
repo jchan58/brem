@@ -9,8 +9,15 @@ import { displayVideo, hideVideo } from '../ModuleEditFunctions/VideoFunctions';
 import { previewOrEditPage} from '../ModuleEditFunctions/PreviewFunctions';
 import { addQuestion, gradeSubmission } from '../ModuleEditFunctions/QuizFunctions';
 import { save } from '../ModuleEditFunctions/SaveFunctions';
+import { Separator } from '@radix-ui/themes/dist/cjs/components/context-menu.js';
+
+
+
+
 
 const ModuleEdit = () => {  
+  //set toast message
+
   //preview button ref
   const previewEditBtnRef = useRef(null);
 
@@ -268,7 +275,7 @@ const ModuleEdit = () => {
       } else if (typeSelectBtn.classList.contains("Image")){        
           const newElement = document.createElement("div");
           newElement.key = moduleElements.length;
-          newElement.classList.add("flex", "flex-row", "flex-wrap", "relative");
+          newElement.classList.add("flex", "flex-row", "flex-wrap", "relative", "justify-center", "w-full");
           newElement.classList.add('element-container');
           newElement.id = `element-container-${moduleElements.length}`;
           newElement.classList.add("justify-center");
@@ -276,7 +283,7 @@ const ModuleEdit = () => {
           const imageFlexBox = document.createElement("div");
           imageFlexBox.classList.add("flex", "grow-0");
           imageFlexBox.classList.add("flex-row");
-          imageFlexBox.classList.add("content-center");
+          imageFlexBox.classList.add("content-center", "justify-center", "w-full");
           imageFlexBox.classList.add("space-x-20");
 
           const image1Container = document.createElement("div");
@@ -346,6 +353,7 @@ const ModuleEdit = () => {
           newElement.appendChild(imageFlexBox);
 
           const btnContainer = document.createElement("div");
+          btnContainer.classList.add("flex", "flex-row", "mt-4", "mb-4", "mr-96", "w-full")
           btnContainer.classList.add("element-btns-container");
 
           
@@ -996,14 +1004,15 @@ const ModuleEdit = () => {
     //rendered
     return (
         <div className="relative bg-white pt-5">
+          <Separator size="4"/>
           <div className="relative z-10">
             <div id = "non-footer">
             <div className="flex flex-row justify-end">
-              <input type = "text" className="border border-black mb-2 mr-16" id = "saved-unit-name-input" name="unit-name" placeholder="UnitName"/> 
+              <input type = "text" className="border border-black mb-2 mr-16 rounded-sm mt-2" id = "saved-unit-name-input" name="unit-name" placeholder="UnitName"/> 
             </div>
               <div id = "add-module-container" className = "columns-3 order-first">
                 <div id = "btn-and-dropdown-element-container">
-                  <button ref = {typeSelectBtnRef} id="module-element-type-sel-btn" data-dropdown-toggle="module-element-type-dropdown" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button"> Select Module Element Type <svg className="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                  <button ref = {typeSelectBtnRef} id="module-element-type-sel-btn" data-dropdown-toggle="module-element-type-dropdown" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button" data-testid="type_select_btn"> Select Module Element Type <svg className="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
                     <path stroke="currentColor" d="m1 1 4 4 4-4"/>
                     </svg>
                   </button>
@@ -1012,7 +1021,7 @@ const ModuleEdit = () => {
                   <div ref = {typeDropdownRef} id="module-element-type-dropdown" className="z-10 hidden relative bg-gray-200 divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
                       <ul className="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
                         <li>
-                          <button ref = {linkSelButtonRef} id = "type-link" className="block w-full px-4 py-2 text-center bg-gray-200 hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white rounded">Link</button>
+                          <button ref = {linkSelButtonRef} id = "type-link" className="block w-full px-4 py-2 text-center bg-gray-200 hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white rounded" data-testid="type_link_btn">Link</button>
                         </li>
                         <li>
                           <button ref = {pdfSelButtonRef} id = "type-pdf" className="block w-full px-4 py-2 text-center bg-gray-200 hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white rounded">PDF</button>
@@ -1034,7 +1043,7 @@ const ModuleEdit = () => {
                 </div>
 
                 <p id = "add-container-text" >Add a module element of type: </p>
-                <button id ="add-module-element-btn" ref = {addBtnRef}>Add</button>
+                <button id ="add-module-element-btn" ref = {addBtnRef} datatest_id="add_el_btn">Add</button>
               </div>
 
               {/*container for added content*/}

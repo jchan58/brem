@@ -22,10 +22,12 @@ export function permaText(event) {
             alert("Please enter text into the input field.");
         } else {
             const text = document.createElement("p");
+   
+            console.log("text height", text.style.height);
             text.size = 2;
             text.pos = 3;
             text.classList.add("absolute", "top-0", "left-1/2", "textbox");
-            text.classList.add("transform", "-translate-x-1/2");
+            text.classList.add("transform", "-translate-x-1/2", "whitespace-pre");
             text.textContent = inputField.value;
             event.target.enableDrop();
             const elContainer = insertBtn.parentElement;
@@ -34,8 +36,14 @@ export function permaText(event) {
             elContainer.classList.add("flex");
             elContainer.classList.add("justify-end");
             text.classList.add("mt-300");
-
+            
+            text.style.maxWidth = inputField.clientWidth + 'px';
             inputField.replaceWith(text);
+            const textHeight = text.clientHeight;
+
+            console.log("par height old", text.parentElement.style.height);
+            text.parentElement.style.height= textHeight > text.parentElement.clientHeight ? textHeight + 'px' : text.parentElement.clientHeight + 'px'; 
+        
             insertBtn.inserted = true;
             insertBtn.remove();
             elContainer.classList.add("relative"); //make text's absolute relative to...this

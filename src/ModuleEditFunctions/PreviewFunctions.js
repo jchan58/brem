@@ -83,14 +83,26 @@ export function previewOrEditPage(event) {
       })
     }
 
+    //remove margin on element button container
+    if(event.target.textContent === "Preview") {
+      Array.from(elementBtnContainers).forEach(item => {
+        item.classList.add("ml-0", "mr-0", "mb-0", "mt-0");
+      })
+    } else {
+      if(event.target.textContent === "Edit")
+      Array.from(elementBtnContainers).forEach(item => {
+        item.classList.remove("ml-0", "mr-0", "mb-0", "mt-0");
+      })
+    }
+
     
-    //flip visibility
+    //flip visibility and make them disappear
     toChange.forEach(item => { 
       if(event.target.textContent === "Preview") {
-        item.classList.add("hidden");
+        item.classList.add("hidden", 'max-h-0');
         item.style.visibility = "hidden";
       } else {
-        item.classList.remove("hidden");
+        item.classList.remove("hidden", 'max-h-0');
         item.style.visibility = "visible";
       }
     });

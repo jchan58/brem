@@ -33,3 +33,10 @@ src/env_temp.js
 
 #test video
 /public/cell_thawing.mp4
+
+# Playwright
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
