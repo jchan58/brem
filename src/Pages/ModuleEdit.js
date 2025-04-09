@@ -1042,8 +1042,8 @@ const ModuleEdit = () => {
                   </div>
                 </div>
 
-                <p id = "add-container-text" >Add a module element of type: </p>
-                <button id ="add-module-element-btn" ref = {addBtnRef} datatest_id="add_el_btn">Add</button>
+                <p id = "add-container-text" className="font-medium text-lg" >Add a module element of type: </p>
+                <button id ="add-module-element-btn" ref = {addBtnRef} className="font-medium" datatest_id="add_el_btn">Add</button>
               </div>
 
               {/*container for added content*/}

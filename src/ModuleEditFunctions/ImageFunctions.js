@@ -99,8 +99,9 @@ export function createCaption(event) {
       //set the corresponding image for the caption so we can hide/reveal the caption on image click
       const correspondingImage = document.getElementById(`image-embed-${event.target.elID}-${event.target.choice}`); 
       caption.id = `image-embed-${event.target.elID}-${event.target.choice}-caption`; 
-      correspondingImage.classList.add("caption-image");
+      
       if(correspondingImage) {
+        correspondingImage.classList.add("caption-image");
         correspondingImage.addEventListener("click", () => {
           if(!caption.classList.contains("hidden")) { //will need to start hidden for users
             caption.classList.add("hidden");
@@ -111,7 +112,7 @@ export function createCaption(event) {
 
 
         //append the caption to the whole page (not including the footer)
-        wholeNonFooter.appendChild(caption);
+        wholeNonFooter.appendChild(caption); //put it closer to the image initially though...
         // Drag start: Add class or set data as needed
         caption.addEventListener("dragstart", function (e) {
           // Capture the mouse offset relative to the caption when the drag starts
