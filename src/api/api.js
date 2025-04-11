@@ -197,6 +197,7 @@ export async function getQuizData(unit_name) {
 
 //files
 export async function getFiles(file_path) {
+    console.log(file_path);
     try {
         const response = await fetch(`http://localhost:5173/files?file_path=${file_path}`, {
             method: "GET",
@@ -209,7 +210,33 @@ export async function getFiles(file_path) {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
         
-        return await response.json();
+        const res = await response.json();
+        console.log(res);
+        return res;
+        
+    } catch (err) {
+        console.error("Error:", err);
+    }
+}
+
+//file contents
+export async function readFile(file_path) {//issue here
+    console.log(file_path);
+    try {
+        const response = await fetch(`http://localhost:5173/file-contents?file_path=${file_path}`, {
+            method: "GET",
+            headers: {
+            "content-type": "application/json"
+            }, 
+        })
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        
+        const res = await response.json();
+        console.log(res);
+        return res;
         
     } catch (err) {
         console.error("Error:", err);

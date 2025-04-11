@@ -12,10 +12,15 @@ const DemoModulePage = () => {
     // Read the contents of demo units folder
      useEffect(() => {
         async function getUnitNames() {
-            const data = await getFiles("../public/demo_units");
-            setUnitNames(data);
+            const data = await getFiles("../public/demo_units"); //will be run from /server, so have to ..
+            const justNames = [];
+            for(let i = 0; i < data.length; i ++) {
+                justNames.push(data[i].split(".")[0]); //get rid of path part
+            }
+            setUnitNames(justNames);
         }
         getUnitNames();
+        console.log(unitNames);
     }, [])
 
     

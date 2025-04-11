@@ -10,6 +10,7 @@ import winston from  "winston";
 import expressWinston from "express-winston";
 import quizElementsRoutes from "./routes/quiz-elements.mjs";
 import filesRoutes from "./routes/files.mjs";
+import fileContentsRoutes from "./routes/file-contents.mjs";
 
 const PORT = 5173;
 const app = express();
@@ -40,6 +41,7 @@ app.use("/", units);
 app.use("/", videoElementsRoutes);
 app.use("/", quizElementsRoutes);
 app.use("/", filesRoutes);
+app.use("/", fileContentsRoutes);
 
 // Global error handling
 app.use((err, _req, res, next) => {

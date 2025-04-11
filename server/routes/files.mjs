@@ -1,28 +1,18 @@
 import express from "express";
-
-
 import fs from 'fs';
+
 
 const filesRoutes = express.Router();
 filesRoutes.get("/files", async (req, res) => {
     const { file_path } = req.query; 
-    const unitNames = [];
-    fs.readdir(file_path, (err, files) => {
 
-        if (err) {
-            console.log(err);
-        } else {
-            //get list of file names
-            files.forEach(file => {
-
-                unitNames.push(file);
-
-            });
-
-        }
-    })
-
+    console.log(file_path);
+    try {
+        const unitNames = fs.readdirSync(file_path);
     return res.status(200).send(unitNames);
+    } catch {
+        return res.status(500).send("Failed to read directory");
+    }
 })
 
-export default filesRoutes
+export default filesRoutes;

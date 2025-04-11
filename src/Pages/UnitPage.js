@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { equipImages, equipQuizzes, equipVideos } from "../ModuleEditFunctions/UserSideFunctions.js";
-import { pullUnit } from "../api/api.js";
+import { pullUnit, readFile } from "../api/api.js";
 
 
 function readHTMLFile(file) {
@@ -47,7 +47,10 @@ window.onload = async function () {
   const moduleName = queryParams.get("module_name");
 
   if(unitName && moduleName)  { //only do this if the parameters are present (on the unit page...)
-    const unitFile = await pullUnit(unitName, moduleName);
+    //THIS IS FOR FROM CLOUD STORAGE const unitFile = await pullUnit(unitName, moduleName);
+
+    //THIS IS FOR FROM DEMO FILES
+    const unitFile = await readFile(`../public/demo_units/${unitName}.html`);
       
     if(unitFile){
       await processAndWriteHTML(unitFile);
