@@ -21,6 +21,7 @@ import Modules from './Pages/modules.js';
 import ModuleEdit from './Pages/ModuleEdit.js';
 import UnitPage from './Pages/UnitPage.js'
 import ModulePage from "./Pages/modulePage.js";
+import DemoModulePage from "./Pages/demoModulePage.js";
 
 function App() {
   return (
@@ -44,6 +45,7 @@ function App() {
           <Route path="/editmodule" element={<ModuleEdit/>} />
           <Route path = "/unitpage" element={<UnitPage/>} />
           <Route path = "/modulepage" element={<ModulePage/>} />
+          <Route path = "/demo-module-page" element={<DemoModulePage/>} />
         </Routes>
         <Footer/>
       </Theme>

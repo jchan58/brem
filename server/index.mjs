@@ -9,6 +9,7 @@ import videoElementsRoutes from "./routes/video-elements.mjs";
 import winston from  "winston";
 import expressWinston from "express-winston";
 import quizElementsRoutes from "./routes/quiz-elements.mjs";
+import filesRoutes from "./routes/files.mjs";
 
 const PORT = 5173;
 const app = express();
@@ -38,6 +39,7 @@ app.use(express.json());
 app.use("/", units);
 app.use("/", videoElementsRoutes);
 app.use("/", quizElementsRoutes);
+app.use("/", filesRoutes);
 
 // Global error handling
 app.use((err, _req, res, next) => {

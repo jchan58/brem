@@ -159,6 +159,19 @@ export async function save(){ //require preview mode to save or auto do?
     await saveVideoQuizzes(unitName);
     await saveQuizzes(unitName); //test, makes sure it saves with max sub change and edit on question!
 
+
+    //save for demo
+    // Create a download link for the blob
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `${unitName}.html`; // File name for download
+
+    // Simulate a click on the link to trigger the download
+    document.body.appendChild(a);
+    a.click(); 
+
+
+
     console.log("saved")
 
     

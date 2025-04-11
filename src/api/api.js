@@ -195,4 +195,24 @@ export async function getQuizData(unit_name) {
     }
 }
 
+//files
+export async function getFiles(file_path) {
+    try {
+        const response = await fetch(`http://localhost:5173/files?file_path=${file_path}`, {
+            method: "GET",
+            headers: {
+            "content-type": "application/json"
+            }, 
+        })
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        
+        return await response.json();
+        
+    } catch (err) {
+        console.error("Error:", err);
+    }
+}
 
