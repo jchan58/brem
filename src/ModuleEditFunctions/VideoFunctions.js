@@ -234,6 +234,11 @@ export function displayVideo(event) {
       videoObj.append(source);
       videoObj.file = file;
 
+      //FOR DEMO FUNCTIONALITY
+      source.classList.add("video-source");
+      source.file_name = file.name;
+      source.backUpSRC = fileURL;
+
 
       const pauseDataContainer = document.createElement("div");
       pauseDataContainer.classList.add("pause-data-container");

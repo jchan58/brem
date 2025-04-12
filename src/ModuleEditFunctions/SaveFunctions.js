@@ -135,12 +135,41 @@ function saveQuizzes(unitName) {
     })
 }
 
+//student demo functions
+function convertURLS() {
+    const imageAndPDFEmbeds = document.getElementsByClassName("file-embed");
+    Array.from(imageAndPDFEmbeds).forEach(file => {
+        file.src = `/demo_files/${file.file_name}`; //everything must be in public/demo_files
+    })
+
+    const videoSources = document.getElementsByClassName("video-source");
+    Array.from(videoSources).forEach(source => {
+        source.src = `/demo_files/${source.file_name}`; //everything must be in public/demo_files
+    })
+}
+
+function unconvertURLS() {
+    const imageAndPDFEmbeds = document.getElementsByClassName("file-embed");
+    Array.from(imageAndPDFEmbeds).forEach(file => {
+        file.src = file.backUpSRC; 
+    })
+
+    const videoSources = document.getElementsByClassName("video-source");
+    Array.from(videoSources).forEach(source => {
+        source.src = source.backUpSRC; //everything must be in public/demo_files
+    })
+}
+
 //note for MongoDB to connect, must add IP address to Network Access in Mongo
 export async function save(){ //require preview mode to save or auto do?
     //test();
     //make it so necessary functions can be used by the html code
     //makeFunctionalHTML();
     //addScript(); not necessary actually
+
+
+    //FOR STUDENT DEMO
+    convertURLS();
     
     const website = `<!DOCTYPE html>\n` + document.getElementsByTagName("html")[0].innerHTML;
 
@@ -179,6 +208,7 @@ export async function save(){ //require preview mode to save or auto do?
     //revert the page to normal so the admin can keep editing if they want
     //reverseFunctionalHTML();
     //removeScript();
+    unconvertURLS();
 
 
 }

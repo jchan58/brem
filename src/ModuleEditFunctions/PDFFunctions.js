@@ -22,6 +22,11 @@ export function displayPDF(event) {
         pdfDisplay.classList.add("file-embed");
         pdfDisplay.width = event.target.parentElement.getBoundingClientRect().width * 0.8;
         pdfDisplay.height = 500;
+
+        //FOR DEMO FUNCTIONALITY
+        pdfDisplay.file_name = file.name;
+        pdfDisplay.backUpSRC = fileURL;
+
         fileInput.replaceWith(pdfDisplay);
         event.target.inserted = true;
         event.target.remove();

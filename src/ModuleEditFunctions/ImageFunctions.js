@@ -29,6 +29,10 @@ export function displayImage(event) {
     imageEmbed.classList.add("box-content");
     imageEmbed.style.width = "200px"; 
     imageEmbed.style.height = "300px";
+
+    //FOR DEMO FUNCTIONALITY
+    imageEmbed.file_name = file.name;
+    imageEmbed.backUpSRC = fileURL;
       
     event.target.enableDrop();
     event.target.inField.replaceWith(imageEmbed);

@@ -221,7 +221,7 @@ export async function getFiles(file_path) {
 
 //file contents
 export async function readFile(file_path) {//issue here
-    console.log(file_path);
+    console.log("path", file_path);
     try {
         const response = await fetch(`http://localhost:5173/file-contents?file_path=${file_path}`, {
             method: "GET",
@@ -236,10 +236,11 @@ export async function readFile(file_path) {//issue here
         
         const res = await response.json();
         console.log(res);
-        return res;
+        return res.html;
         
     } catch (err) {
         console.error("Error:", err);
     }
 }
+
 
