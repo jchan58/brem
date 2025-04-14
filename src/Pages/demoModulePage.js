@@ -25,21 +25,25 @@ const DemoModulePage = () => {
 
     
     return (
-        <ScrollArea type="always" scrollbars="vertical" style={{ height: 180 }}>
-            <Box p="2" pr="8">
-                <Heading size="4" mb="2" trim="start">
-                    Unit List
-                </Heading>
-                <Flex direction="column" gap="4">
-                    {unitNames.map((name) => (
-                        <div key = {name}>
-                            <a href={`${BASE_URL}unitpage?unit_name=${name}&module_name=DemoModule`}>{name}</a>
-                        </div>
-                    ))}
-                    <Separator />
-                </Flex>
-            </Box>
-    </ScrollArea>
+        <div>
+            <p className="text-center text-5xl font-bold mb-5">Welcome to the Demo Module</p>
+            <ScrollArea type="always" scrollbars="vertical" style={{ height: 500 }} className="mb-3.5">
+                <Box p="2" pr="8">
+                    <Heading size="4" mb="2" trim="start">
+                        Unit List
+                    </Heading>
+                    <Flex direction="column" gap="4">
+                        {unitNames.map((name) => (
+                            <div key = {name} className="text-center text-3xl">
+                                <a href={`${BASE_URL}unitpage?unit_name=${name}&module_name=DemoModule`}>{name}</a>
+                                <Separator orientation="horizontal" size="4"/>
+                            </div>
+                        ))}
+                        
+                    </Flex>
+                </Box>
+            </ScrollArea>
+        </div>
     );
 };
 

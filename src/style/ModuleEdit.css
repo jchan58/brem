@@ -234,16 +234,18 @@
 
 .grade-mark-check{
     color: #48e061;
-    font-size: 35px;
+    font-size: 33px;
     margin-bottom: 20px;
     margin-right: 30px;
+    margin-top: 2px;
 }
 
 .grade-mark-x{
     color: #f05151;
-    font-size: 35px;
+    font-size: 33px;
     margin-bottom: 20px;
     margin-right: 30px;
+    margin-top: 2px;
 }
 
 .hint-popup{
@@ -446,9 +448,10 @@
 }
 
 .score-display{
-    width: 50px;
-    font-size: 35px;
-    margin-right: 65px;
+    width: 60px;
+    font-size: 23px;
+    margin-right: 50px;
+    margin-top: 8px;
 }
 
 .submit-quiz{

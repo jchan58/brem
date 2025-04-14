@@ -98,7 +98,7 @@ function giveFeedbackAndHints(incorrect, questionData, submitButton, score) {
         const hint = document.createElement("p");
   
         //give hints if there are any left for the question and the user can resubmit
-        console.log(submitButton.subsUsed - 1);
+        //console.log(submitButton.subsUsed - 1);
         console.log(questionData[i].hintInfo);
         if(questionData[i].hintInfo[submitButton.subsUsed-1] && (submitButton.subsUsed !== submitButton.maxSubs)) {
           console.log("there");
@@ -145,7 +145,9 @@ function giveFeedbackAndHints(incorrect, questionData, submitButton, score) {
       scoreDisplay.textContent = `${Math.ceil(score)}%`;
       questionForm.appendChild(scoreDisplay);
     }
-  
+    
+    console.log("max subs", submitButton.maxSubs);
+    console.log("subs used", submitButton.subsUsed)
     //show score and disable submit button if all possible resubmits were used
     if(submitButton.subsUsed === submitButton.maxSubs && correct !==questionData.length) {
   
@@ -183,7 +185,8 @@ export async function equipQuizzes(unit_name) {
     const parsedQuizId = data.id.split("-");
     const numElId = parsedQuizId[1]; //get numeric part of the quiz's id; should be element id I think...changed from last element
     const subBtnId = `submit-quiz-${numElId}`;
-    
+    console.log("sub btn id", subBtnId);
+    console.log("max subs in data:", data.quizMaxSubs);
     if(!(subBtnId in subsEquipped)) { //only do this once per sub button
       const subBtn = document.getElementById(subBtnId); //get the quizzes' submission button
       //console.log("sub btn", subBtnId);

@@ -26,7 +26,7 @@ import DemoModulePage from "./Pages/demoModulePage.js";
 function App() {
   return (
     <>
-      <Theme>
+      <Theme className="flex flex-col min-h-screen">
         <NavBar/>
         <Routes>
           <Route path="/" element={<HomePage />} /> 
