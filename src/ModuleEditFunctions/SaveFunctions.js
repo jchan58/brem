@@ -117,8 +117,6 @@ function saveQuizzes(unitName) {
     Array.from(quizzes).forEach(quiz => {
         console.log(quiz);
         const data = quiz.questionData;
-        const quizIdSplit = quiz.id.split("-");
-        const numQuizId = quizIdSplit[quizIdSplit.length - 1];
         data.forEach(item => {
             const document = {
                 question: item.question,
@@ -126,7 +124,6 @@ function saveQuizzes(unitName) {
                 allOptions: item.allOptions,
                 hintInfo: item.hintInfo,
                 id: item.questionId,
-                quizId: numQuizId,
                 quizMaxSubs: quiz.submitBtn.maxSubs,
                 unitName: unitName
             }
