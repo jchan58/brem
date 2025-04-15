@@ -15,7 +15,7 @@ const DemoModulePage = () => {
             const data = await getFiles("../public/demo_units"); //will be run from /server, so have to ..
             const justNames = [];
             for(let i = 0; i < data.length; i ++) {
-                justNames.push(data[i].split(".")[0]); //get rid of path part
+                justNames.push(data[i].replace(" ", "%20").split(".")[0]); //get rid of path part
             }
             setUnitNames(justNames);
         }
@@ -34,8 +34,8 @@ const DemoModulePage = () => {
                     </Heading>
                     <Flex direction="column" gap="4">
                         {unitNames.map((name) => (
-                            <div key = {name} className="text-center text-3xl">
-                                <a href={`${BASE_URL}unitpage?unit_name=${name}&module_name=DemoModule`}>{name}</a>
+                            <div key = {name} className="text-center text-3xl space-y-2">
+                                <a href={`${BASE_URL}unitpage?unit_name=${name}&module_name=DemoModule`} className="hover:text-blue-600">{name.split("-").slice(1).join("-").replace("%20", " ")}</a>
                                 <Separator orientation="horizontal" size="4"/>
                             </div>
                         ))}

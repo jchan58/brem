@@ -1007,7 +1007,7 @@ const ModuleEdit = () => {
           <Separator size="4"/>
           <div className="relative z-10">
             <div id = "non-footer">
-            <div className="flex flex-row justify-end">
+            <div className="flex flex-row justify-end relative">
               <input type = "text" className="border border-black mb-2 mr-16 rounded-sm mt-2" id = "saved-unit-name-input" name="unit-name" placeholder="UnitName"/> 
             </div>
               <div id = "add-module-container" className = "columns-3 order-first">
@@ -1050,7 +1050,6 @@ const ModuleEdit = () => {
               <div id = "new-modules-container" ref = {newElContainerRef}>
                 
               </div>
-              <div className="mb-36"></div>
               <button id ="preview-module-page-btn" ref = {previewEditBtnRef} className = "ml-4 mb-3.5" >Preview</button>
 
               <button id ="save-module-page-btn" ref = {saveBtnRef} className = "mr-4 mb-3.5" >Save</button>
