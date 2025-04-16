@@ -113,6 +113,19 @@ export function previewOrEditPage(event) {
       event.target.textContent = "Preview";
     }
 
+    //make quality editing buttons disappear height wise
+    const qualEditors = document.getElementsByClassName("element-change-btns");
+    Array.from(qualEditors).forEach(editor => {
+      console.log(editor);
+      if(event.target.textContent === "Preview") {
+        editor.classList.add('max-h-0', "overflow-hidden");
+      } else {
+        editor.classList.remove('max-h-0', "overflow-hidden");
+      }
+    })
+
+    //need to make element height match text height for text...
+    
     //hide all the dropdowns
     Array.from(dropdowns).forEach(dropdown => dropdown.hide());
 
