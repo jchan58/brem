@@ -641,7 +641,7 @@ const ModuleEdit = () => {
       
         const newElement = document.createElement("div");
         newElement.key = moduleElements.length;
-        newElement.classList.add('element-container', "relative");
+        newElement.classList.add('element-container', "relative", "text-element");
         newElement.id = `element-container-${moduleElements.length}`;
 
         const inputBox = document.createElement("textarea");

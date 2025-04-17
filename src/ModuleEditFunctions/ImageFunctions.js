@@ -80,7 +80,7 @@ export function createCaption(event) {
   if (event.target.inField.value !== "" && event.target.choice) {
       const caption = document.createElement("div");
       caption.classList.add("caption");
-      caption.classList.add("relative")
+      caption.classList.add("relative", "hover:cursor-pointer")
       caption.setAttribute("draggable", "true"); // Make the caption draggable
 
       const text = document.createElement("p");
@@ -105,6 +105,16 @@ export function createCaption(event) {
       caption.id = `image-embed-${event.target.elID}-${event.target.choice}-caption`; 
       
       if(correspondingImage) {
+        const imageRect = correspondingImage.getBoundingClientRect();
+        const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+        caption.style.position = "absolute";
+        caption.style.left = imageRect.left + scrollLeft - 300 + 'px';
+        caption.style.top = imageRect.top + scrollTop + correspondingImage.offsetHeight - 200 + 10 + 'px';
+
+        console.log(caption.style.left)
+
         correspondingImage.classList.add("caption-image");
         correspondingImage.addEventListener("click", () => {
           if(!caption.classList.contains("hidden")) { //will need to start hidden for users
@@ -127,12 +137,12 @@ export function createCaption(event) {
 
           e.dataTransfer.setData("text/plain", null); // Required for Firefox
           // Set an ID or unique identifier for the dragged element
-          caption.classList.add("dragging");
+          caption.classList.add("dragging", "cursor-grabbing");
         });
   
         // Drag end: Remove class
         caption.addEventListener("dragend", function () {
-            caption.classList.remove("dragging");
+            caption.classList.remove("dragging", "cursor-grabbing");
         });
   
         // Handle where the caption can be dropped (the parent container)

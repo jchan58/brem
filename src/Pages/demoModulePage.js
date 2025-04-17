@@ -1,4 +1,4 @@
-import { Box, Flex, Heading, ScrollArea, Separator, Text } from "@radix-ui/themes";
+import { Box, Flex, Heading, ScrollArea } from "@radix-ui/themes";
 import { getFiles } from "../api/api";
 import { useEffect, useState } from "react";
 
@@ -27,16 +27,17 @@ const DemoModulePage = () => {
     return (
         <div>
             <p className="text-center text-5xl font-bold mb-5">Welcome to the Demo Module</p>
+            <Heading size="8" mb="2" trim="start" weight="medium" className="ml-4">
+                Unit List
+            </Heading>
             <ScrollArea type="always" scrollbars="vertical" style={{ height: 500 }} className="mb-3.5">
                 <Box p="2" pr="8">
-                    <Heading size="4" mb="2" trim="start">
-                        Unit List
-                    </Heading>
-                    <Flex direction="column" gap="4">
+                    
+                    <Flex direction="column" gap="0">
                         {unitNames.map((name) => (
-                            <div key = {name} className="text-center text-3xl space-y-2">
-                                <a href={`${BASE_URL}unitpage?unit_name=${name}&module_name=DemoModule`} className="hover:text-blue-600">{name.split("-").slice(1).join("-").replace("%20", " ")}</a>
-                                <Separator orientation="horizontal" size="4"/>
+                            <div key = {name} className="text-left font-medium text-2xl border border-gray-400 bg-zinc-100 space-y-0 h-16 flex items-center">
+                                <a href={`${BASE_URL}unitpage?unit_name=${name}&module_name=DemoModule`} className="hover:text-blue-600  ml-5">{name.split("-").slice(1).join("-").replace("%20", " ")}</a>
+                               {/* <Separator orientation="horizontal" size="4"/> */}
                             </div>
                         ))}
                         
