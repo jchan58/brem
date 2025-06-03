@@ -19,6 +19,10 @@ import arushi from '../Image_folder/arushi.jpeg'
 import dania from '../Image_folder/dania.jpg'
 import divi from '../Image_folder/Raj_Divyaansh_picture.jpg'
 import holly from '../Image_folder/Holly Tang.jpg'
+import omar from '../Image_folder/omar.JPG'
+import david from '../Image_folder/david.jpg'
+
+
 
 
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
@@ -125,6 +129,10 @@ const tableData = [
   ['Ibrahim Mrad', '2025'], 
   ['Zain Ghufran Ul Haq (Zain)', '2025'],
   ['William ElNemer', '2025'], 
+  ['Omar Selim', '2025'], 
+  ['David Lee', '2025'], 
+
+
 ];
 
 const teamMembers = [
@@ -157,16 +165,16 @@ const teamMembers = [
 
     },
     {
-        imgUrl: harshal,
-        name: 'Harshal Shah',
-        position: '3rd year at Hofstra/Northwell',
+        imgUrl: david,
+        name: 'David Lee',
+        position: 'Johns Hopkins University',
         category: 'Medical Student'
 
     },
     {
-        imgUrl: dania,
-        name: 'Dania Alsoodany',
-        position: '4th year at KU Leuven, Belgium',
+        imgUrl: omar,
+        name: 'Omar Selim',
+        position: 'Johns Hopkins University',
         category: 'Medical Student'
 
     },

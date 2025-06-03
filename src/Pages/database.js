@@ -339,6 +339,19 @@ import file336 from '../pdf/levy1989.pdf'
 import file337 from '../pdf/lipomeningioma__report_of_three_cases_and_review.24 (1).pdf'
 import file338 from '../pdf/Magnetic Resonance in Med - August 1989 - Grant Steen - In vivo 31P nuclear magnetic resonance spectroscopy of rat 9l.pdf'
 import file339 from '../pdf/Yang MB, Tamargo RJ, and Brem H..pdf'
+import file440 from '../pdf/Buaron 2024.pdf'
+import file441 from '../pdf/CCR2 and CCR5 co-inhibition modulates immunosuppressive myeloid milieu in glioma and synergizes with anti-PD-1 therapy.pdf'
+import file442 from '../pdf/jove-protocol-65115-focused-ultrasound-neuromodulation-of-human-emin-vitroem-neural-cultures-in-multiwell-microelectrode-arrays.pdf'
+import file443 from '../pdf/Kim 2024.pdf'
+import file444 from '../pdf/kwak-et-al-2024-brain-nucleic-acid-delivery-and-genome-editing-via-focused-ultrasound-mediated-blood-brain-barrier.pdf'
+import file445 from '../pdf/s41416-024-02878-2.pdf'
+import file446 from '../pdf/slika-et-al-2024-intracranial-nanogel-pellets-carrying-temozolomide-and-paclitaxel-for-adjuvant-brain-cancer-therapy.pdf'
+import file447 from '../pdf/awae347.pdf'
+import file448 from '../pdf/research_as_an_imperative_for_clinical_excellence.11 (1).pdf'
+
+
+
+
 
 
 const Database = () => {
@@ -761,7 +774,18 @@ const Database = () => {
         2024: [
             { title: "The Hospital Frailty Risk Score Independently Predicts Postoperative Outcomes in Glioblastoma Patients", link:  file259},
             { title: "Ultrasound inhibits tumor growth and selectively eliminates malignant brain tumor in vivo", link: file260},
-            { title: "GPR68-ATF4 signaling is a novel prosurvival pathway in glioblastoma activated by acidic extracellular microenvironment", link:  file261}
+            { title: "GPR68-ATF4 signaling is a novel prosurvival pathway in glioblastoma activated by acidic extracellular microenvironment", link:  file261},
+            { title: "Ultrasound inhibits tumor growth and selectively eliminates malignant brain tumor in vivo", link:  file440},
+            { title: "CCR2 and CCR5 co-inhibition modulates immunosuppressive myeloid milieu in glioma and synergizes with anti-PD-1 therapy", link:  file441},
+            { title: "Focused Ultrasound Neuromodulation of Human In Vitro Neural Cultures in Multi-Well Microelectrode Arrays", link:  file442},
+            { title: "Soluble PD-L1 reprograms blood monocytes to prevent cerebral edema and facilitate recovery after ischemic stroke", link:  file443},
+            { title: "Brain Nucleic Acid Delivery and Genome Editing via Focused Ultrasound-Mediated Blood−Brain Barrier Opening and Long-Circulating Nanoparticles", link:  file444},
+            { title: "Neurosurgical application of olaparib from a thermo-responsive paste potentiates DNA damage to prolong survival in malignant glioma", link:  file445},
+            { title: "Intracranial Nanogel Pellets Carrying Temozolomide and Paclitaxel for Adjuvant Brain Cancer Therapy", link:  file446},
+        ],
+        2025: [
+            { title: "CCL2 blockade combined with PD-1/P-selectin immunomodulators impedes breast cancer brain metastasis", link:  file447},
+            { title: "Research as an Imperative for Clinical Excellence", link:  file448}        
         ]
     };
 
