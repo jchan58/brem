@@ -125,7 +125,7 @@ export function createCaption(event) {
 
 
         //append the caption to the whole page (not including the footer)
-        wholeNonFooter.appendChild(caption); //put it closer to the image initially though...
+        wholeNonFooter.appendChild(caption); 
         // Drag start: Add class or set data as needed
         caption.addEventListener("dragstart", function (e) {
           // Capture the mouse offset relative to the caption when the drag starts
@@ -139,7 +139,7 @@ export function createCaption(event) {
           caption.classList.add("dragging", "cursor-grabbing");
         });
   
-        // Drag end: Remove class
+        // On drag end: Remove class
         caption.addEventListener("dragend", function () {
             caption.classList.remove("dragging", "cursor-grabbing");
         });

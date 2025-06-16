@@ -16,14 +16,14 @@ function handleCorrectAnswer(event) {
   event.target.video.classList.remove("pointer-events-none");
 }
 
-//when the answer is wrong, renablethe options so the user can try again, and hide the popup
+//when the answer is wrong, renable the options so the user can try again, and hide the popup
 function handleWrongAnswer(event) {
   const radios =  document.getElementsByName(event.target.radioGroup);
   radios.forEach(item => item.disabled = false);
   event.target.parent.classList.add("hidden");
 }
 
-//correct answer popup activity
+//function that handles the correct answer popup 
 function correctAnswerPopUp(event) {
   const radios =  document.getElementsByName(event.target.name);
   radios.forEach(item => item.disabled = true);
@@ -52,7 +52,7 @@ function correctAnswerPopUp(event) {
   popUp.classList.remove("hidden");
 }
 
-//wrong answer popup activity
+//function that handles the incorrect answer popup 
 function incorrectAnswerPopUp(event) {
   const radios =  document.getElementsByName(event.target.name);
   radios.forEach(item => item.disabled = true);

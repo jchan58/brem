@@ -1,4 +1,4 @@
-//reverse PDF inserted
+//reverse PDF insertion
 export function hidePDF(event) {
     if(event.currentTarget.insertBtn.inserted) {
         const element = event.currentTarget.parent;

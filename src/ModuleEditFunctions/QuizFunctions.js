@@ -202,7 +202,7 @@ function editPart(event, questionData, index) {
 }
 
 //function to add a question to a quiz
-export function addQuestion(questionData, parent, subBtn){//(question, options, hints, parent, questionId, subBtn) { //edit does not currently edit questionData....fix!
+export function addQuestion(questionData, parent, subBtn){
     
 
     const question = questionData.question;
@@ -322,5 +322,3 @@ export function addQuestion(questionData, parent, subBtn){//(question, options, 
     questionDiv.appendChild(fieldset);
     parent.appendChild(questionDiv);
 }
-
-//image

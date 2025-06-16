@@ -1,3 +1,4 @@
+//function to hide editing elements in preview mode and reveal them in edit mode
 export function previewOrEditPage(event) {
     //collect elements you want to flip into preview/edit mode
     const toChange = [];
@@ -141,9 +142,6 @@ export function previewOrEditPage(event) {
       event.target.textContent = "Preview";
     }
 
-    
-
-    //need to make element height match text height for text...
     
     //hide all the dropdowns
     Array.from(dropdowns).forEach(dropdown => dropdown.hide());

@@ -3,7 +3,7 @@ import { createDriveFolder, fetchDriveFolders, uploadFileToFolder, uploadLargeFi
 
 const functionsForUserSide = ["gradeSubmission()", "timeStampWatch()"]; //I will call timestamp triggering stuff timeStampWatch()
 
-//helper function to give user side functions to the html code
+//helper function to insert student user side functions into the html code
 function makeFunctionalHTML(){
     
     //for quiz submission buttons
@@ -13,7 +13,7 @@ function makeFunctionalHTML(){
     });
 }
 
-//helper function to remove user side functions in the html code
+//helper function to remove user side functions from the html code
 function reverseFunctionalHTML(){
     //for quiz submission buttons
     const submitQuizBtns = document.getElementsByClassName("submit-quiz");
@@ -39,6 +39,8 @@ function removeScript() {
     scriptElement.remove();
 }
 
+
+//functions to hide the preview and save buttons on the page
 function hidePreviewAndSave() {
     const prevBtn = document.getElementById("preview-module-page-btn");
     const saveBtn = document.getElementById("save-module-page-btn");
@@ -46,6 +48,7 @@ function hidePreviewAndSave() {
     saveBtn.classList.add("hidden");
 }
 
+//function to make the preview and save buttons visible
 function revertPreviewAndSave() {
     const prevBtn = document.getElementById("preview-module-page-btn");
     const saveBtn = document.getElementById("save-module-page-btn");
