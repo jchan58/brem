@@ -67,6 +67,34 @@ export function previewOrEditPage(event) {
     const unitNameInput = document.getElementById("saved-unit-name-input");
     toChange.push(unitNameInput);
 
+    //make quality editing buttons disappear height wise
+    const qualEditors = document.getElementsByClassName("element-change-btns");
+    Array.from(qualEditors).forEach(editor => {
+      console.log(editor);
+      if(event.target.textContent === "Preview") {
+        editor.classList.add('max-h-0', "overflow-hidden");
+      } else {
+        editor.classList.remove('max-h-0', "overflow-hidden");
+      }
+    })
+
+    //make text elements lose enought height on preview, and make sure to revert
+    const textElementContainers = document.getElementsByClassName("text-element");
+    if(event.target.textContent === "Preview") {
+      Array.from(textElementContainers).forEach(textEl => {
+        const text = textEl.querySelectorAll('p')[0];
+        console.log(textEl);
+        console.log(text);
+        console.log("text client height", text.clientHeight);
+        textEl.style.height = text.clientHeight + 5 + 'px';
+      })
+    } else {
+      Array.from(textElementContainers).forEach(textEl => {
+        textEl.style.height = 140 + 'px';
+      })
+    }
+
+
     //remove/add boxing
     if(event.target.textContent === "Preview") {
       Array.from(elementContainers).forEach(item => {
@@ -113,6 +141,10 @@ export function previewOrEditPage(event) {
       event.target.textContent = "Preview";
     }
 
+    
+
+    //need to make element height match text height for text...
+    
     //hide all the dropdowns
     Array.from(dropdowns).forEach(dropdown => dropdown.hide());
 

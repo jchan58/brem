@@ -195,4 +195,55 @@ export async function getQuizData(unit_name) {
     }
 }
 
+<<<<<<< HEAD
+=======
+//files
+export async function getFiles(file_path) {
+    console.log(file_path);
+    try {
+        const response = await fetch(`http://localhost:5173/files?file_path=${file_path}`, {
+            method: "GET",
+            headers: {
+            "content-type": "application/json"
+            }, 
+        })
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        
+        const res = await response.json();
+        console.log(res);
+        return res;
+        
+    } catch (err) {
+        console.error("Error:", err);
+    }
+}
+
+//file contents
+export async function readFile(file_path) {//issue here
+    console.log("path", file_path);
+    try {
+        const response = await fetch(`http://localhost:5173/file-contents?file_path=${file_path}`, {
+            method: "GET",
+            headers: {
+            "content-type": "application/json"
+            }, 
+        })
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        
+        const res = await response.json();
+        console.log(res);
+        return res.html;
+        
+    } catch (err) {
+        console.error("Error:", err);
+    }
+}
+
+>>>>>>> ec704d8798c6f831a07049abcb3c51c86cdd3417
 

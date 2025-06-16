@@ -1,4 +1,4 @@
-import { postQuizData, postUnit, postVideoData, test } from "../api/api";
+import { getFiles, postQuizData, postUnit, postVideoData, test } from "../api/api";
 import { createDriveFolder, fetchDriveFolders, uploadFileToFolder, uploadLargeFileToFolder, uploadLargerFileToFolder } from "../googleDriveService";
 
 const functionsForUserSide = ["gradeSubmission()", "timeStampWatch()"]; //I will call timestamp triggering stuff timeStampWatch()
@@ -39,6 +39,20 @@ function removeScript() {
     scriptElement.remove();
 }
 
+function hidePreviewAndSave() {
+    const prevBtn = document.getElementById("preview-module-page-btn");
+    const saveBtn = document.getElementById("save-module-page-btn");
+    prevBtn.classList.add("hidden");
+    saveBtn.classList.add("hidden");
+}
+
+function revertPreviewAndSave() {
+    const prevBtn = document.getElementById("preview-module-page-btn");
+    const saveBtn = document.getElementById("save-module-page-btn");
+    prevBtn.classList.remove("hidden");
+    saveBtn.classList.remove("hidden");
+}
+
 
 //send the page as a string of html to the server
 async function send(content) {
@@ -53,11 +67,6 @@ async function send(content) {
 // refer to: videoObj.stampList.push(
     //{time: val, question: questionInfo[0], answer: questionInfo[1], allOptions: options, explanations: explainInfo});
 async function saveVideoQuizzes(unitName) {
-    if(unitName.includes(" ") || unitName === "") {
-        alert("Unit not saved. Must enter a unit name with no spaces");
-        return;
-    }
-
     /*not functional
     const folders = await fetchDriveFolders();
     let folderId = "";
@@ -108,10 +117,6 @@ async function saveVideoQuizzes(unitName) {
 //refer to questionDataContainer.questionData.push(
    // {question: questionInfo[0], answer: questionInfo[1], allOptions: options, hintInfo: hintInfo, questionId: questionId});
 function saveQuizzes(unitName) {
-    if(unitName.includes(" ") || unitName === "") {
-        alert("Unit not saved. Must enter a unit name with no spaces");
-        return;
-    }
     const quizzes = document.getElementsByClassName("question-data-container"); //quizzes are represented by question data containers
 
     Array.from(quizzes).forEach(quiz => {
@@ -135,12 +140,42 @@ function saveQuizzes(unitName) {
     })
 }
 
+//student demo functions
+function convertURLS() {
+    const imageAndPDFEmbeds = document.getElementsByClassName("file-embed");
+    Array.from(imageAndPDFEmbeds).forEach(file => {
+        file.src = `/demo_files/${file.file_name}`; //everything must be in public/demo_files
+    })
+
+    const videoSources = document.getElementsByClassName("video-source");
+    Array.from(videoSources).forEach(source => {
+        source.src = `/demo_files/${source.file_name}`; //everything must be in public/demo_files
+    })
+}
+
+function unconvertURLS() {
+    const imageAndPDFEmbeds = document.getElementsByClassName("file-embed");
+    Array.from(imageAndPDFEmbeds).forEach(file => {
+        file.src = file.backUpSRC; 
+    })
+
+    const videoSources = document.getElementsByClassName("video-source");
+    Array.from(videoSources).forEach(source => {
+        source.src = source.backUpSRC; //everything must be in public/demo_files
+    })
+}
+
 //note for MongoDB to connect, must add IP address to Network Access in Mongo
 export async function save(){ //require preview mode to save or auto do?
     //test();
     //make it so necessary functions can be used by the html code
     //makeFunctionalHTML();
     //addScript(); not necessary actually
+
+    hidePreviewAndSave();
+    //FOR STUDENT DEMO
+    convertURLS();
+
     
     const website = `<!DOCTYPE html>\n` + document.getElementsByTagName("html")[0].innerHTML;
 
@@ -150,7 +185,33 @@ export async function save(){ //require preview mode to save or auto do?
    
 
     //save unit data
-    const unitName = document.getElementById("saved-unit-name-input").value; //enforce no empty and no spaces
+    const unitName = document.getElementById("saved-unit-name-input").value; 
+
+    const existingUnits = await getFiles("../public/demo_units");
+
+    if(existingUnits.includes(`${unitName}.html`)) {
+        alert("Unit not saved. A unit with this name already exists");
+        unconvertURLS();
+        revertPreviewAndSave();
+        return;
+    }
+
+
+
+    if(unitName === "") {
+        alert("Unit not saved. Must enter a unit name.");
+        unconvertURLS();
+        revertPreviewAndSave();
+        return;
+    }
+
+    if(unitName.includes("%20")) {
+        alert("Unit name must not include '%20' .");
+        unconvertURLS();
+        revertPreviewAndSave();
+        return;
+    }
+
     const htmlFile = new File([blob], `${unitName}`);
 
     const queryParams = new URLSearchParams(window.location.search);
@@ -159,6 +220,19 @@ export async function save(){ //require preview mode to save or auto do?
     await saveVideoQuizzes(unitName);
     await saveQuizzes(unitName); //test, makes sure it saves with max sub change and edit on question!
 
+
+    //save for demo
+    // Create a download link for the blob
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `${unitName}.html`; // File name for download
+
+    // Simulate a click on the link to trigger the download
+    document.body.appendChild(a);
+    a.click(); 
+
+
+
     console.log("saved")
 
     
@@ -166,6 +240,9 @@ export async function save(){ //require preview mode to save or auto do?
     //revert the page to normal so the admin can keep editing if they want
     //reverseFunctionalHTML();
     //removeScript();
+    unconvertURLS();
+    revertPreviewAndSave();
+
 
 
 }

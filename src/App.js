@@ -21,11 +21,19 @@ import Modules from './Pages/modules.js';
 import ModuleEdit from './Pages/ModuleEdit.js';
 import UnitPage from './Pages/UnitPage.js'
 import ModulePage from "./Pages/modulePage.js";
+<<<<<<< HEAD
+=======
+import DemoModulePage from "./Pages/demoModulePage.js";
+>>>>>>> ec704d8798c6f831a07049abcb3c51c86cdd3417
 
 function App() {
   return (
     <>
+<<<<<<< HEAD
       <Theme>
+=======
+      <Theme className="flex flex-col min-h-screen">
+>>>>>>> ec704d8798c6f831a07049abcb3c51c86cdd3417
         <NavBar/>
         <Routes>
           <Route path="/" element={<HomePage />} /> 
@@ -44,6 +52,10 @@ function App() {
           <Route path="/editmodule" element={<ModuleEdit/>} />
           <Route path = "/unitpage" element={<UnitPage/>} />
           <Route path = "/modulepage" element={<ModulePage/>} />
+<<<<<<< HEAD
+=======
+          <Route path = "/demo-module-page" element={<DemoModulePage/>} />
+>>>>>>> ec704d8798c6f831a07049abcb3c51c86cdd3417
         </Routes>
         <Footer/>
       </Theme>

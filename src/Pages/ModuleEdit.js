@@ -641,7 +641,11 @@ const ModuleEdit = () => {
       
         const newElement = document.createElement("div");
         newElement.key = moduleElements.length;
+<<<<<<< HEAD
         newElement.classList.add('element-container', "relative");
+=======
+        newElement.classList.add('element-container', "relative", "text-element");
+>>>>>>> ec704d8798c6f831a07049abcb3c51c86cdd3417
         newElement.id = `element-container-${moduleElements.length}`;
 
         const inputBox = document.createElement("textarea");
@@ -1007,7 +1011,11 @@ const ModuleEdit = () => {
           <Separator size="4"/>
           <div className="relative z-10">
             <div id = "non-footer">
+<<<<<<< HEAD
             <div className="flex flex-row justify-end">
+=======
+            <div className="flex flex-row justify-end relative">
+>>>>>>> ec704d8798c6f831a07049abcb3c51c86cdd3417
               <input type = "text" className="border border-black mb-2 mr-16 rounded-sm mt-2" id = "saved-unit-name-input" name="unit-name" placeholder="UnitName"/> 
             </div>
               <div id = "add-module-container" className = "columns-3 order-first">
@@ -1050,7 +1058,10 @@ const ModuleEdit = () => {
               <div id = "new-modules-container" ref = {newElContainerRef}>
                 
               </div>
+<<<<<<< HEAD
               <div className="mb-36"></div>
+=======
+>>>>>>> ec704d8798c6f831a07049abcb3c51c86cdd3417
               <button id ="preview-module-page-btn" ref = {previewEditBtnRef} className = "ml-4 mb-3.5" >Preview</button>
 
               <button id ="save-module-page-btn" ref = {saveBtnRef} className = "mr-4 mb-3.5" >Save</button>

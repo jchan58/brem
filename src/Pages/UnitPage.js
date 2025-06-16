@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
 import { equipImages, equipQuizzes, equipVideos } from "../ModuleEditFunctions/UserSideFunctions.js";
+<<<<<<< HEAD
 import { pullUnit } from "../api/api.js";
+=======
+import { pullUnit, readFile } from "../api/api.js";
+import { Button } from "@radix-ui/themes/dist/cjs/index.js";
+>>>>>>> ec704d8798c6f831a07049abcb3c51c86cdd3417
 
 
 function readHTMLFile(file) {
@@ -47,15 +52,40 @@ window.onload = async function () {
   const moduleName = queryParams.get("module_name");
 
   if(unitName && moduleName)  { //only do this if the parameters are present (on the unit page...)
+<<<<<<< HEAD
     const unitFile = await pullUnit(unitName, moduleName);
+=======
+    //THIS IS FOR FROM CLOUD STORAGE const unitFile = await pullUnit(unitName, moduleName);
+
+    //THIS IS FOR FROM DEMO FILES
+    const realUnitName = unitName.replace("%20", " ");
+    const unitFile = await readFile(`../public/demo_units/${realUnitName}.html`);
+>>>>>>> ec704d8798c6f831a07049abcb3c51c86cdd3417
       
     if(unitFile){
       await processAndWriteHTML(unitFile);
           //console.log("called");
 
+<<<<<<< HEAD
       await equipVideos(unitName); 
       await equipQuizzes(unitName);
       equipImages();
+=======
+      await equipVideos(realUnitName); 
+      await equipQuizzes(realUnitName);
+      equipImages();
+
+      //BACK NAV ONLY FOR DEMO
+      const nonFooter = document.getElementById("non-footer");
+      nonFooter.classList.add("flex", "flex-col");
+      const backNavBtn = document.createElement("button");
+      backNavBtn.classList.add("text-lg", "border", "border-solid", "border-black", "rounded-sm", "px-4", "py-2", "ml-2", "absolute", "bottom-4");
+      backNavBtn.textContent = "Back to Module Page"; 
+      backNavBtn.onclick = () => {
+        window.location.href = "http://localhost:3000/demo-module-page";
+      };
+      nonFooter.appendChild(backNavBtn);
+>>>>>>> ec704d8798c6f831a07049abcb3c51c86cdd3417
    
     } 
   }
