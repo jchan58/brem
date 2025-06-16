@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+/server/node_modules
 /.pnp
 .pnp.js
 
@@ -24,3 +25,18 @@ yarn-error.log*
 
 # Local Netlify folder
 .netlify
+
+# Environment variables
+.env
+src/env_temp.js
+
+
+#test video
+/public/cell_thawing.mp4
+
+# Playwright
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/

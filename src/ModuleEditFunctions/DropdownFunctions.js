@@ -14,11 +14,12 @@ export function createDropdown(parent, label, menuItems, initDisabled = true, el
     button.setAttribute('data-dropdown-toggle', `${label}-type-dropdown`);
     button.innerHTML = `Change ${label.replaceAll("-", " ").replace(/\d/g, "")} <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6"><path stroke="currentColor" d="m1 1 4 4 4-4"/></svg>`;
     
+    //we want some buttons to be initally disabled
     if(initDisabled) {
       button.disabled = true; 
     }
 
-    
+    //functions to allow the enabling and disabling of all buttons (doing them per element did not work)
     const enableAllButtons = () => {
         const buttons = parent.querySelectorAll('button');
         buttons.forEach(btn => { 
@@ -26,16 +27,35 @@ export function createDropdown(parent, label, menuItems, initDisabled = true, el
           });
     }
 
+    const disableAllButtons = () => {
+      const buttons = parent.querySelectorAll('button');
+      buttons.forEach(btn => { 
+          btn.disabled = true;
+        });
+    }
+
     // Create dropdown container div
     const dropdownDiv = document.createElement('div');
     dropdownDiv.id = `${label}-type-dropdown`;
-    dropdownDiv.className = "dropdown z-10 hidden absolute left-1/2 transform -translate-x-1/2 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700";
+    classesStr = "dropdown z-10 hidden absolute left-1/2 transform -translate-x-1/2 bg-gray-200 divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700";
+    classes = classesStr.split(" ");
+    dropdownDiv.classList.add(...classes);
     // Create unordered list element
     const ul = document.createElement('ul');
     classesStr = "py-2 text-sm text-gray-700 dark:text-gray-200";
     classes = classesStr.split(" ");
     ul.classList.add(...classes);
     ul.setAttribute('aria-labelledby', 'dropdownDefaultButton');
+
+    const hideDropdown = () => {
+      //dropdownDiv.classList.add("hidden");
+      const dropdowns = parent.querySelectorAll('.dropdown');
+      dropdowns.forEach(drop => drop.classList.add("hidden"));
+
+    }
+
+    //want dropdown to be able to hide itself
+    dropdownDiv.hide = hideDropdown;
   
     menuItems.forEach(item => {
       const li = document.createElement('li');
@@ -45,7 +65,7 @@ export function createDropdown(parent, label, menuItems, initDisabled = true, el
       classesStr = "block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white";
       classes = classesStr.split(" ");
       a.classList.add(...classes);
-      a.textContent = item.text;
+      a.textContent = item.text; //these will be used as an exact match for setting the selected option!
       a.elID = elID;
       if(item.funcs != null) {
         for(let i = 0; i < item.funcs.length; i++) {
@@ -67,11 +87,13 @@ export function createDropdown(parent, label, menuItems, initDisabled = true, el
     container.appendChild(button);
     container.appendChild(dropdownDiv);
     parent.enableDropdown = enableAllButtons;
+    parent.disableDropdown = disableAllButtons;
+    parent.hideDrop = hideDropdown;
     parent.appendChild(container);
 
 }
 
-//general dropdown menu logic
+//general dropdown menu logic, similar to that of the dropdown in ModuleEdit
 export function displayDropdownOptions(event) {
     const selectBtn = event.target;
 
@@ -81,6 +103,7 @@ export function displayDropdownOptions(event) {
       const links = dropdown.querySelectorAll('a');
       const removes = Array.from(links).map(link => link.textContent);
 
+      //remove all dropdown option text from the class list (they will all be tagged 'a')
       for (let i = 0; i < removes.length; i++) {
         selectBtn.classList.remove(removes[i]);
       }
@@ -89,28 +112,25 @@ export function displayDropdownOptions(event) {
       <path stroke="currentColor" d="m1 1 4 4 4-4"/>
       </svg>`;
       
-      
+      //reveal or hide the dropdown
       if (dropdown.classList.contains("hidden")) {
         
         dropdown.classList.remove("hidden");
-        dropdown.classList.add("shown");
       } else {
         dropdown.classList.add("hidden");
-        dropdown.classList.remove("shown");
       }
     }
 
 }
 
-  //select on dropdown display logic, is a list item
+//logic to change dropdown text on selection; options are list items
 export function displayDropdownSelection(event) {
+    event.preventDefault();
     const targetText = event.target.textContent;
-    //console.log(event.target);
+
     const typeSelectBtn = event.target.parentSelBtn;
 
-    if(typeSelectBtn) {
-      //console.log(typeSelectBtn);
-      
+    if(typeSelectBtn) {  
       typeSelectBtn.innerHTML = `${targetText} <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
         <path stroke="currentColor" d="m1 1 4 4 4-4"/>
         </svg>`;

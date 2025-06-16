@@ -1,50 +1,127 @@
-export function previewPage() {
-    const hide = [];
+export function previewOrEditPage(event) {
+    //collect elements you want to flip into preview/edit mode
+    const toChange = [];
 
     const addModuleContainer = document.getElementById("add-module-container");
-    hide.push(addModuleContainer);
+    toChange.push(addModuleContainer);
 
     const insertInputButtons = document.getElementsByClassName("insert-input-btn");
-    hide.push(...insertInputButtons);
+    toChange.push(...insertInputButtons);
 
     const elementBtnContainers = document.getElementsByClassName("element-btns-container");
-    hide.push(...elementBtnContainers);
+    toChange.push(...elementBtnContainers);
 
     const imageElBtnContainers1 = document.getElementsByClassName("image1-btns-container");
-    hide.push(...imageElBtnContainers1);
+    toChange.push(...imageElBtnContainers1);
     const imageElBtnContainers2 = document.getElementsByClassName("image2-btns-container");
-    hide.push(...imageElBtnContainers2);
+    toChange.push(...imageElBtnContainers2);
     const imageElBtnContainers3 = document.getElementsByClassName("image3-btns-container");
-    hide.push(...imageElBtnContainers3);
+    toChange.push(...imageElBtnContainers3);
 
+    const captionEditors  = document.getElementsByClassName("caption-editor");
+    toChange.push(...captionEditors);
+    
     const pauseDataContainers = document.getElementsByClassName("pause-data-container");
-    hide.push(...pauseDataContainers);
+    toChange.push(...pauseDataContainers);
 
     const dropdowns = document.getElementsByClassName("dropdown"); 
-    hide.push(...dropdowns);
+    toChange.push(...dropdowns);
 
     const imageInputs = document.getElementsByClassName("image-input");
-    hide.push(...imageInputs);
+    toChange.push(...imageInputs);
+
+    const elementInputs = document.getElementsByClassName("element-input");
+    toChange.push(...elementInputs);
+
+    const editButtons = document.getElementsByClassName("edit-btn");
+    toChange.push(...editButtons);
 
     const trashButtons = document.getElementsByClassName("trash-btn");
-    console.log(trashButtons);
-    hide.push(...trashButtons);
+    toChange.push(...trashButtons);
 
     const captionInputs = document.getElementsByClassName("caption-input");
-    hide.push(...captionInputs);
+    toChange.push(...captionInputs);
 
     const addCaptionBtns = document.getElementsByClassName("add-caption-btn");
-    hide.push(...addCaptionBtns);
+    toChange.push(...addCaptionBtns);
+
+    const videoInputs = document.getElementsByClassName("video-input");
+    toChange.push(...videoInputs);
     
     const elementContainers = document.getElementsByClassName("element-container");
-    Array.from(elementContainers).forEach(item => {
-      item.classList.remove("element-container");
-      item.classList.add("added-element-container");
-    })
 
-    hide.forEach(item => { 
-      item.classList.add("hidden");
-      item.style.visibility = "hidden";
-      
+    const addedElementContainers = document.getElementsByClassName("added-element-container");
+
+    const questionDataContainers = document.getElementsByClassName("question-data-container");
+    toChange.push(...questionDataContainers);
+
+    const inputQuestionBars = document.getElementsByClassName("input-question-bar");
+    toChange.push(...inputQuestionBars);
+
+    const editButtonsQ = document.getElementsByClassName("question-edit-btn");
+    toChange.push(...editButtonsQ);
+
+    const editButtonsA = document.getElementsByClassName("answer-edit-btn");
+    toChange.push(...editButtonsA);
+
+    const unitNameInput = document.getElementById("saved-unit-name-input");
+    toChange.push(unitNameInput);
+
+    //remove/add boxing
+    if(event.target.textContent === "Preview") {
+      Array.from(elementContainers).forEach(item => {
+        console.log(event.target.textContent);
+        item.classList.remove("element-container");
+        item.classList.add("added-element-container");
+      })
+    } else {
+      if(event.target.textContent === "Edit")
+      Array.from(addedElementContainers).forEach(item => {
+        console.log(event.target.textContent);
+        item.classList.add("element-container");
+        item.classList.remove("added-element-container");
+      })
+    }
+
+    //remove margin on element button container
+    if(event.target.textContent === "Preview") {
+      Array.from(elementBtnContainers).forEach(item => {
+        item.classList.add("ml-0", "mr-0", "mb-0", "mt-0");
+      })
+    } else {
+      if(event.target.textContent === "Edit")
+      Array.from(elementBtnContainers).forEach(item => {
+        item.classList.remove("ml-0", "mr-0", "mb-0", "mt-0");
+      })
+    }
+
+    
+    //flip visibility and make them disappear
+    toChange.forEach(item => { 
+      if(event.target.textContent === "Preview") {
+        item.classList.add("hidden", 'max-h-0');
+        item.style.visibility = "hidden";
+      } else {
+        item.classList.remove("hidden", 'max-h-0');
+        item.style.visibility = "visible";
+      }
     });
+
+    if(event.target.textContent === "Preview") {
+      event.target.textContent = "Edit";
+    } else {
+      event.target.textContent = "Preview";
+    }
+
+    //hide all the dropdowns
+    Array.from(dropdowns).forEach(dropdown => dropdown.hide());
+
+    //re-enable the submit button on quizzes on mode switch
+    const submitQuizButtons = document.getElementsByClassName("submit-quiz");
+    Array.from(submitQuizButtons).forEach(item => { 
+      item.disabled = false;
+      item.subsUsed = 0;
+    });
+
+
 }

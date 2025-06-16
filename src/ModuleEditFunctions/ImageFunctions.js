@@ -1,4 +1,19 @@
-//add warning, insert file first
+//function to reverse image insertion
+export function hideImage(event) {
+  if(event.currentTarget.insertBtn.inserted){
+    const imgContainer = event.currentTarget.parent;
+    imgContainer.innerHTML = "";
+    imgContainer.appendChild(event.currentTarget.inputField); 
+    imgContainer.appendChild(event.currentTarget.buttons); 
+    event.currentTarget.hideDrop();
+    event.currentTarget.insertBtn.disableDrop();
+    event.currentTarget.insertBtnsContainer.appendChild(event.currentTarget.insertBtn);
+    imgContainer.appendChild(event.currentTarget);
+    event.currentTarget.insertBtn.inserted = false;
+  }
+}
+
+//function to display inserted image
 export function displayImage(event) {
   let file;
   if(event.target.files) {
@@ -10,19 +25,21 @@ export function displayImage(event) {
     imageEmbed.src = fileURL;
     imageEmbed.classList.add("file-embed");
     imageEmbed.id = `image-embed-${event.target.elID}-${event.target.num}`;
-    imageEmbed.classList.add("flex-1"); //looks different in chrome??? scrolls
+    imageEmbed.classList.add("flex-1"); 
     imageEmbed.classList.add("box-content");
     imageEmbed.style.width = "200px"; 
     imageEmbed.style.height = "300px";
       
     event.target.enableDrop();
     event.target.inField.replaceWith(imageEmbed);
+    event.target.inserted = true;
     event.target.remove();
   } else {
     alert("Please upload an image.")
   }
 }
 
+//function to let users resize the image
 export function changeImageSize(event) {
   event.preventDefault();
   const imageEmbed = event.target.dropdownContainer.parentElement.parentElement.children[0];
@@ -50,7 +67,6 @@ export function changeImageSize(event) {
 
 //does not move with preview...maybe need to lock to images?
 export function createCaption(event) {
-  //want to be able to put caption answer
   const wholeNonFooter = document.getElementById("non-footer");
   wholeNonFooter.classList.add("relative");
   let offsetX = 0;
@@ -68,19 +84,23 @@ export function createCaption(event) {
       caption.appendChild(text);
       
 
-      const trashButton = document.createElement("button");
-      trashButton.innerText = '🗑';
-      trashButton.classList.add('trash-btn');
-      trashButton.classList.add("absolute");
-      trashButton.classList.add("top-1", "right-1");
-      trashButton.addEventListener("click", () => trashButton.parentElement.remove());
-      caption.appendChild(trashButton);
+      //caption delete button
+      const deleteButton = document.createElement("button");
+      const deleteIcon = document.createElement("i");
+      deleteIcon.classList.add("bi", "bi-trash3-fill");
+      deleteButton.appendChild(deleteIcon);
+      deleteButton.classList.add('trash-btn'); 
+      deleteButton.classList.add("absolute");
+      deleteButton.classList.add("top-1", "right-1");
+      deleteButton.addEventListener("click", () => deleteButton.parentElement.remove());
+      caption.appendChild(deleteButton);
 
-      
-
-      
+      //set the corresponding image for the caption so we can hide/reveal the caption on image click
       const correspondingImage = document.getElementById(`image-embed-${event.target.elID}-${event.target.choice}`); 
+      caption.id = `image-embed-${event.target.elID}-${event.target.choice}-caption`; 
+      
       if(correspondingImage) {
+        correspondingImage.classList.add("caption-image");
         correspondingImage.addEventListener("click", () => {
           if(!caption.classList.contains("hidden")) { //will need to start hidden for users
             caption.classList.add("hidden");
@@ -90,8 +110,8 @@ export function createCaption(event) {
         });
 
 
-
-        wholeNonFooter.appendChild(caption);
+        //append the caption to the whole page (not including the footer)
+        wholeNonFooter.appendChild(caption); //put it closer to the image initially though...
         // Drag start: Add class or set data as needed
         caption.addEventListener("dragstart", function (e) {
           // Capture the mouse offset relative to the caption when the drag starts
@@ -126,8 +146,6 @@ export function createCaption(event) {
                 const mouseX = e.clientX - containerRect.left;
                 const mouseY = e.clientY - containerRect.top;
 
-                console.log(mouseX);
-                console.log(mouseY);
                 // Adjust for the offset of the dragged element
                 const adjustedX = mouseX - offsetX - 330; //manual adjustment may not be good...
                 const adjustedY = mouseY - offsetY - 55;
@@ -151,6 +169,7 @@ export function createCaption(event) {
   }
 }
 
+//allow the user to choose which image to attach the caption to
 export function updateChoice (event) { 
   const capAddButton = document.getElementById(`caption-add-btn-${event.target.elID}`);
   capAddButton.choice = event.target.textContent;
