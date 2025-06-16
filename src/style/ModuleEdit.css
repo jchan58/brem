@@ -234,30 +234,18 @@
 
 .grade-mark-check{
     color: #48e061;
-<<<<<<< HEAD
-    font-size: 35px;
-    margin-bottom: 20px;
-    margin-right: 30px;
-=======
     font-size: 33px;
     margin-bottom: 20px;
     margin-right: 30px;
     margin-top: 2px;
->>>>>>> ec704d8798c6f831a07049abcb3c51c86cdd3417
 }
 
 .grade-mark-x{
     color: #f05151;
-<<<<<<< HEAD
-    font-size: 35px;
-    margin-bottom: 20px;
-    margin-right: 30px;
-=======
     font-size: 33px;
     margin-bottom: 20px;
     margin-right: 30px;
     margin-top: 2px;
->>>>>>> ec704d8798c6f831a07049abcb3c51c86cdd3417
 }
 
 .hint-popup{
@@ -460,16 +448,10 @@
 }
 
 .score-display{
-<<<<<<< HEAD
-    width: 50px;
-    font-size: 35px;
-    margin-right: 65px;
-=======
     width: 60px;
     font-size: 23px;
     margin-right: 50px;
     margin-top: 8px;
->>>>>>> ec704d8798c6f831a07049abcb3c51c86cdd3417
 }
 
 .submit-quiz{

@@ -195,8 +195,6 @@ export async function getQuizData(unit_name) {
     }
 }
 
-<<<<<<< HEAD
-=======
 //files
 export async function getFiles(file_path) {
     console.log(file_path);
@@ -245,5 +243,4 @@ export async function readFile(file_path) {//issue here
     }
 }
 
->>>>>>> ec704d8798c6f831a07049abcb3c51c86cdd3417
 
