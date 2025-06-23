@@ -1,6 +1,11 @@
 import { getFiles, postQuizData, postUnit, postVideoData, test } from "../api/api";
 import { createDriveFolder, fetchDriveFolders, uploadFileToFolder, uploadLargeFileToFolder, uploadLargerFileToFolder } from "../googleDriveService";
 
+
+//AWS storage imports
+import { Storage } from 'aws-amplify';
+
+
 const functionsForUserSide = ["gradeSubmission()", "timeStampWatch()"]; //I will call timestamp triggering stuff timeStampWatch()
 
 //helper function to insert student user side functions into the html code
@@ -144,6 +149,8 @@ function saveQuizzes(unitName) {
 }
 
 //student demo functions
+
+// changes image and video sources to the proper local location (demo_files)
 function convertURLS() {
     const imageAndPDFEmbeds = document.getElementsByClassName("file-embed");
     Array.from(imageAndPDFEmbeds).forEach(file => {
@@ -156,6 +163,7 @@ function convertURLS() {
     })
 }
 
+//reverts the image and video sources to their original state
 function unconvertURLS() {
     const imageAndPDFEmbeds = document.getElementsByClassName("file-embed");
     Array.from(imageAndPDFEmbeds).forEach(file => {
@@ -168,6 +176,23 @@ function unconvertURLS() {
     })
 }
 
+
+//AWS functions
+
+//upload files, so far: images and PDFs
+function uploadFiles() {
+    const imageAndPDFEmbeds = document.getElementsByClassName("file-embed");
+    Array.from(imageAndPDFEmbeds).forEach(doc => {
+        const filename = doc.file_name;
+        const file = document.getElementById(doc.id).files[0];
+        Storage.put(filename, file).then(resp => {
+            console.log(resp);
+        }).catch(err => { 
+            console.log(err);
+        });
+    })
+}
+
 //note for MongoDB to connect, must add IP address to Network Access in Mongo
 export async function save(){ //require preview mode to save or auto do?
     //test();
@@ -175,9 +200,14 @@ export async function save(){ //require preview mode to save or auto do?
     //makeFunctionalHTML();
     //addScript(); not necessary actually
 
+    uploadFiles(); 
+
+    /*testing file upload
     hidePreviewAndSave();
+    
+    
     //FOR STUDENT DEMO
-    convertURLS();
+    //convertURLS();
 
     
     const website = `<!DOCTYPE html>\n` + document.getElementsByTagName("html")[0].innerHTML;
@@ -243,8 +273,8 @@ export async function save(){ //require preview mode to save or auto do?
     //revert the page to normal so the admin can keep editing if they want
     //reverseFunctionalHTML();
     //removeScript();
-    unconvertURLS();
-    revertPreviewAndSave();
+    //unconvertURLS(); FOR STUDENT DEMO
+    revertPreviewAndSave();*/
 
 
 
