@@ -34,14 +34,11 @@ src/env_temp.js
 #test video
 /public/cell_thawing.mp4
 
-<<<<<<< HEAD
-=======
 #Test folder
 /public/DeltaTest
 /public/demo_files
 /public/demo_units
 
->>>>>>> ec704d8798c6f831a07049abcb3c51c86cdd3417
 # Playwright
 node_modules/
 /test-results/

@@ -10,30 +10,13 @@ import { previewOrEditPage} from '../ModuleEditFunctions/PreviewFunctions';
 import { addQuestion, gradeSubmission } from '../ModuleEditFunctions/QuizFunctions';
 import { save } from '../ModuleEditFunctions/SaveFunctions';
 import { Separator } from '@radix-ui/themes/dist/cjs/components/context-menu.js';
-//AWS storage imports
-import { Amplify } from 'aws-amplify';
+
 
 
 
 
 
 const ModuleEdit = () => {  
-  //configure AWS Amplify Storage
-  useEffect(() => {
-    Amplify.configure({
-      Auth: {
-        identityPoolId: "us-east-2:68ab2cf3-82e5-4d75-ba12-503d802b10b2",
-        region: "us-east-2", 
-      },
-      Storage:{
-        AWSS3: {
-          bucket: "delta-bucket-alpha",
-          region: "us-east-2", 
-        }
-      }
-    })
-  }, []);
-
 
   //set toast message
 

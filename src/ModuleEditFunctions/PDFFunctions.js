@@ -27,6 +27,9 @@ export function displayPDF(event) {
         pdfDisplay.file_name = file.name;
         pdfDisplay.backUpSRC = fileURL;
 
+        //for AWS functionality
+        pdfDisplay.file = file;
+
         fileInput.replaceWith(pdfDisplay);
         event.target.inserted = true;
         event.target.remove();

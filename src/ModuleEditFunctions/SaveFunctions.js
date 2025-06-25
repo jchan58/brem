@@ -2,47 +2,36 @@ import { getFiles, postQuizData, postUnit, postVideoData, test } from "../api/ap
 import { createDriveFolder, fetchDriveFolders, uploadFileToFolder, uploadLargeFileToFolder, uploadLargerFileToFolder } from "../googleDriveService";
 
 
-//AWS storage imports
-import { Storage } from 'aws-amplify';
+//AWS imports
+import { uploadData } from "aws-amplify/storage";
+import { Amplify } from "aws-amplify";
 
+const IDENTITY_POOL_ID = process.env.REACT_APP_IDENTITY_POOL_ID;
+const USER_POOL_ID = process.env.REACT_APP_USER_POOL_ID;
+const USER_POOL_CLIENT_ID = process.env.REACT_APP_USER_POOL_CLIENT_ID;
+const BUCKET = "delta-bucket-alpha";
+const REGION = "us-east-2";
 
-const functionsForUserSide = ["gradeSubmission()", "timeStampWatch()"]; //I will call timestamp triggering stuff timeStampWatch()
+//configure AWS amplify storage
+Amplify.configure({
+    Auth: {
+        Cognito: {
+            identityPoolId: IDENTITY_POOL_ID,
+            userPoolId: USER_POOL_ID,
+            userPoolClientId: USER_POOL_CLIENT_ID,
+            allowGuestAccess: true,  // Enable unauthenticated access
+            
+        },
+      },
+    Storage:{
+        S3: {
+          bucket: BUCKET,
+          region: REGION, 
+        }
+    }
+})
 
-//helper function to insert student user side functions into the html code
-function makeFunctionalHTML(){
-    
-    //for quiz submission buttons
-    const submitQuizBtns = document.getElementsByClassName("submit-quiz");
-    Array.from(submitQuizBtns).forEach(item => { 
-        item.setAttribute("onclick", functionsForUserSide[0]);
-    });
-}
-
-//helper function to remove user side functions from the html code
-function reverseFunctionalHTML(){
-    //for quiz submission buttons
-    const submitQuizBtns = document.getElementsByClassName("submit-quiz");
-    Array.from(submitQuizBtns).forEach(item => { 
-        item.removeAttribute("onclick");
-    });
-}
-
-//helper function to add script element to body so that user side functions can be accessed by the html from another file
-function addScript() { //only works if the js file is in the same place as the html folder!! don't think I need since unitpage is in the same place as everything now...
-    // Create a script element
-    const scriptElement = document.createElement("script");
-    scriptElement.id = "user-side-function-script";
-    scriptElement.type = "text/javascript";
-    scriptElement.setAttribute("src", "./UserSideFunctions.js"); //give the html page access to the user side functions, maybe not necessary bc unit page is written to here?
-
-    document.head.appendChild(scriptElement);
-}
-
-//helper function to remove the added script element from the body
-function removeScript() {
-    const scriptElement = document.getElementById("user-side-function-script");
-    scriptElement.remove();
-}
+console.log(Amplify.getConfig())
 
 
 //functions to hide the preview and save buttons on the page
@@ -179,31 +168,41 @@ function unconvertURLS() {
 
 //AWS functions
 
-//upload files, so far: images and PDFs
+//upload files, so far: images and PDFs; 
 function uploadFiles() {
     const imageAndPDFEmbeds = document.getElementsByClassName("file-embed");
-    Array.from(imageAndPDFEmbeds).forEach(doc => {
+    Array.from(imageAndPDFEmbeds).forEach(async doc => {
         const filename = doc.file_name;
-        const file = document.getElementById(doc.id).files[0];
-        Storage.put(filename, file).then(resp => {
-            console.log(resp);
-        }).catch(err => { 
-            console.log(err);
-        });
+        console.log(document.getElementById(doc.id));
+        const file = document.getElementById(doc.id).file;
+        try {
+			console.log('File name:', filename);
+			const results = await uploadData({
+			  path: `uploads/${filename}`,
+			  data: file,
+			}).result; //get the key (path) of the uploaded file in the bucket for use later..for mongo db
+			console.log('File uploaded successfully, here is the key in the bucket:', results.path);
+		} catch (error) {
+			console.error('Error uploading file', error);
+		}
     })
 }
 
+//map the image, etc src to the key, and then swap the image src with the src from getURL(key)...
+
+//then, can get file by the file key...upload this to mongoDB, then on reconstruction,
+//use the key to get the file url from storage and set it as the src
+
 //note for MongoDB to connect, must add IP address to Network Access in Mongo
 export async function save(){ //require preview mode to save or auto do?
-    //test();
-    //make it so necessary functions can be used by the html code
-    //makeFunctionalHTML();
-    //addScript(); not necessary actually
+
+    //hide these buttons from the page so they don't get saved
+    hidePreviewAndSave();
 
     uploadFiles(); 
 
-    /*testing file upload
-    hidePreviewAndSave();
+
+    
     
     
     //FOR STUDENT DEMO
@@ -254,7 +253,7 @@ export async function save(){ //require preview mode to save or auto do?
     await saveQuizzes(unitName); //test, makes sure it saves with max sub change and edit on question!
 
 
-    //save for demo
+    //save for demo; next save it for the AWS...
     // Create a download link for the blob
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
@@ -271,10 +270,9 @@ export async function save(){ //require preview mode to save or auto do?
     
 
     //revert the page to normal so the admin can keep editing if they want
-    //reverseFunctionalHTML();
-    //removeScript();
+
     //unconvertURLS(); FOR STUDENT DEMO
-    revertPreviewAndSave();*/
+    revertPreviewAndSave();
 
 
 

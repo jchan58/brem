@@ -33,6 +33,9 @@ export function displayImage(event) {
     //FOR DEMO FUNCTIONALITY
     imageEmbed.file_name = file.name;
     imageEmbed.backUpSRC = fileURL;
+
+    //for AWS functionality
+    imageEmbed.file = file;
       
     event.target.enableDrop();
     event.target.inField.replaceWith(imageEmbed);
