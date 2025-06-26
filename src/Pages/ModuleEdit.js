@@ -227,6 +227,7 @@ const ModuleEdit = () => {
         inputField.id = `select-file-${moduleElements.length}`;
         const insertBtn = document.createElement("button");
         insertBtn.id = `insert-btn-${moduleElements.length}`;
+        insertBtn.elID = moduleElements.length + 1;
         insertBtn.classList.add("insert-input-btn");
         insertBtn.textContent = "Insert";
         insertBtn.inserted = false;

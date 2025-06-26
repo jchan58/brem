@@ -1,4 +1,4 @@
-import { getFiles, postQuizData, postUnit, postVideoData, test } from "../api/api";
+import { getFiles, postImageData, postPDFData, postQuizData, postUnit, postVideoData, test } from "../api/api";
 import { createDriveFolder, fetchDriveFolders, uploadFileToFolder, uploadLargeFileToFolder, uploadLargerFileToFolder } from "../googleDriveService";
 
 
@@ -169,7 +169,7 @@ function unconvertURLS() {
 //AWS functions
 
 //upload files, so far: images and PDFs; 
-function uploadFiles() {
+function uploadFiles(unitName) {
     const imageAndPDFEmbeds = document.getElementsByClassName("file-embed");
     Array.from(imageAndPDFEmbeds).forEach(async doc => {
         const filename = doc.file_name;
@@ -181,7 +181,33 @@ function uploadFiles() {
 			  path: `uploads/${filename}`,
 			  data: file,
 			}).result; //get the key (path) of the uploaded file in the bucket for use later..for mongo db
+
+
 			console.log('File uploaded successfully, here is the key in the bucket:', results.path);
+
+            
+            
+            if(doc.id.includes("image-embed")) {
+                const document = {
+                    id: doc.id,
+                    awsKey: results.path,
+                    unitName: unitName
+                }
+
+                postImageData(document); 
+                console.log(`saved image: ${document.id}`)
+            } else if(doc.id.includes("pdf-embed")) {
+                const document = {
+                    id: doc.id,
+                    awsKey: results.path,
+                    unitName: unitName
+                }
+
+                postPDFData(document); 
+                console.log(`saved pdf: ${document.id}`)
+            }
+
+            
 		} catch (error) {
 			console.error('Error uploading file', error);
 		}
@@ -199,7 +225,11 @@ export async function save(){ //require preview mode to save or auto do?
     //hide these buttons from the page so they don't get saved
     hidePreviewAndSave();
 
-    uploadFiles(); 
+    
+    //save unit data
+    const unitName = document.getElementById("saved-unit-name-input").value; 
+    
+    uploadFiles(unitName); 
 
 
     
@@ -208,7 +238,7 @@ export async function save(){ //require preview mode to save or auto do?
     //FOR STUDENT DEMO
     //convertURLS();
 
-    
+    /*testing AWS rn
     const website = `<!DOCTYPE html>\n` + document.getElementsByTagName("html")[0].innerHTML;
 
     console.log('saving...')
@@ -216,8 +246,7 @@ export async function save(){ //require preview mode to save or auto do?
     const blob = new Blob([website], { type: "text/html" });
    
 
-    //save unit data
-    const unitName = document.getElementById("saved-unit-name-input").value; 
+    
 
     const existingUnits = await getFiles("../public/demo_units");
 
@@ -261,7 +290,7 @@ export async function save(){ //require preview mode to save or auto do?
 
     // Simulate a click on the link to trigger the download
     document.body.appendChild(a);
-    a.click(); 
+    a.click(); */
 
 
 

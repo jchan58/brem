@@ -174,6 +174,41 @@ export async function postQuizData(quiz_element_data) {
     }
 }
 
+//image data
+export async function postImageData(image_element_data) {
+    console.log(image_element_data);   
+    try {
+        await fetch(`http://localhost:5173/image-elements`, {
+            method: "POST",
+            headers: {
+            "content-type": "application/json"
+            },
+            body: JSON.stringify({ image_element_data }) 
+        }).then(resp => resp.json());
+        
+    } catch (err) {
+        console.error("Error:", err);
+    }
+}
+
+
+//pdf data
+export async function postPDFData(pdf_element_data) {
+    console.log("pdf data: ", pdf_element_data);   
+    try {
+        await fetch(`http://localhost:5173/pdf-elements`, {
+            method: "POST",
+            headers: {
+            "content-type": "application/json"
+            },
+            body: JSON.stringify({ pdf_element_data }) 
+        }).then(resp => resp.json());
+        
+    } catch (err) {
+        console.error("Error:", err);
+    }
+}
+
 export async function getQuizData(unit_name) {
     console.log(`api getting quiz data for unit ${unit_name}`);
     try {
@@ -197,7 +232,7 @@ export async function getQuizData(unit_name) {
 
 //files
 export async function getFiles(file_path) {
-    console.log(file_path);
+    //console.log(file_path);
     try {
         const response = await fetch(`http://localhost:5173/files?file_path=${file_path}`, {
             method: "GET",

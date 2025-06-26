@@ -9,11 +9,10 @@ import videoElementsRoutes from "./routes/video-elements.mjs";
 import winston from  "winston";
 import expressWinston from "express-winston";
 import quizElementsRoutes from "./routes/quiz-elements.mjs";
-<<<<<<< HEAD
-=======
 import filesRoutes from "./routes/files.mjs";
 import fileContentsRoutes from "./routes/file-contents.mjs";
->>>>>>> ec704d8798c6f831a07049abcb3c51c86cdd3417
+import imageElementsRoutes from "./routes/image-elements.mjs";
+import pdfElementsRoutes from "./routes/pdf-elements.mjs";
 
 const PORT = 5173;
 const app = express();
@@ -43,11 +42,10 @@ app.use(express.json());
 app.use("/", units);
 app.use("/", videoElementsRoutes);
 app.use("/", quizElementsRoutes);
-<<<<<<< HEAD
-=======
 app.use("/", filesRoutes);
 app.use("/", fileContentsRoutes);
->>>>>>> ec704d8798c6f831a07049abcb3c51c86cdd3417
+app.use("/", imageElementsRoutes);
+app.use("/", pdfElementsRoutes);
 
 // Global error handling
 app.use((err, _req, res, next) => {
