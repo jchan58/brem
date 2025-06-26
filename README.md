@@ -1,8 +1,16 @@
-# Getting Started with Create React App
+# DELTA Grant Project: Teaching & Training Modules for Translational Neurosurgery Research
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This tool will allow the Hunterian Neurosurgical Laboratory to develop a series of online modules
+that serve as a teaching and reference guide for both new and experienced researchers.
 
 ## Available Scripts
+
+In the server directory, you can run:
+### `npm start`
+
+Runs the backend server for the website and connects to MongoDB
+
+
 
 In the project directory, you can run:
 
@@ -68,3 +76,8 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+## More on Running the Backend Server
+
+- Ensure your IP Address has been added to the allowed users in MongoDB
+
