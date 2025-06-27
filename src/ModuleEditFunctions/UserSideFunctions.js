@@ -1,5 +1,35 @@
-import { getQuizData, getVideoData } from "../api/api";
+import { getImageData, getPDFData, getQuizData, getVideoData } from "../api/api";
 
+//AWS imports
+import { getUrl } from "aws-amplify/storage";
+import { Amplify } from "aws-amplify";
+
+const IDENTITY_POOL_ID = process.env.REACT_APP_IDENTITY_POOL_ID;
+const USER_POOL_ID = process.env.REACT_APP_USER_POOL_ID;
+const USER_POOL_CLIENT_ID = process.env.REACT_APP_USER_POOL_CLIENT_ID;
+const BUCKET = "delta-bucket-alpha";
+const REGION = "us-east-2";
+
+//configure AWS amplify storage
+Amplify.configure({
+    Auth: {
+        Cognito: {
+            identityPoolId: IDENTITY_POOL_ID,
+            userPoolId: USER_POOL_ID,
+            userPoolClientId: USER_POOL_CLIENT_ID,
+            allowGuestAccess: true,  // Enable unauthenticated access
+            
+        },
+      },
+    Storage:{
+        S3: {
+          bucket: BUCKET,
+          region: REGION, 
+        }
+    }
+})
+
+//console.log(Amplify.getConfig())
 
 
 //helper function to shuffle the array
@@ -248,7 +278,25 @@ export async function equipVideos(unit_name) {
   console.log("videos equipped");
 }
 
-export function equipImages() {
+//function that sets up images on the user (student) side
+export async function equipImages(unit_name) {
+  //load in the images
+  const images = document.getElementsByClassName("image-embed");
+  const unitImageData = await getImageData(unit_name);
+
+  Array.from(images).forEach(async (image) => {
+    const image_doc = unitImageData.filter((doc) => doc.id === image.id)[0]; 
+  
+
+    const urlObj = await getUrl({path: image_doc.awsKey, options:{
+      expiresIn: 604800 //1 week in seconds
+    }});
+
+    const awsSrc = urlObj.url.href;
+    image.src = awsSrc; //set the image source to the AWS S3 URL
+  })
+
+  //setup image captions
   const captionedImages = document.getElementsByClassName("caption-image");
   Array.from(captionedImages).forEach((image) => {
       const imageId = image.id;
@@ -264,6 +312,25 @@ export function equipImages() {
     });
     }
   )
+}
+
+//function that sets up pdfs on the user (student) side
+export async function equipPDFs(unit_name) {
+  //load in the pdfs
+  const pdfs = document.getElementsByClassName("pdf-embed");
+  const unitPDFData = await getPDFData(unit_name);
+
+  Array.from(pdfs).forEach(async (pdf) => {
+    const pdf_doc = unitPDFData.filter((doc) => doc.id === pdf.id)[0]; 
+    console.log("pdf doc", pdf_doc);
+
+    const urlObj = await getUrl({path: pdf_doc.awsKey, options:{
+      expiresIn: 604800 //1 week in seconds
+    }});
+    //console.log("aws src", urlObj);
+    const awsSrc = urlObj.url.href;
+    pdf.src = awsSrc; //set the image source to the AWS S3 URL
+  })
 
 }
 

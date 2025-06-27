@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { equipImages, equipQuizzes, equipVideos } from "../ModuleEditFunctions/UserSideFunctions.js";
+import { equipImages, equipPDFs, equipQuizzes, equipVideos } from "../ModuleEditFunctions/UserSideFunctions.js";
 import { pullUnit, readFile } from "../api/api.js";
 import { Button } from "@radix-ui/themes/dist/cjs/index.js";
 
@@ -60,7 +60,8 @@ window.onload = async function () {
 
       await equipVideos(realUnitName); 
       await equipQuizzes(realUnitName);
-      equipImages();
+      await equipImages(realUnitName);
+      await equipPDFs(realUnitName);
 
       //BACK NAV ONLY FOR DEMO
       const nonFooter = document.getElementById("non-footer");

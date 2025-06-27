@@ -31,7 +31,7 @@ Amplify.configure({
     }
 })
 
-console.log(Amplify.getConfig())
+//console.log(Amplify.getConfig())
 
 
 //functions to hide the preview and save buttons on the page
@@ -238,7 +238,7 @@ export async function save(){ //require preview mode to save or auto do?
     //FOR STUDENT DEMO
     //convertURLS();
 
-    /*testing AWS rn
+    
     const website = `<!DOCTYPE html>\n` + document.getElementsByTagName("html")[0].innerHTML;
 
     console.log('saving...')
@@ -277,7 +277,7 @@ export async function save(){ //require preview mode to save or auto do?
 
     const queryParams = new URLSearchParams(window.location.search);
     const moduleName = queryParams.get("module_name");
-    await postUnit(htmlFile, moduleName);
+    //await postUnit(htmlFile, moduleName);
     await saveVideoQuizzes(unitName);
     await saveQuizzes(unitName); //test, makes sure it saves with max sub change and edit on question!
 
@@ -290,7 +290,7 @@ export async function save(){ //require preview mode to save or auto do?
 
     // Simulate a click on the link to trigger the download
     document.body.appendChild(a);
-    a.click(); */
+    a.click(); 
 
 
 

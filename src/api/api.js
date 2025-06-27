@@ -191,6 +191,27 @@ export async function postImageData(image_element_data) {
     }
 }
 
+export async function getImageData(unit_name) {
+    console.log(`api getting image data for unit ${unit_name}`);
+    try {
+        const response = await fetch(`http://localhost:5173/image-elements?unit_name=${unit_name}`, {
+            method: "GET",
+            headers: {
+            "content-type": "application/json"
+            }, 
+        })
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        
+        return await response.json();
+        
+    } catch (err) {
+        console.error("Error:", err);
+    }
+}
+
 
 //pdf data
 export async function postPDFData(pdf_element_data) {
@@ -208,6 +229,28 @@ export async function postPDFData(pdf_element_data) {
         console.error("Error:", err);
     }
 }
+
+export async function getPDFData(unit_name) {
+    console.log(`api getting pdf data for unit ${unit_name}`);
+    try {
+        const response = await fetch(`http://localhost:5173/pdf-elements?unit_name=${unit_name}`, {
+            method: "GET",
+            headers: {
+            "content-type": "application/json"
+            }, 
+        })
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        
+        return await response.json();
+        
+    } catch (err) {
+        console.error("Error:", err);
+    }
+}
+
 
 export async function getQuizData(unit_name) {
     console.log(`api getting quiz data for unit ${unit_name}`);
@@ -246,7 +289,7 @@ export async function getFiles(file_path) {
         }
         
         const res = await response.json();
-        console.log(res);
+        //console.log(res);
         return res;
         
     } catch (err) {
@@ -270,7 +313,7 @@ export async function readFile(file_path) {//issue here
         }
         
         const res = await response.json();
-        console.log(res);
+        //console.log(res);
         return res.html;
         
     } catch (err) {

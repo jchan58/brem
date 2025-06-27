@@ -20,7 +20,7 @@ export function displayPDF(event) {
         const pdfDisplay = document.createElement("embed");
         pdfDisplay.src = fileURL;
         pdfDisplay.id = `pdf-embed-${event.target.elID}`;
-        pdfDisplay.classList.add("file-embed");
+        pdfDisplay.classList.add("file-embed", "pdf-embed");
         pdfDisplay.width = event.target.parentElement.getBoundingClientRect().width * 0.8;
         pdfDisplay.height = 500;
 

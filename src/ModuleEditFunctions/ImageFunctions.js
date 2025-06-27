@@ -23,7 +23,7 @@ export function displayImage(event) {
     const fileURL = URL.createObjectURL(file);
     const imageEmbed = document.createElement("img");
     imageEmbed.src = fileURL;
-    imageEmbed.classList.add("file-embed");
+    imageEmbed.classList.add("file-embed", "image-embed");
     imageEmbed.id = `image-embed-${event.target.elID}-${event.target.num}`;
     imageEmbed.classList.add("flex-1"); 
     imageEmbed.classList.add("box-content");
