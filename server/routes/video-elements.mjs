@@ -18,18 +18,11 @@ videoElementsRoutes.post("/video-elements", async (req, res) => {
       return res.status(400).send("No data provided.");
     }
 
-
-    const existCount = await collection.countDocuments({unitName: video_element_data.unitName}, { limit: 1 })
   
-    if(existCount === 0) {
-      const result = await collection.insertOne({unitName: video_element_data.unitName, data: [video_element_data]});
-      console.log(`Successfully inserted document: ${result.insertedId}`);
-      res.status(201).send(result);
-    } else { //add subdoc to existing unit
-      const result = await collection.updateOne( { unitName : video_element_data.unitName }, { $push : { data : { ...video_element_data } } }, { upsert: true } );
-      console.log(`Successfully inserted video data`);
-      res.status(201).send(result);
-    }
+    //add new document or sub document to existing unit
+    const result = await collection.updateOne( { unitName : video_element_data.unitName }, { $push : { data : { ...video_element_data } } }, { upsert: true } );
+    console.log(`Successfully inserted video data`);
+    res.status(201).send(result);  
 });
 
 //get video element data for a certain unit name

@@ -236,6 +236,10 @@ export async function equipQuizzes(unit_name) {
 export async function equipVideos(unit_name) {
   const videoObjList = [];
   const videoObjs = document.getElementsByClassName("video-obj");
+  if(videoObjs.length === 0) { //no videos to equip
+    return;
+  }
+  
   videoObjList.push(...videoObjs);
 
   if(videoObjList.length === 0) { //no videos to equip
@@ -247,12 +251,22 @@ export async function equipVideos(unit_name) {
   videoObjList.forEach(videoObj => {
     videoObj.stampList = []; //get this of pause timestamps list from database
     
-    unitVideoData.forEach(document => {
+    unitVideoData.forEach(async document => {
       if(document.id === videoObj.id) {
-        videoObj.stampList.push(document);
-        //not working const source = videoObj.getElementsByTagName('source'); 
-        //source.src = document.vidLocation;
-      }
+        if(!document.awsSrc) { //no awsSRC means it is timestamp information
+          videoObj.stampList.push(document);
+        } else {
+          const urlObj = await getUrl({path: document.awsKey, options:{
+            expiresIn: 604800 //1 week in seconds
+          }});
+
+          const awsSrc = urlObj.url.href;
+
+          const source = videoObj.getElementsByTagName("source")[0]; //get the source element of the video
+          
+          source.src = awsSrc; //set the source to the AWS S3 URL
+        }
+    }
 
       
     });
@@ -282,6 +296,10 @@ export async function equipVideos(unit_name) {
 export async function equipImages(unit_name) {
   //load in the images
   const images = document.getElementsByClassName("image-embed");
+  if(images.length === 0) { //no images to equip
+    return;
+  }
+
   const unitImageData = await getImageData(unit_name);
 
   Array.from(images).forEach(async (image) => {
@@ -318,6 +336,9 @@ export async function equipImages(unit_name) {
 export async function equipPDFs(unit_name) {
   //load in the pdfs
   const pdfs = document.getElementsByClassName("pdf-embed");
+  if(pdfs.length === 0) { //no pdfs to equip
+    return;
+  }
   const unitPDFData = await getPDFData(unit_name);
 
   Array.from(pdfs).forEach(async (pdf) => {

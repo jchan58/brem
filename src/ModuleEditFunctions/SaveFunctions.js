@@ -5,6 +5,7 @@ import { createDriveFolder, fetchDriveFolders, uploadFileToFolder, uploadLargeFi
 //AWS imports
 import { uploadData } from "aws-amplify/storage";
 import { Amplify } from "aws-amplify";
+import { upload } from "@testing-library/user-event/dist/cjs/utility/index.js";
 
 const IDENTITY_POOL_ID = process.env.REACT_APP_IDENTITY_POOL_ID;
 const USER_POOL_ID = process.env.REACT_APP_USER_POOL_ID;
@@ -100,7 +101,6 @@ async function saveVideoQuizzes(unitName) {
                 explanations: item.explanations,
                 id: video.id,
                 unitName: unitName,
-                //vidLocation: videoLocation
             }
     
             postVideoData(document);
@@ -168,8 +168,9 @@ function unconvertURLS() {
 
 //AWS functions
 
-//upload files, so far: images and PDFs; 
-function uploadFiles(unitName) {
+//upload images/pdfs
+function uploadImagesAndPDFS(unitName) {
+    //upload all images and PDFs
     const imageAndPDFEmbeds = document.getElementsByClassName("file-embed");
     Array.from(imageAndPDFEmbeds).forEach(async doc => {
         const filename = doc.file_name;
@@ -209,10 +210,43 @@ function uploadFiles(unitName) {
 
             
 		} catch (error) {
-			console.error('Error uploading file', error);
+			console.error('Error uploading image or pdf', error);
 		}
     })
+
 }
+
+//upload videos to AWS bucket; note: add a saving screen so users will wait until it is done
+function uploadVideos(unitName) { //still broken, uploading awsSrc to MongoDB 4 times? also need to change everything to upsert/check if that is the problem
+    const videoObjs = document.getElementsByClassName("video-obj");
+    console.log("video objs", videoObjs);
+    Array.from(videoObjs).forEach(async doc => {
+        const filename = doc.file_name;
+        console.log(document.getElementById(doc.id));
+        const file = document.getElementById(doc.id).file;
+   
+		console.log('File name:', filename);
+		await uploadData({
+			path: `uploads/${filename}`,
+			data: file,
+		}).result.then((results) => { //only do this once the upload is finished
+            console.log('File uploaded successfully, here is the key in the bucket:', results.path);
+            const document = {
+                id: doc.id,
+                awsKey: results.path,
+                unitName: unitName
+            }
+
+            postVideoData(document); 
+            console.log(`saved video: ${document.id}`);
+
+        }).catch((error) => {
+            console.error("Error uploading video ", error);
+        }); 
+
+    })
+}
+
 
 //map the image, etc src to the key, and then swap the image src with the src from getURL(key)...
 
@@ -229,7 +263,8 @@ export async function save(){ //require preview mode to save or auto do?
     //save unit data
     const unitName = document.getElementById("saved-unit-name-input").value; 
     
-    uploadFiles(unitName); 
+    uploadImagesAndPDFS(unitName); 
+    uploadVideos(unitName); 
 
 
     

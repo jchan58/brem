@@ -233,6 +233,7 @@ export function displayVideo(event) {
       videoObj.backUpStampList = [];
       videoObj.append(source);
       videoObj.file = file;
+      videoObj.file_name = file.name;
 
       //FOR DEMO FUNCTIONALITY
       source.classList.add("video-source");
