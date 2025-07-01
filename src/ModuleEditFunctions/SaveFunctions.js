@@ -1,4 +1,4 @@
-import { getFiles, postImageData, postPDFData, postQuizData, postUnit, postVideoData, test } from "../api/api";
+import { getFiles, postHTMLData, postImageData, postPDFData, postQuizData, postUnit, postVideoData, test } from "../api/api";
 import { createDriveFolder, fetchDriveFolders, uploadFileToFolder, uploadLargeFileToFolder, uploadLargerFileToFolder } from "../googleDriveService";
 
 
@@ -217,7 +217,7 @@ function uploadImagesAndPDFS(unitName) {
 }
 
 //upload videos to AWS bucket; note: add a saving screen so users will wait until it is done
-function uploadVideos(unitName) { //still broken, uploading awsSrc to MongoDB 4 times? also need to change everything to upsert/check if that is the problem
+function uploadVideos(unitName) { 
     const videoObjs = document.getElementsByClassName("video-obj");
     console.log("video objs", videoObjs);
     Array.from(videoObjs).forEach(async doc => {
@@ -245,6 +245,27 @@ function uploadVideos(unitName) { //still broken, uploading awsSrc to MongoDB 4 
         }); 
 
     })
+}
+
+//upload the html file for the unit to AWS
+async function uploadHTML(unitName, file) { 
+    
+	await uploadData({
+		path: `uploads/${unitName}.html`,
+		data: file,
+	}).result.then((results) => { //only do this once the upload is finished
+        console.log('File uploaded successfully, here is the key in the bucket:', results.path);
+        const document = {
+            awsKey: results.path,
+            unitName: unitName
+        }
+
+        postHTMLData(document); 
+        console.log(`saved html file: ${document.unitName}`);
+
+    }).catch((error) => {
+        console.error("Error uploading video ", error);
+    }); 
 }
 
 
@@ -282,7 +303,7 @@ export async function save(){ //require preview mode to save or auto do?
    
 
     
-
+    /*
     const existingUnits = await getFiles("../public/demo_units");
 
     if(existingUnits.includes(`${unitName}.html`)) {
@@ -306,9 +327,10 @@ export async function save(){ //require preview mode to save or auto do?
         unconvertURLS();
         revertPreviewAndSave();
         return;
-    }
+    }*/
 
     const htmlFile = new File([blob], `${unitName}`);
+    uploadHTML(unitName, htmlFile); //upload the html file to AWS
 
     const queryParams = new URLSearchParams(window.location.search);
     const moduleName = queryParams.get("module_name");
@@ -317,6 +339,7 @@ export async function save(){ //require preview mode to save or auto do?
     await saveQuizzes(unitName); //test, makes sure it saves with max sub change and edit on question!
 
 
+    /*tyring save to AWS...
     //save for demo; next save it for the AWS...
     // Create a download link for the blob
     const a = document.createElement("a");
@@ -325,7 +348,7 @@ export async function save(){ //require preview mode to save or auto do?
 
     // Simulate a click on the link to trigger the download
     document.body.appendChild(a);
-    a.click(); 
+    a.click(); */
 
 
 

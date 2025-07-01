@@ -13,18 +13,10 @@ pdfElementsRoutes.post("/pdf-elements", async (req, res) => {
       return res.status(400).send("No data provided.");
     }
   
-    //prevent duplicate unit data
-    const existCount = await collection.countDocuments({unitName: pdf_element_data.unitName}, { limit: 1 })
-  
-    if(existCount === 0) {
-      const result = await collection.insertOne({unitName: pdf_element_data.unitName, data: [pdf_element_data]});
-      console.log(`Successfully inserted document: ${result.insertedId}`);
-      res.status(201).send(result);
-    } else { //add subdoc to existing unit
-      const result = await collection.updateOne( { unitName : pdf_element_data.unitName }, { $push : { data : { ...pdf_element_data } } }, { upsert: true } );
-      console.log(`Successfully inserted pdf data`);
-      res.status(201).send(result);
-    }
+    //add new document or sub document to existing unit
+    const result = await collection.updateOne( { unitName : pdf_element_data.unitName }, { $push : { data : { ...pdf_element_data } } }, { upsert: true } );
+    console.log(`Successfully inserted pdf data`);
+    res.status(201).send(result);
 });
 
 //get image element data for a certain unit name

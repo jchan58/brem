@@ -13,6 +13,7 @@ import filesRoutes from "./routes/files.mjs";
 import fileContentsRoutes from "./routes/file-contents.mjs";
 import imageElementsRoutes from "./routes/image-elements.mjs";
 import pdfElementsRoutes from "./routes/pdf-elements.mjs";
+import HTMLFilesRoutes from "./routes/html-files.mjs";
 
 const PORT = 5173;
 const app = express();
@@ -46,6 +47,7 @@ app.use("/", filesRoutes);
 app.use("/", fileContentsRoutes);
 app.use("/", imageElementsRoutes);
 app.use("/", pdfElementsRoutes);
+app.use("/", HTMLFilesRoutes);
 
 // Global error handling
 app.use((err, _req, res, next) => {

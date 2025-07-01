@@ -191,6 +191,7 @@ export async function postImageData(image_element_data) {
     }
 }
 
+
 export async function getImageData(unit_name) {
     console.log(`api getting image data for unit ${unit_name}`);
     try {
@@ -256,6 +257,44 @@ export async function getQuizData(unit_name) {
     console.log(`api getting quiz data for unit ${unit_name}`);
     try {
         const response = await fetch(`http://localhost:5173/quiz-elements?unit_name=${unit_name}`, {
+            method: "GET",
+            headers: {
+            "content-type": "application/json"
+            }, 
+        })
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        
+        return await response.json();
+        
+    } catch (err) {
+        console.error("Error:", err);
+    }
+}
+
+
+//html file data
+export async function postHTMLData(html_data) {
+    console.log(html_data);
+    try {
+        await fetch(`http://localhost:5173/html-files`, {
+            method: "POST",
+            headers: {
+            "content-type": "application/json"
+            },
+            body: JSON.stringify({ html_data }) 
+        }).then(resp => resp.json());
+    } catch (err) {
+        console.error("Error:", err);
+    }
+}
+
+export async function getHTMLData(unit_name) {
+    console.log(`api getting quiz data for unit ${unit_name}`);
+    try {
+        const response = await fetch(`http://localhost:5173/html-files?unit_name=${unit_name}`, {
             method: "GET",
             headers: {
             "content-type": "application/json"

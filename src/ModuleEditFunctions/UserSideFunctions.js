@@ -252,10 +252,12 @@ export async function equipVideos(unit_name) {
     videoObj.stampList = []; //get this of pause timestamps list from database
     
     unitVideoData.forEach(async document => {
+      console.log("document", document);
       if(document.id === videoObj.id) {
-        if(!document.awsSrc) { //no awsSRC means it is timestamp information
+        if(!document.awsKey) { //no awsSRC means it is timestamp information
           videoObj.stampList.push(document);
         } else {
+          console.log("using aws key...");
           const urlObj = await getUrl({path: document.awsKey, options:{
             expiresIn: 604800 //1 week in seconds
           }});
@@ -265,6 +267,9 @@ export async function equipVideos(unit_name) {
           const source = videoObj.getElementsByTagName("source")[0]; //get the source element of the video
           
           source.src = awsSrc; //set the source to the AWS S3 URL
+
+          //reload the video with the new source
+          videoObj.load();
         }
     }
 

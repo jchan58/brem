@@ -1,8 +1,36 @@
 import { useEffect, useState } from "react";
 import { equipImages, equipPDFs, equipQuizzes, equipVideos } from "../ModuleEditFunctions/UserSideFunctions.js";
-import { pullUnit, readFile } from "../api/api.js";
+import { getHTMLData, pullUnit, readFile } from "../api/api.js";
 import { Button } from "@radix-ui/themes/dist/cjs/index.js";
 
+//AWS imports
+import { downloadData } from "aws-amplify/storage";
+import { Amplify } from "aws-amplify";
+
+const IDENTITY_POOL_ID = process.env.REACT_APP_IDENTITY_POOL_ID;
+const USER_POOL_ID = process.env.REACT_APP_USER_POOL_ID;
+const USER_POOL_CLIENT_ID = process.env.REACT_APP_USER_POOL_CLIENT_ID;
+const BUCKET = "delta-bucket-alpha";
+const REGION = "us-east-2";
+
+//configure AWS amplify storage
+Amplify.configure({
+    Auth: {
+        Cognito: {
+            identityPoolId: IDENTITY_POOL_ID,
+            userPoolId: USER_POOL_ID,
+            userPoolClientId: USER_POOL_CLIENT_ID,
+            allowGuestAccess: true,  // Enable unauthenticated access
+            
+        },
+      },
+    Storage:{
+        S3: {
+          bucket: BUCKET,
+          region: REGION, 
+        }
+    }
+})
 
 function readHTMLFile(file) {
     return new Promise((resolve, reject) => {
@@ -52,7 +80,15 @@ window.onload = async function () {
 
     //THIS IS FOR FROM DEMO FILES
     const realUnitName = unitName.replace("%20", " ");
-    const unitFile = await readFile(`../public/demo_units/${realUnitName}.html`);
+    
+    //for demo: const unitFile = await readFile(`../public/demo_units/${realUnitName}.html`);
+
+    //use AWS
+    const unitHTMLData = await getHTMLData(realUnitName);
+    const unit_doc = unitHTMLData.filter((doc) => doc.unitName === realUnitName)[0]; 
+
+    const unitFile = await downloadData({path: unit_doc.awsKey}); //figure out how to actually get the file...
+    console.log("unitFile: ", unitFile);
       
     if(unitFile){
       await processAndWriteHTML(unitFile);
