@@ -1,8 +1,34 @@
 import { Box, Flex, Heading, ScrollArea, Separator, Text } from "@radix-ui/themes";
-import { fetchDriveFolders, signInWithGoogle } from "../googleDriveService";
 import { useEffect, useState } from "react";
 
+//AWS imports
+import { Amplify } from "aws-amplify";
+import { getHTMLData } from "../api/api";
 
+const IDENTITY_POOL_ID = process.env.REACT_APP_IDENTITY_POOL_ID;
+const USER_POOL_ID = process.env.REACT_APP_USER_POOL_ID;
+const USER_POOL_CLIENT_ID = process.env.REACT_APP_USER_POOL_CLIENT_ID;
+const BUCKET = "delta-bucket-alpha";
+const REGION = "us-east-2";
+
+//configure AWS amplify storage
+Amplify.configure({
+    Auth: {
+        Cognito: {
+            identityPoolId: IDENTITY_POOL_ID,
+            userPoolId: USER_POOL_ID,
+            userPoolClientId: USER_POOL_CLIENT_ID,
+            allowGuestAccess: true,  // Enable unauthenticated access
+            
+        },
+      },
+    Storage:{
+        S3: {
+          bucket: BUCKET,
+          region: REGION, 
+        }
+    }
+})
 
 const BASE_URL = "http://localhost:3000/";
 
@@ -26,56 +52,24 @@ const ModulePage = () => {
     useEffect(() => {
         async function getUnitNames() {
             const unitNamesList = [];
-            console.log(moduleName)
-            //fetch all unit names from module folder
+            
             try {
-                //get the access token
-                const accessToken = await signInWithGoogle();
-                if (!accessToken) {
-                    console.error("No access token available.");
-                    return;
-                }
-            
-                const folders = await fetchDriveFolders();
-                let folderId = "";
-            
-                // Find the module's folder ID
-                for(let i = 0; i < folders.length; i++) {
-                    if(folders[i].name === moduleName) {
-                        folderId = folders[i].id;
-                        break;
-                    }
-                }
-            
-                console.log(folderId);
-            
-                if (!folderId) {
-                    console.error(`Module "${moduleName}" not found.`);
-                }
-            
-                // Fetch files in the folder
-                const filesResponse = await fetch(
-                    `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents and mimeType contains 'text/html'&fields=files(id,name)`,
-                    {
-                        method: "GET",
-                        headers: {
-                            Authorization: `Bearer ${accessToken}`,
-                        },
-                    }
-                );
-            
-                const filesData = await filesResponse.json();
-                const units = filesData.files;
-            
-                for(let i = 0; i < units.length; i++) {
-                    unitNamesList.push(units[i].name); 
-                }
+         
+                const unitHTMLData = await getHTMLData("!!!"); //!!! will give all of the units
+
+
+
+                const moduleUnitsData = unitHTMLData.filter((doc) => doc.data[0].moduleName === moduleName); 
+                moduleUnitsData.forEach((unit) => {
+                    unitNamesList.push(unit.unitName);
+                });
 
                 setUnitNames(unitNamesList);
-                console.log(unitNames);
+      
             } catch (error) {
-                console.log("Error getting unit names: ", error);
+                console.log("Error:", error);
             }
+            
         }
 
         if(moduleName !== "") {
@@ -97,21 +91,26 @@ const ModulePage = () => {
     }
 
     return (
-        <ScrollArea type="always" scrollbars="vertical" style={{ height: 180 }}>
-            <Box p="2" pr="8">
-                <Heading size="4" mb="2" trim="start">
+        <div>
+            <p className="text-center text-5xl font-bold mb-5">Welcome to the Module: {moduleName}</p>
+                <Heading size="8" mb="2" trim="start" weight="medium" className="ml-4">
                     Unit List
                 </Heading>
-                <Flex direction="column" gap="4">
-                    {unitNames.map((name) => (
-                        <div key = {name}>
-                            <a href={`${BASE_URL}unitpage?unit_name=${name}&module_name=${moduleName}`}>{name}</a>
-                        </div>
-
-                    ))}
-                </Flex>
-            </Box>
-    </ScrollArea>
+                <ScrollArea type="always" scrollbars="vertical" style={{ height: 500 }} className="mb-3.5">
+                    <Box p="2" pr="8">
+                            
+                        <Flex direction="column" gap="0">
+                            {unitNames.map((name) => (
+                                <div key = {name} className="text-left font-medium text-2xl border border-gray-400 bg-zinc-100 space-y-0 h-16 flex items-center">
+                                    <a href={`${BASE_URL}unitpage?unit_name=${name}&module_name=${moduleName}`} className="hover:text-blue-600  ml-5">{name}</a>
+                                    {/* <Separator orientation="horizontal" size="4"/> */}
+                                </div>
+                            ))}
+                                
+                        </Flex>
+                    </Box>
+                </ScrollArea>
+        </div>
     );
 };
 

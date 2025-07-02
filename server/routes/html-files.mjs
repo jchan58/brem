@@ -32,11 +32,19 @@ HTMLFilesRoutes.get("/html-files", async (req, res) => {
   }
 
 
+  if(unit_name === "!!!") { //return all unit files if you see this
+    const result = await collection.find(); //there will only be one document per unit
+    const data = await result.toArray(); //convert the cursor to an array
+    console.log(`Successfully got html file data`);
+    res.status(200).send(data);
+    
+  } else {
 
-  const result = await collection.findOne({unitName: unit_name}); //there will only be one document per unit
-  const data = result.data;
-  console.log(`Successfully got html file data`);
-  res.status(200).send(data);
+    const result = await collection.findOne({unitName: unit_name}); //there will only be one document per unit
+    const data = result.data;
+    console.log(`Successfully got html file data`);
+    res.status(200).send(data);
+  }
 });
 
 export default HTMLFilesRoutes;

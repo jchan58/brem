@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
 import { equipImages, equipPDFs, equipQuizzes, equipVideos } from "../ModuleEditFunctions/UserSideFunctions.js";
-import { getHTMLData, pullUnit, readFile } from "../api/api.js";
-import { Button } from "@radix-ui/themes/dist/cjs/index.js";
+import { getHTMLData } from "../api/api.js";
+
 
 //AWS imports
 import { downloadData } from "aws-amplify/storage";
@@ -32,30 +31,7 @@ Amplify.configure({
     }
 })
 
-function readHTMLFile(file) {
-    return new Promise((resolve, reject) => {
-      if (!file) {
-        reject("No file provided.");
-        return;
-      }
-  
-      const reader = new FileReader();
-  
-      // When the file is successfully read
-      reader.onload = function(event) {
-        resolve(event.target.result); // Return the content of the file
-      };
-  
-      // Handle errors
-      reader.onerror = function() {
-        reject("Error reading file.");
-      };
-  
-      // Read the file as plain text
-      reader.readAsText(file);
-    });
-  }
-  
+ 
 //process the HTML file and write it to the page
 async function processAndWriteHTML(htmlContent) {
   console.log("called");
@@ -76,19 +52,17 @@ window.onload = async function () {
   const moduleName = queryParams.get("module_name");
 
   if(unitName && moduleName)  { //only do this if the parameters are present (on the unit page...)
-    //THIS IS FOR FROM CLOUD STORAGE const unitFile = await pullUnit(unitName, moduleName);
+  
 
-    //THIS IS FOR FROM DEMO FILES
     const realUnitName = unitName.replace("%20", " ");
     
-    //for demo: const unitFile = await readFile(`../public/demo_units/${realUnitName}.html`);
 
     //use AWS
     const unitHTMLData = await getHTMLData(realUnitName);
     const unit_doc = unitHTMLData.filter((doc) => doc.unitName === realUnitName)[0]; 
 
-    const unitFile = await downloadData({path: unit_doc.awsKey}); //figure out how to actually get the file...
-    console.log("unitFile: ", unitFile);
+    const downloadResult = await downloadData({path: unit_doc.awsKey}).result; 
+    const unitFile = await downloadResult.body.text();
       
     if(unitFile){
       await processAndWriteHTML(unitFile);
@@ -106,7 +80,7 @@ window.onload = async function () {
       backNavBtn.classList.add("text-lg", "border", "border-solid", "border-black", "rounded-sm", "px-4", "py-2", "ml-2", "absolute", "bottom-4");
       backNavBtn.textContent = "Back to Module Page"; 
       backNavBtn.onclick = () => {
-        window.location.href = "http://localhost:3000/demo-module-page";
+        window.location.href = `http://localhost:3000/modulepage?module_name=${moduleName}`;
       };
       nonFooter.appendChild(backNavBtn);
    
