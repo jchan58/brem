@@ -51,16 +51,6 @@ function revertPreviewAndSave() {
 }
 
 
-//send the page as a string of html to the server
-async function send(content) {
-   try {
-    let results = await fetch(`http://localhost:5050/posts/`).then(resp => resp.json()); //testing out mongodb stuff, will change to more like smth above; issue
-    console.log(results);
-    } catch (error) {
-        console.error("Error:", error);
-    }
-}
-
 // refer to: videoObj.stampList.push(
     //{time: val, question: questionInfo[0], answer: questionInfo[1], allOptions: options, explanations: explainInfo});
 async function saveVideoQuizzes(unitName) {
@@ -115,35 +105,6 @@ function saveQuizzes(unitName) {
 
     })
 }
-
-//student demo functions
-
-// changes image and video sources to the proper local location (demo_files)
-function convertURLS() {
-    const imageAndPDFEmbeds = document.getElementsByClassName("file-embed");
-    Array.from(imageAndPDFEmbeds).forEach(file => {
-        file.src = `/demo_files/${file.file_name}`; //everything must be in public/demo_files
-    })
-
-    const videoSources = document.getElementsByClassName("video-source");
-    Array.from(videoSources).forEach(source => {
-        source.src = `/demo_files/${source.file_name}`; //everything must be in public/demo_files
-    })
-}
-
-//reverts the image and video sources to their original state
-function unconvertURLS() {
-    const imageAndPDFEmbeds = document.getElementsByClassName("file-embed");
-    Array.from(imageAndPDFEmbeds).forEach(file => {
-        file.src = file.backUpSRC; 
-    })
-
-    const videoSources = document.getElementsByClassName("video-source");
-    Array.from(videoSources).forEach(source => {
-        source.src = source.backUpSRC; //everything must be in public/demo_files
-    })
-}
-
 
 //AWS functions
 
@@ -250,6 +211,14 @@ async function uploadHTML(unitName, file, moduleName) {
 
 
 export async function save(){ //require preview mode to save or auto do?
+    //check if the page is in edit mode, if it is, set it to preview (student view) mode
+    const prevEditBtn = document.getElementById("preview-module-page-btn");
+
+    let wasEdit = false;
+    if(prevEditBtn.textContent === "Preview") {
+        wasEdit = true;
+        prevEditBtn.click();
+    }
 
     //hide these buttons from the page so they don't get saved
     hidePreviewAndSave();
@@ -288,6 +257,10 @@ export async function save(){ //require preview mode to save or auto do?
 
     revertPreviewAndSave();
 
+    //if the user was originally in edit mode, put it back for them
+    if(wasEdit) {
+        prevEditBtn.click();
+    }
 
-
+    //alert("Saving complete.");
 }
