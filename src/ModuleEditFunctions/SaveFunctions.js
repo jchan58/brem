@@ -54,7 +54,7 @@ function revertPreviewAndSave() {
 // refer to: videoObj.stampList.push(
     //{time: val, question: questionInfo[0], answer: questionInfo[1], allOptions: options, explanations: explainInfo});
 async function saveVideoQuizzes(unitName) {
-
+    
 
     const videoObjs = document.getElementsByClassName("video-obj");
     Array.from(videoObjs).forEach(async (video) => {
@@ -189,7 +189,6 @@ function uploadVideos(unitName) {
 
 //upload the html file for the unit to AWS
 async function uploadHTML(unitName, file, moduleName) { 
-    
 	await uploadData({
 		path: `uploads/${unitName}.html`,
 		data: file,
@@ -203,14 +202,13 @@ async function uploadHTML(unitName, file, moduleName) {
 
         postHTMLData(document); 
         console.log(`saved html file: ${document.unitName}`);
-
     }).catch((error) => {
         console.error("Error uploading video ", error);
     }); 
 }
 
 
-export async function save(){ //require preview mode to save or auto do?
+export async function save(){ 
     //check if the page is in edit mode, if it is, set it to preview (student view) mode
     const prevEditBtn = document.getElementById("preview-module-page-btn");
 
@@ -226,11 +224,9 @@ export async function save(){ //require preview mode to save or auto do?
     
     //save unit data
     const unitName = document.getElementById("saved-unit-name-input").value; 
-    
-    uploadImagesAndPDFS(unitName); 
-    uploadVideos(unitName); 
 
-    
+
+    //save the HTML file first, quickly
     const website = `<!DOCTYPE html>\n` + document.getElementsByTagName("html")[0].innerHTML;
 
     console.log('saving...')
@@ -245,10 +241,21 @@ export async function save(){ //require preview mode to save or auto do?
     const moduleName = queryParams.get("module_name");
     uploadHTML(unitName, htmlFile, moduleName); //upload the html file to AWS
 
+    //show saving animation
+    const saveOverlay = document.getElementById("saving-overlay");
+    saveOverlay.classList.remove("hidden"); //might need to use promises?
+
+    /*commented out for now to save on limited requests...
     
     await saveVideoQuizzes(unitName);
-    await saveQuizzes(unitName); 
+    await saveQuizzes(unitName);
 
+
+    uploadImagesAndPDFS(unitName); 
+    uploadVideos(unitName); 
+
+    
+     */
 
 
 
@@ -261,6 +268,4 @@ export async function save(){ //require preview mode to save or auto do?
     if(wasEdit) {
         prevEditBtn.click();
     }
-
-    //alert("Saving complete.");
 }

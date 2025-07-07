@@ -13,14 +13,7 @@ import { Separator } from '@radix-ui/themes/dist/cjs/components/context-menu.js'
 
 
 
-
-
-
-
-
 const ModuleEdit = () => {  
-  const [saving, setSaving] = useState(false); //state to keep track of saving status
-
   //set toast message
 
   //preview button ref
@@ -51,6 +44,9 @@ const ModuleEdit = () => {
   const addBtnRef = useRef(null);
   const newElContainerRef = useRef(null);
 
+  //reference for saving text
+  const saveTextRef = useRef(null);
+
   //in use effect because buttons may not render right away
   useEffect(() => {
 
@@ -63,10 +59,24 @@ const ModuleEdit = () => {
     //get save button and add its funcitonality to it
     const saveBtn = saveBtnRef.current;
     if(saveBtn){
-      saveBtn.addEventListener("click", async (e) => {
-        //alert("Saving...please do not refresh the page.");
-        await save();
-      })
+      saveBtn.addEventListener("click", save);
+    }
+
+    //get the saving text for the animation
+    const saveText = saveTextRef.current;
+    if(saveTextRef) {
+      let id = null; 
+      let dots = 0;
+      id = setInterval(saveAnim, 500);
+      function saveAnim() {
+        if (dots === 3) {
+          saveText.textContent = "Saving";
+          dots = 0;
+        } else {
+          dots++; 
+          saveText.textContent = saveText.textContent + ".";
+        }
+      }
     }
 
 
@@ -1016,6 +1026,9 @@ const ModuleEdit = () => {
           <Separator size="4"/>
           <div className="relative z-10">
             <div id = "non-footer">
+              <div id = "saving-overlay" className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center hidden">
+                <div id = "saving-text" className="text-blue-800 text-4xl font-semibold" ref={saveTextRef}>Saving</div>
+              </div>
               <div className="flex flex-row justify-end relative">
                 <input type = "text" className="border border-black mb-2 mr-16 rounded-sm mt-2" id = "saved-unit-name-input" name="unit-name" placeholder="UnitName"/> 
               </div>
