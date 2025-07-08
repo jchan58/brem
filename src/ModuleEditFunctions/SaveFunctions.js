@@ -57,7 +57,7 @@ async function saveVideoQuizzes(unitName) {
     
 
     const videoObjs = document.getElementsByClassName("video-obj");
-    Array.from(videoObjs).forEach(async (video) => {
+    const promises = Array.from(videoObjs).map(async (video) => {
         
         const data = video.stampList;
         data.forEach(item => {
@@ -75,9 +75,12 @@ async function saveVideoQuizzes(unitName) {
             postVideoData(document);
 
             console.log(`saved video question: ${document.id}`)
+            return document.id;
         })
         
     })
+
+    return Promise.all(promises);
 }
 
 //refer to questionDataContainer.questionData.push(
@@ -85,7 +88,7 @@ async function saveVideoQuizzes(unitName) {
 function saveQuizzes(unitName) {
     const quizzes = document.getElementsByClassName("question-data-container"); //quizzes are represented by question data containers
 
-    Array.from(quizzes).forEach(quiz => {
+    const promises = Array.from(quizzes).map(quiz => {
         console.log(quiz);
         const data = quiz.questionData;
         data.forEach(item => {
@@ -101,9 +104,11 @@ function saveQuizzes(unitName) {
           
             postQuizData(document); 
             console.log(`saved quiz question: ${document.id}`)
+            return document.id;
         })
 
     })
+    return Promise.all(promises);
 }
 
 //AWS functions
@@ -112,7 +117,7 @@ function saveQuizzes(unitName) {
 function uploadImagesAndPDFS(unitName) {
     //upload all images and PDFs
     const imageAndPDFEmbeds = document.getElementsByClassName("file-embed");
-    Array.from(imageAndPDFEmbeds).forEach(async doc => {
+    const promises = Array.from(imageAndPDFEmbeds).map(async doc => {
         const filename = doc.file_name;
         console.log(document.getElementById(doc.id));
         const file = document.getElementById(doc.id).file;
@@ -137,6 +142,7 @@ function uploadImagesAndPDFS(unitName) {
 
                 postImageData(document); 
                 console.log(`saved image: ${document.id}`)
+                return document.id;
             } else if(doc.id.includes("pdf-embed")) {
                 const document = {
                     id: doc.id,
@@ -146,6 +152,7 @@ function uploadImagesAndPDFS(unitName) {
 
                 postPDFData(document); 
                 console.log(`saved pdf: ${document.id}`)
+                return document.id;
             }
 
             
@@ -153,43 +160,47 @@ function uploadImagesAndPDFS(unitName) {
 			console.error('Error uploading image or pdf', error);
 		}
     })
+    return Promise.all(promises); 
 
 }
 
 //upload videos to AWS bucket; note: add a saving screen so users will wait until it is done
-function uploadVideos(unitName) { 
+function uploadVideos(unitName) {
     const videoObjs = document.getElementsByClassName("video-obj");
-    console.log("video objs", videoObjs);
-    Array.from(videoObjs).forEach(async doc => {
+
+    const promises = Array.from(videoObjs).map(doc => {
         const filename = doc.file_name;
-        console.log(document.getElementById(doc.id));
         const file = document.getElementById(doc.id).file;
-   
-		console.log('File name:', filename);
-		await uploadData({
-			path: `uploads/${filename}`,
-			data: file,
-		}).result.then((results) => { //only do this once the upload is finished
+
+        console.log('File name:', filename);
+
+        return uploadData({
+            path: `uploads/${filename}`,
+            data: file,
+        }).result.then((results) => {
             console.log('File uploaded successfully, here is the key in the bucket:', results.path);
             const document = {
                 id: doc.id,
                 awsKey: results.path,
                 unitName: unitName
-            }
+            };
 
-            postVideoData(document); 
+            postVideoData(document);
             console.log(`saved video: ${document.id}`);
 
+            return document.id; 
         }).catch((error) => {
             console.error("Error uploading video ", error);
-        }); 
+            throw error; // optional: let the error propagate
+        });
+    });
 
-    })
+    return Promise.all(promises); 
 }
 
 //upload the html file for the unit to AWS
 async function uploadHTML(unitName, file, moduleName) { 
-	await uploadData({
+	return uploadData({ //return a promise so it will be awaited
 		path: `uploads/${unitName}.html`,
 		data: file,
 	}).result.then((results) => { //only do this once the upload is finished
@@ -202,17 +213,20 @@ async function uploadHTML(unitName, file, moduleName) {
 
         postHTMLData(document); 
         console.log(`saved html file: ${document.unitName}`);
+        return document.unitName;
     }).catch((error) => {
         console.error("Error uploading video ", error);
     }); 
 }
 
 
+
 export async function save(){ 
+
     //check if the page is in edit mode, if it is, set it to preview (student view) mode
     const prevEditBtn = document.getElementById("preview-module-page-btn");
 
-    let wasEdit = false;
+        let wasEdit = false;
     if(prevEditBtn.textContent === "Preview") {
         wasEdit = true;
         prevEditBtn.click();
@@ -221,7 +235,7 @@ export async function save(){
     //hide these buttons from the page so they don't get saved
     hidePreviewAndSave();
 
-    
+        
     //save unit data
     const unitName = document.getElementById("saved-unit-name-input").value; 
 
@@ -232,34 +246,26 @@ export async function save(){
     console.log('saving...')
     // Create a blob with the inner HTML content
     const blob = new Blob([website], { type: "text/html" });
-   
+    
 
     //create an html file fromt he blob
     const htmlFile = new File([blob], `${unitName}`);
 
     const queryParams = new URLSearchParams(window.location.search);
     const moduleName = queryParams.get("module_name");
-    uploadHTML(unitName, htmlFile, moduleName); //upload the html file to AWS
+    await uploadHTML(unitName, htmlFile, moduleName); //upload the html file to AWS
 
     //show saving animation
     const saveOverlay = document.getElementById("saving-overlay");
-    saveOverlay.classList.remove("hidden"); //might need to use promises?
+    saveOverlay.classList.remove("hidden"); 
 
-    /*commented out for now to save on limited requests...
-    
+        
     await saveVideoQuizzes(unitName);
     await saveQuizzes(unitName);
 
 
-    uploadImagesAndPDFS(unitName); 
-    uploadVideos(unitName); 
-
-    
-     */
-
-
-
-
+    await uploadImagesAndPDFS(unitName); 
+    await uploadVideos(unitName)
     console.log("saved")
 
     revertPreviewAndSave();
@@ -268,4 +274,6 @@ export async function save(){
     if(wasEdit) {
         prevEditBtn.click();
     }
+
+    saveOverlay.classList.add("hidden");
 }
