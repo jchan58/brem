@@ -69,10 +69,11 @@ const ModuleEdit = () => {
       let dots = 0;
       id = setInterval(saveAnim, 500);
       function saveAnim() {
+        console.log(saveText.textContent);
         if (dots === 3) {
           saveText.textContent = "Saving";
           dots = 0;
-        } else {
+        } else if(!saveText.parentElement.classList.contains("hidden")){
           dots++; 
           saveText.textContent = saveText.textContent + ".";
         }

@@ -5,6 +5,7 @@ import { getHTMLData } from "../api/api.js";
 //AWS imports
 import { downloadData } from "aws-amplify/storage";
 import { Amplify } from "aws-amplify";
+import { useEffect, useRef } from "react";
 
 const IDENTITY_POOL_ID = process.env.REACT_APP_IDENTITY_POOL_ID;
 const USER_POOL_ID = process.env.REACT_APP_USER_POOL_ID;
@@ -91,11 +92,36 @@ window.onload = async function () {
     
  
 const UnitPage = () => {
+    //reference for loading text
+    const loadTextRef = useRef(null);
+    
+    //in use effect because may not render right away
+    useEffect(() => {
+      //get the loading text for the animation
+      const loadText = loadTextRef.current;
+      if(loadTextRef) {
+        let id = null; 
+        let dots = 0;
+        id = setInterval(saveAnim, 500);
+        function saveAnim() {
+          if (dots === 3) {
+            loadText.textContent = "Unit Loading";
+              dots = 0;
+          } else {
+              dots++; 
+              loadText.textContent = loadText.textContent + ".";
+          }
+        }
+      }
+    }, []);
+
     return (
         <div className="relative bg-white pt-5">
           <div className="relative z-10">
             <div id = "non-footer">
-              <p>Unit Loading...</p>
+              <div id = "loading-overlay" className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
+                <div id = "loading-text" className="text-blue-800 text-4xl font-semibold" ref={loadTextRef}>Unit Loading</div>
+              </div>
             </div>
           </div>
         </div>

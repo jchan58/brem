@@ -1,5 +1,5 @@
-import { Box, Flex, Heading, ScrollArea, Separator, Text } from "@radix-ui/themes";
-import { useEffect, useState } from "react";
+import { Box, Flex, Heading, ScrollArea } from "@radix-ui/themes";
+import { useEffect, useRef, useState } from "react";
 
 //AWS imports
 import { Amplify } from "aws-amplify";
@@ -49,6 +49,31 @@ const ModulePage = () => {
         setModuleName(module);
     }
 
+    //reference for loading text
+    const loadTextRef = useRef(null);
+        
+    //in use effect because may not render right away
+    useEffect(() => {
+        //get the loading text for the animation
+        const loadText = loadTextRef.current;
+        if(loadTextRef) {
+            let id = null; 
+            let dots = 0;
+            id = setInterval(saveAnim, 500);
+            function saveAnim() {
+                if (dots === 3) {
+                    loadText.textContent = "Unit Loading";
+                    dots = 0;
+                } else {
+                    dots++; 
+                    loadText.textContent = loadText.textContent + ".";
+              }
+            }
+          }
+    }, []);
+
+
+
     useEffect(() => {
         async function getUnitNames() {
             const unitNamesList = [];
@@ -83,7 +108,9 @@ const ModulePage = () => {
             <div className="relative bg-white pt-5">
               <div className="relative z-10">
                 <div id = "non-footer">
-                  <p>Units Loading...</p>
+                  <div id = "loading-overlay" className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
+                    <div id = "loading-text" className="text-blue-800 text-4xl font-semibold" ref={loadTextRef}>Units Loading</div>
+                </div>
                 </div>
               </div>
             </div>
