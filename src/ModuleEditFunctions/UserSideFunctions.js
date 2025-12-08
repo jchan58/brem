@@ -1,7 +1,5 @@
 import { getQuizData, getVideoData } from "../api/api";
 
-
-
 //helper function to shuffle the array
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
@@ -144,6 +142,23 @@ function giveFeedbackAndHints(incorrect, questionData, submitButton, score) {
       scoreDisplay.classList.add("score-display", "absolute", "top-0", "right-16", "disabled:opacity-50", "disabled:cursor-not-allowed");
       scoreDisplay.textContent = `${Math.ceil(score)}%`;
       questionForm.appendChild(scoreDisplay);
+
+      // Track completion for demo units and return to the module page.
+      if (submitButton.unitName) {
+        const stored = localStorage.getItem("demoUnitsCompleted");
+        const completedUnits = stored ? JSON.parse(stored) : [];
+        if (!completedUnits.includes(submitButton.unitName)) {
+          completedUnits.push(submitButton.unitName);
+          localStorage.setItem("demoUnitsCompleted", JSON.stringify(completedUnits));
+        }
+      }
+
+      // On demo unit pages, return the user to the demo module page after a perfect score.
+      if (window.location.pathname.includes("unitpage")) {
+        setTimeout(() => {
+          window.location.href = "http://localhost:3000/demo-module-page";
+        }, 800);
+      }
     }
     
     console.log("max subs", submitButton.maxSubs);
@@ -193,6 +208,7 @@ export async function equipQuizzes(unit_name) {
       //console.log(`max subs: ${data.quizMaxSubs}`) //change cap to quizMaxSubs later...
       subBtn.subsUsed = 0;
       subBtn.maxSubs = data.quizMaxSubs;
+      subBtn.unitName = unit_name; //keep track of which unit this quiz belongs to for completion state
       const specificQuizData = quizData.filter((specData) => specData.id === data.id);
       subBtn.addEventListener("click", (event) => {gradeSubmission(event, specificQuizData)});
       subsEquipped.push(subBtnId);

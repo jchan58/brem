@@ -21,8 +21,10 @@ const NavBar = () => {
                 <div className="pr-4 md:block hidden">
                     <Link className="p-2 text-sm" to="/">Home</Link>
                     <Link className="p-2 text-sm" to="/team">Team</Link>
+                    <Link className="p-2 text-sm" to="/discover">Gallery</Link>
                     <Link className="p-2 text-sm" to="/discover">About</Link>
                     <Link className="p-2 text-sm" to="/database">Database</Link>
+                    <Link className="p-2 text-sm" to="/log-in-page">Learn</Link>
                     <Link className="p-2 text-sm" to="/contact">Contact</Link>
                 </div>
             </nav>
@@ -42,6 +44,9 @@ const NavBar = () => {
                     <Link className="block text-sm py-3 w-full hover:bg-indigo-700 border-b border-white" to="/database" onClick={toggleMenu}>
                         Database
                     </Link>
+                    <Link className="block text-sm py-3 w-full hover:bg-indigo-700 border-b border-white" to="/log-in-page" onClick={toggleMenu}>
+                        Learn
+                    </Link>
                     <Link className="block text-sm py-3 w-full hover:bg-indigo-700" to="/contact" onClick={toggleMenu}>
                         Contact
                     </Link>
@@ -58,7 +63,7 @@ const NavBar = () => {
                     />
                     <div className="border-l border-gray-600 h-40 md:h-32 mx-6 hidden md:block"></div> {/* Vertical line hidden on mobile */}
                     <h2 className="text-2xl font-bold text-center md:text-left md:text-xl md:font-normal lg:text-2xl">
-                        The Johns Hopkins Hunterian Laboratory
+                        The Johns Hopkins Hunterian Laboratory and Neurosurgery Translational Research Center
                     </h2>
                 </div>
             </div>

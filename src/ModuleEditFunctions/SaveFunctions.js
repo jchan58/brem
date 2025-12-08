@@ -190,7 +190,7 @@ export async function save(){ //require preview mode to save or auto do?
     //save unit data
     const unitName = document.getElementById("saved-unit-name-input").value; 
 
-    const existingUnits = await getFiles("../public/demo_units");
+    const existingUnits = await getFiles("../public/demo_units") || [];
 
     if(existingUnits.includes(`${unitName}.html`)) {
         alert("Unit not saved. A unit with this name already exists");

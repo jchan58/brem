@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cell Counting Practice</title>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: white;
+      margin: 0;
+      font-family: sans-serif;
+    }
+    h1 {
+      margin-bottom: 10px;
+      color: #000000;
+    }
+    canvas {
+      cursor: pointer;
+      background: white;
+      display: block;
+    }
+    #controls {
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    input[type="number"] {
+      padding: 6px 3px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      width: 40px;
+    }
+    button {
+      padding: 7px 14px;
+      background-color: #0159b0;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background-color: #014f9d;
+    }
+    #message {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255, 255, 255, 0.9);
+      color: black;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-family: sans-serif;
+      font-size: 16px;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+  </style>
+</head>
+<body>
+  <h1>Cell Counting Practice</h1>
+  <canvas id="hemo" width="600" height="600"></canvas>
+
+  <div id="controls">
+    <input type="number" id="countInput" placeholder="" min="0" />
+    <button id="checkBtn">Check</button>
+  </div>
+
+  <div id="message"></div>
+
+  <script>
+    const canvas = document.getElementById("hemo");
+    const ctx = canvas.getContext("2d");
+    const msgBox = document.getElementById("message");
+    const checkBtn = document.getElementById("checkBtn");
+    const countInput = document.getElementById("countInput");
+
+    const size = 600;
+    const mm = size / 3;
+    const numCells = 40;
+    const radius = 6;
+    const cells = [];
+
+    function drawGrid() {
+      ctx.clearRect(0, 0, size, size);
+      ctx.fillStyle = "#014f9d";
+      ctx.fillRect(0, 0, size, size);
+
+      ctx.strokeStyle = "#c0c0c0";
+      ctx.lineWidth = 3;
+      ctx.strokeRect(0, 0, size, size);
+
+      // Large 3x3 squares
+      ctx.lineWidth = 2;
+      for (let i = 1; i < 3; i++) {
+        const pos = i * mm;
+        ctx.beginPath();
+        ctx.moveTo(pos, 0);
+        ctx.lineTo(pos, size);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(0, pos);
+        ctx.lineTo(size, pos);
+        ctx.stroke();
+      }
+
+      // Draw all regions
+      for (let row = 0; row < 3; row++) {
+        for (let col = 0; col < 3; col++) {
+          const x0 = col * mm;
+          const y0 = row * mm;
+          const isCenter = row === 1 && col === 1;
+          const isTop = row === 0 && col === 1;
+          const isBottom = row === 2 && col === 1;
+          const isLeft = col === 0 && row === 1;
+          const isRight = col === 2 && row === 1;
+
+          if (isCenter) drawCentralSquare(x0, y0);
+          else if (isTop || isBottom) drawVerticalBands(x0, y0);
+          else if (isLeft || isRight) drawHorizontalBands(x0, y0);
+          else drawOuterSquare(x0, y0);
+        }
+      }
+    }
+
+    // Corner 4x4 squares
+    function drawOuterSquare(x0, y0) {
+      const step = mm / 4;
+      ctx.lineWidth = 1;
+      for (let i = 1; i < 4; i++) {
+        ctx.beginPath();
+        ctx.moveTo(x0 + i * step, y0);
+        ctx.lineTo(x0 + i * step, y0 + mm);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(x0, y0 + i * step);
+        ctx.lineTo(x0 + mm, y0 + i * step);
+        ctx.stroke();
+      }
+    }
+
+    // Horizontal fine lines (left/right squares)
+    function drawHorizontalBands(x0, y0) {
+      const step = mm / 4;
+      ctx.lineWidth = 1;
+      for (let i = 1; i < 5; i++) {
+        ctx.beginPath();
+        ctx.moveTo(x0 + i * step, y0);
+        ctx.lineTo(x0 + i * step, y0 + mm);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(x0, y0 + i * (mm/5));
+        ctx.lineTo(x0 + mm, y0 + i * (mm/5));
+        ctx.stroke();
+      }
+      const fineStep = mm / 20;
+      ctx.lineWidth = 0.5;
+      for (let i = 1; i < 20; i++) {
+        ctx.beginPath();
+        ctx.moveTo(x0, y0 + i * fineStep);
+        ctx.lineTo(x0 + mm, y0 + i * fineStep);
+        ctx.stroke();
+      }
+    }
+
+    // Vertical fine lines (top/bottom squares)
+    function drawVerticalBands(x0, y0) {
+      const step = mm / 5;
+      ctx.lineWidth = 1;
+      for (let i = 1; i < 5; i++) {
+        ctx.beginPath();
+        ctx.moveTo(x0 + i * step, y0);
+        ctx.lineTo(x0 + i * step, y0 + mm);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(x0, y0 + i * (mm/4));
+        ctx.lineTo(x0 + mm, y0 + i * (mm/4));
+        ctx.stroke();
+      }
+      const fineStep = mm / 20;
+      ctx.lineWidth = 0.5;
+      for (let i = 1; i < 20; i++) {
+        ctx.beginPath();
+        ctx.moveTo(x0 + i * fineStep, y0);
+        ctx.lineTo(x0 + i * fineStep, y0 + mm);
+        ctx.stroke();
+      }
+    }
+
+    // Central 5x5 grid with fine 4x4 inside each
+    function drawCentralSquare(x0, y0) {
+      const medStep = mm / 5;
+      ctx.lineWidth = 1.2;
+      for (let i = 1; i < 5; i++) {
+        ctx.beginPath();
+        ctx.moveTo(x0 + i * medStep, y0);
+        ctx.lineTo(x0 + i * medStep, y0 + mm);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(x0, y0 + i * medStep);
+        ctx.lineTo(x0 + mm, y0 + i * medStep);
+        ctx.stroke();
+      }
+
+      const fineStep = medStep / 4;
+      ctx.lineWidth = 0.5;
+      for (let i = 0; i < 5; i++) {
+        for (let j = 0; j < 5; j++) {
+          const xx = x0 + i * medStep;
+          const yy = y0 + j * medStep;
+          for (let k = 1; k < 4; k++) {
+            ctx.beginPath();
+            ctx.moveTo(xx + k * fineStep, yy);
+            ctx.lineTo(xx + k * fineStep, yy + medStep);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(xx, yy + k * fineStep);
+            ctx.lineTo(xx + medStep, yy + k * fineStep);
+            ctx.stroke();
+          }
+        }
+      }
+    }
+
+    // Random cells
+    function drawCells() {
+      cells.length = 0;
+      for (let i = 0; i < numCells; i++) {
+        const x = Math.random() * (size - 2 * radius) + radius;
+        const y = Math.random() * (size - 2 * radius) + radius;
+        const isViable = Math.random() < 0.5;
+        const color = isViable ? "white" : "#002d72";
+        cells.push({ x, y, color, isViable });
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, 2 * Math.PI);
+        ctx.fillStyle = color;
+        ctx.fill();
+      }
+    }
+
+    function showMessage(text) {
+      msgBox.textContent = text;
+      msgBox.style.opacity = "1";
+      setTimeout(() => (msgBox.style.opacity = "0"), 2000);
+    }
+
+    canvas.addEventListener("click", (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      for (const cell of cells) {
+        const dx = x - cell.x;
+        const dy = y - cell.y;
+        if (Math.sqrt(dx * dx + dy * dy) <= radius) {
+          if (cell.isViable) {
+            showMessage("Correct, this is a viable cell");
+          } else {
+            showMessage("Incorrect, notice that the color of the cell suggests it is not viable");
+          }
+          break;
+        }
+      }
+    });
+
+    // Button check for user input
+    checkBtn.addEventListener("click", () => {
+      const entered = parseInt(countInput.value);
+      if (isNaN(entered)) {
+        showMessage("Enter a number");
+        return;
+      }
+      const actualCount = cells.filter(c => c.isViable).length;
+      if (entered === actualCount) {
+        showMessage("Correct! You counted all viable cells.");
+      } else {
+        showMessage(`Incorrect. There are actually ${actualCount} viable cells.`);
+      }
+    });
+
+    function redraw() {
+      drawGrid();
+      drawCells();
+    }
+
+    redraw();
+  </script>
+</body>
+</html>
