@@ -25,6 +25,7 @@ import david from '../Image_folder/david.jpg'
 
 
 
+
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 
 const tableHeaders = ['Name', 'Year'];
