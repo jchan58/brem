@@ -17,6 +17,7 @@ const tableData = [
   ['Doris Lenartz', '1988'],
   ['Takahiro (Taka) Tsuchida', '1988'],
   ['Michael Lawton', '1988'],
+  ['Carla Reinhard', '1988'],
 ];
 
 const Alumni7 = () => {

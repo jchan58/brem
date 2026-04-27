@@ -348,6 +348,8 @@ import file445 from '../pdf/s41416-024-02878-2.pdf'
 import file446 from '../pdf/slika-et-al-2024-intracranial-nanogel-pellets-carrying-temozolomide-and-paclitaxel-for-adjuvant-brain-cancer-therapy.pdf'
 import file447 from '../pdf/awae347.pdf'
 import file448 from '../pdf/research_as_an_imperative_for_clinical_excellence.11 (1).pdf'
+import file449 from '../pdf/1-s2.0-S0753332225006274-main.pdf'
+import file450 from '../pdf/Divi Raj 2026 Small Science paper.pdf'
 
 
 const Database = () => {
@@ -782,6 +784,10 @@ const Database = () => {
         2025: [
             { title: "CCL2 blockade combined with PD-1/P-selectin immunomodulators impedes breast cancer brain metastasis", link:  file447},
             { title: "Research as an Imperative for Clinical Excellence", link:  file448}, 
+            { title: "Mechanistic insights and basis for real-time monitoring and closed-loop feedback control in sonodynamic therapy for glioblastoma", link:  file449}, 
+        ],
+        2026: [
+            { title: "DNA-Loaded Nanoparticles Reprogram the Tumor Immune Microenvironment to Treat Brain Tumors", link:  file450},
         ]
     };
 

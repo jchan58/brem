@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ScrollView } from 'react-native';
 
 const tableHeaders = ['Name', 'Year'];
 const tableData = [
+  ['Michael Pinn', '1989'],
   ['Catalino Dureza', '1989'],
   ['Peter Oishi', '1989'],
   ['Taras Masnyk', '1989'],

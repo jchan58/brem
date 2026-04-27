@@ -4,6 +4,7 @@ import { View, Text, StyleSheet, ScrollView } from 'react-native';
 const tableHeaders = ['Name', 'Year'];
 const tableData = [
   ['Violette Renaud', '2001'],
+  ['Andrea Brem', '2001'],
   ['Gustavo Pradilla', '2001'],
   ['Veronica Chiang', '2001'],
   ['Paolo Rizzo', '2001'],
@@ -34,8 +35,11 @@ const tableData = [
   ['Urvashi Uphadhyay', '2003'],
   ['Wesley Hsu', '2003'],
   ['Pablo Recinos','2003'],
+  ['Ariel Wolf','2003'],
   ['Adam Fisch', '2003'],
   ['Yuval Zohar','2003'],
+  ['Urvashi Upadhyay', '2003'],
+  ['Alisa Brem', '2003'],
   ['Sarah Brem', '2003'],
   ['Sarah Posner','2003'],
   ['Brandon Togioka', '2004'],
