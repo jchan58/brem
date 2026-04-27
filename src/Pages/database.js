@@ -350,10 +350,6 @@ import file447 from '../pdf/awae347.pdf'
 import file448 from '../pdf/research_as_an_imperative_for_clinical_excellence.11 (1).pdf'
 
 
-
-
-
-
 const Database = () => {
     const data = {
         1985: [
@@ -786,7 +782,6 @@ const Database = () => {
         2025: [
             { title: "CCL2 blockade combined with PD-1/P-selectin immunomodulators impedes breast cancer brain metastasis", link:  file447},
             { title: "Research as an Imperative for Clinical Excellence", link:  file448}, 
-            { title: "dfdfdfdfdfd", link:  file449}           
         ]
     };
 
